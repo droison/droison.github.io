@@ -84,6 +84,113 @@ $(document).ready(function(event) {
 
 	<article>
 		 <header>
+		  	<h1 class="entry-title"><a href="15378876732010.html">AFN源码分析-AFHTTPConnectionOperation</a></h1>
+			<p class="meta"><time datetime="2016-03-13T23:01:13+08:00" 
+			pubdate data-updated="true">2016/3/13</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<blockquote>
+<p>AFHTTPConnectionOperation是AFNetWorking在使用NSURLConnection进行网络请求和下载的基本任务单元，其继承自AFURLConnectionOperation，仅对其进行了一些不太复杂的封装。在整个框架中，AFN并没有直接使用过AFURLConnectionOperation，均为面向AFHTTPConnectionOperation的一些开发工作，但作为抽象更好的Operation，需要进行优先的分析与学习。<br/>
+<!--more--></p>
+
+<h3 id="toc_0">AFURLConnectionOperation</h3>
+
+<p>本类是NSOperation的子类，天然就是做具体任务操作的。由于进行网络请求，所以implement了NSURLConnectionDelegate和NSURLConnectionDataDelegate两个月网络相关的代理。</p>
+</blockquote>
+
+<p>由于过多线程本身会比较吃资源，同时还会有同步问题，AFN将所有网络请求的调用都统一放在了一个名为“AFNetWorking”的thread（以下简称AFThread）中。该thread的创建放在了具体的Operation中，使用懒加载，并用dispatch_once_t进行多线程单例创建。</p>
+
+<p>类中持有一个NSRecursiveLock的lock，进行多线程的同步操作，所有读写调用操作都会lock加锁。</p>
+
+<p>Operation启动后，会在AFThread调起operationDidStart方法，该方法会新建NSURLConnection并加入当前线程runloop中，然后启动网络请求。整个过程会判断isCancel，cancel就会停止该operation。</p>
+
+<p>Operation调用cancel方法后，会在AFThread线程调起cancelConnection方法，该方法会将当前已有的connection断掉并嗲用代理方法connection:didFailWithError:，将封装的cancel error发送出去。cancel的调用加锁，严格线程同步。</p>
+
+<p>pause方法同样是在加锁情况下使用，避免状态不同步问题。会在AFThead线程调用operationDidPause方法，方法会将已有connection cancel掉。</p>
+
+<p>resume是重新调起start方法，调用前需判断是不是在pause状态下，然后将相关的状态初始化。使用也用加锁方式严格线程同步。</p>
+
+<p>数据上传和下载过程中，更新进度的downloadProgress和uploadProgress都会严格在主线程调用，这个不知道为什么？一般应该在completeQueue使用吧。</p>
+
+<p>NSURLConnetion的代理回调线程一定在和调用线程一致，所以只要在主动调起代理方法时候注意当前线程问题即可，不需要在代理方法里进行加锁操作。</p>
+
+<p>一个小技巧要注意：本Operation中的很多状态都使用自定义的state进行识别和标志，用以替代覆写NSOperation中得一些默然方法，为支持KVO，需要将state改变的时候手动调起与状态改变有关的父类对应变量的willChangeValueForKey和didChangeValueForKey方法。</p>
+
+<p>completeQueue在传入为nil时默认使用主线程队列。</p>
+
+<p>在Operation complete时，有一处需要学些的GCD group的使用：</p>
+
+<pre><code class="language-objectivec">dispatch_group_t group = strongSelf.completionGroup ?: url_request_operation_completion_group();
+dispatch_queue_t queue = strongSelf.completionQueue ?: dispatch_get_main_queue();
+dispatch_group_async(group, queue, ^{
+    block();
+});
+dispatch_group_notify(group, url_request_operation_completion_queue(), ^{
+    [strongSelf setCompletionBlock:nil];
+});
+</code></pre>
+
+<p>本operation还提供了一个能够多url请求依赖完成统一回调的方法封装batchOfRequestOperations:progressBlock:completionBlock:，通过封装可以在调用方观察若干个网络请求operation进度和完成情况。方法分别传入需要观察的网络请求operation、进度观察的block和完成观察的block，返回值为一个operation的Array（本质就是为所有operation加了一个相同的groupQueue，并新建一个Operation，将所有的网络请求Operation都加入其依赖）。代码中有一些设计GCD group和operation的dependency相关的使用方法值得学习：</p>
+
+<pre><code class="language-objectivec">__block dispatch_group_t group = dispatch_group_create();
+NSBlockOperation *batchedOperation = [NSBlockOperation blockOperationWithBlock:^{
+    dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+        if (completionBlock) {
+            completionBlock(operations);
+        }
+    });
+}];
+
+for (AFURLConnectionOperation *operation in operations) {
+    operation.completionGroup = group;
+    void (^originalCompletionBlock)(void) = [operation.completionBlock copy];
+    __weak __typeof(operation)weakOperation = operation;
+    operation.completionBlock = ^{
+        __strong __typeof(weakOperation)strongOperation = weakOperation;
+        dispatch_queue_t queue = strongOperation.completionQueue ?: dispatch_get_main_queue();
+        dispatch_group_async(group, queue, ^{
+            if (originalCompletionBlock) {
+                originalCompletionBlock();
+            }
+            NSUInteger numberOfFinishedOperations = [[operations indexesOfObjectsPassingTest:^BOOL(id op, NSUInteger __unused idx,  BOOL __unused *stop) {
+                return [op isFinished];
+            }] count];
+            if (progressBlock) {
+                progressBlock(numberOfFinishedOperations, [operations count]);
+           }
+            dispatch_group_leave(group);
+        });
+    };
+    dispatch_group_enter(group);
+    [batchedOperation addDependency:operation];
+}
+</code></pre>
+
+<p>上面代码技巧包括</p>
+
+<ul>
+<li>异步block使用group需要在对应位置使用dispatch_group_enter和dispatch_group_leave方法，否则block不会执行，这里的group操作只会将block块放到队列里而已。</li>
+<li><strong>weak标记了对象避免block造成循环引用；</strong>strong标记已经被weak标记了得对象，使得对象在block使用过程中不会被释放。</li>
+<li>addDependency:方法可以使在一个queue上的若干个operation增加相互间的依赖关系，使其可以有一定顺序先后执行</li>
+<li>如果block中想修改外部变量指针的指向，需要对变量增加__block修饰关键字，否则block只是copy了一份指针过来，block能修改的，只是指针指向的堆内存中得数据</li>
+</ul>
+
+<p>本类可以比较多得收获到关于线程同步以及多线程一些操作的知识运用。</p>
+
+<h3 id="toc_1">AFHTTPRequestOperation</h3>
+
+<p>作为子类，基本的功能就是对基类的一些封装和扩展</p>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
 		  	<h1 class="entry-title"><a href="15378876731943.html">AFN源码分析-AFURLRequestSerialization</a></h1>
 			<p class="meta"><time datetime="2016-03-12T23:01:13+08:00" 
 			pubdate data-updated="true">2016/3/12</time></p>
@@ -464,32 +571,6 @@ $(document).ready(function(event) {
 		
 
 	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876730285.html">【读书笔记】iOS编程实践</a></h1>
-			<p class="meta"><time datetime="2015-11-18T23:01:13+08:00" 
-			pubdate data-updated="true">2015/11/18</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<ul>
-<li>1、UIView的新属性 tintColor，一般如果子view不定义默认使用父view的tintColor</li>
-<li><p>2、关联引用 runtime机制</p>
-<p>objc_setAssociatedObject(self, &amp;key, value, OBJC_ASSOCITION_RETAIN)<br/>
- objc_getAssociatedObject(self, &amp;key)</p></li>
-<li><p>3、NSCache iOS的缓存，线程安全<br/>
-
-
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876730285.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
   
 	<div class="pagination">
 	 <a class="prev" href="tech_4.html">&larr; Older</a> 
@@ -505,7 +586,7 @@ $(document).ready(function(event) {
 	  <ul id="recent_posts">
 	  
 	      <li class="post">
-	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        <a href="tech.html"><strong>技术&nbsp;(58)</strong></a>
 	        
 	        
 	        
@@ -533,6 +614,12 @@ $(document).ready(function(event) {
 	  
 	      
 		      <li class="post">
+		        <a href="15379393489219.html">【从历年weak看iOS面试】</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
 		        <a href="15378876730248.html">面试常见：iOS Category</a>
 		      </li>
 	     
@@ -552,12 +639,6 @@ $(document).ready(function(event) {
 	      
 		      <li class="post">
 		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
 		      </li>
 	     
 	  

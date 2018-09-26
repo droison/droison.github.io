@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <title>
     
-  今日好文20160726 - 野火🔥
+  【从历年weak看iOS面试】 - 野火🔥
   
 
   </title>
@@ -83,69 +83,42 @@ $(document).ready(function(event) {
 <div>
 	<article class="hentry" role="article">
 	<header>
-			  	<h1 class="entry-title">今日好文20160726</h1>
-				<p class="meta"><time datetime="2016-07-26T23:01:13+08:00" pubdate data-updated="true">2016/7/26</time></p>
+			  	<h1 class="entry-title">【从历年weak看iOS面试】</h1>
+				<p class="meta"><time datetime="2018-09-26T13:22:28+08:00" pubdate data-updated="true">2018/9/26</time></p>
 			 </header>
 		  	<div class="entry-content">
-			  	<blockquote>
-<p>本月事情多，师妹的好多事情，还有开发工作。深刻研究了RN的使用，并应用在实践中；极限的流量优化，将QDaily客户端的消耗流量减少了75%。这些都开始囤积文章，稍后慢慢分享出来。</p>
-
-<p>水一些本月学习的东西</p>
-</blockquote>
-
-<span id="more"></span><!-- more -->
-
-<h4 id="toc_0">1、<a href="http://www.imbeta.cn/react-native-for-android-huan-jing-da-jian-ji-cai-keng.html">React-Native For Android 环境搭建及踩坑</a></h4>
-
-<p>android引入RN的基础知识。</p>
-
-<h4 id="toc_1">2、<a href="http://blog.jobbole.com/103048/">用 Jenkins 搭建 iOS/Android 持续集成打包平台</a></h4>
-
-<p>已经在本机上进行的使用，未来会在编译服务器部署。<br/>
-<!--more--></p>
-
-<h4 id="toc_2">3、<a href="https://github.com/dkhamsing/open-source-ios-apps/blob/master/README.md">Open-Source iOS Apps</a></h4>
-
-<p>若干iOS开源项目，都是老外的，值得学习研究。</p>
-
-<h4 id="toc_3">4、<a href="https://onevcat.com/2016/06/ios-10-ats/">关于 iOS 10 中 ATS 的问题</a></h4>
-
-<p>今年估计所有app都要面临全部转向https的问题，这个值得学习参考 </p>
-
-<h4 id="toc_4">5、<a href="https://mp.weixin.qq.com/s?__biz=MzA3NTYzODYzMg==&amp;mid=2653577446&amp;idx=2&amp;sn=940cfe45f8da91277d1046d90368d440">浅谈Android自定义锁屏页的发车姿势</a></h4>
-
-<p>可以了解下android的一些诡异知识。以前曾经写过星酷壁纸，实现了一个比较初级的壁纸、锁屏app。分享这个文章紧紧是因为回忆。。。</p>
-
-<h4 id="toc_5">6、<a href="http://wuxiaolong.me/2016/07/12/appcompatDayNight">Android Support Library 之 夜间模式</a></h4>
-
-<p>夜间模式的最简单实现。QDaily用了一半，但由于比较复杂的recycler在recreate时候会有比较明显的闪烁，所以还兼容了广播和通知的方式进行了夜间模式的实现。<br/>
-ps：这篇文章其实比较水，这么水的文章也能出来，那QDaily的夜间模式方案估计也可以出来分享了。。。</p>
-
-<h4 id="toc_6">7、<a href="http://www.jianshu.com/p/9bd6efca8724">如何调试Glide加载图片</a></h4>
-
-<h4 id="toc_7">8、glide的一些分析</h4>
-
-<p><a href="http://blog.csdn.net/u011228356/article/details/45026431">图片加载框架Glide解析</a></p>
-
-<p><a href="http://blog.csdn.net/shangmingchao/article/details/51125554">Glide使用详解（一） — 介绍了一些下载进度的方法</a></p>
-
-<p><a href="http://blog.csdn.net/junjianzhang/article/details/49514465">Glide 源码解析</a></p>
-
-<h4 id="toc_8">9、研究下android 下的 http 代理</h4>
-
-<p>将来用于对webview的全局缓存处理</p>
-
-<p>google : gitHub android http proxy <br/>
-<a href="https://github.com/adamfisk/LittleProxy">https://github.com/adamfisk/LittleProxy</a> <br/>
-<a href="https://github.com/shouldit/android-proxy/">https://github.com/shouldit/android-proxy/</a></p>
-
-<h4 id="toc_9">10、<a href="http://mp.weixin.qq.com/s?__biz=MzAxMTI4MTkwNQ==&amp;mid=2650820648&amp;idx=1&amp;sn=cb9ee924f2ded3358dd6c256803cc687">Android面试点</a></h4>
-
-<p>暂时可能不需要了，竟然招到人了。。。但也值得学习参考</p>
-
-<h4 id="toc_10">11、知名产品wireapp全面开源了，包含后台、app、前端</h4>
-
-<p><a href="https://github.com/wireapp/">https://github.com/wireapp/</a></p>
+			  	<ul>
+<li><p>2013年<br/>
+面试官：代理用weak还是strong?<br/>
+我 ：weak 。<br/>
+面试官：明天来上班吧</p></li>
+<li><p>2014年<br/>
+面试官：代理为什么用weak不用strong?<br/>
+我 ： 用strong会造成循环引用。<br/>
+面试官：明天来上班吧</p></li>
+<li><p>2015年<br/>
+面试官：weak是怎么实现的？<br/>
+我 ：weak其实是 系统通过一个hash表来实现对象的弱引用<br/>
+面试官：明天来上班吧</p></li>
+<li><p>2016年<br/>
+面试官：weak是怎么实现的？<br/>
+我 ：runtime维护了一个weak表，用于存储指向某个对象的所有weak指针。weak表其实是一个hash（哈希）表，key是所指对象的地址，Value是weak指针的地址（这个地址的值是所指对象指针的地址）数组。<br/>
+面试官：明天来上班吧</p></li>
+<li><p>2017年<br/>
+面试官：weak是怎么实现的？<br/>
+我 ： 1 初始化时：runtime会调用objc_initWeak函数，初始化一个新的weak指针指向对象的地址。<br/>
+2    添加引用时：objc_initWeak函数会调用 storeWeak() 函数， storeWeak() 的作用是更新指针指向，创建对应的弱引用表。<br/>
+3    释放时,调用clearDeallocating函数。clearDeallocating函数首先根据对象地址获取所有weak指针地址的数组，然后遍历这个数组把其中的数据设为nil，最后把这个entry从weak表中删除，最后清理对象的记录。<br/>
+面试官：明天来上班吧</p></li>
+<li><p>2018年<br/>
+面试官：weak是怎么实现的？<br/>
+我 ：跟2017年说的一样，还详细补充了objc_initWeak, storeWeak, clearDeallocating的实现细节。<br/>
+面试官：小伙子基础不错。13k ,996干不干？干就明天来上班。。   下一个</p></li>
+<li><p>2019年<br/>
+面试官：weak是怎么实现的？<br/>
+我 ：     别说了，拿纸来，我动手实现一个。<br/>
+面试官：等写完后，面试官慢悠悠的说，小伙子不错，我考虑考虑，你先回去吧</p></li>
+</ul>
 
 			</div>
 
@@ -189,12 +162,9 @@ ps：这篇文章其实比较水，这么水的文章也能出来，那QDaily的
 
 	    <p class="meta">
 	    
-	        <a class="basic-alignment left" href="15378876731000.html" 
-	        title="Previous Post: 【Android&iOS】QDaily基于WebP的流量优化实践">&laquo; 【Android&iOS】QDaily基于WebP的流量优化实践</a>
 	    
-	    
-	        <a class="basic-alignment right" href="15378876731637.html" 
-	        title="Next Post: React Native 0.30 Android出现Didn't find class "com.facebook.jni.IteratorHelper"错误">React Native 0.30 Android出现Didn't find class "com.facebook.jni.IteratorHelper"错误 &raquo;</a>
+	        <a class="basic-alignment right" href="15378876730248.html" 
+	        title="Next Post: 面试常见：iOS Category">面试常见：iOS Category &raquo;</a>
 	    
 	    </p>
 	  </footer>

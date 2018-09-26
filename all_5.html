@@ -84,6 +84,95 @@ $(document).ready(function(event) {
 
 	<article>
 		 <header>
+		  	<h1 class="entry-title"><a href="15378876731318.html">iOS hook实践（1）</a></h1>
+			<p class="meta"><time datetime="2015-11-19T23:01:13+08:00" 
+			pubdate data-updated="true">2015/11/19</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<blockquote>
+<p>最近为了玖富理财的自动化投钱，狠狠的研究了下如何hack别人的app inject自己的代码，收货良多。同时发现自己对此非常感兴趣，成就感膨胀！</p>
+
+<p>so，今年多了一个目标：读完《iOS逆向工程（第二版）》，已经duokan下单，监督自己。</p>
+
+<p>感谢微信，给了我进入iOS大门的机会，感谢微信，叫我系统化的iOS研究方法，给了我编写动态库和入门hack的基础，我将在此继续学习，继续充实。</p>
+</blockquote>
+
+<h2 id="toc_0">一个不知道算不算开头的开头</h2>
+
+<p>这将是一个系列文章，包含各种学习研究过程，有生涩的基础，也有生动的实践，系列文章将伴随我的整个研究过程。</p>
+
+<p>系列文章需要懂得iOS的基础知识，并且对iOS开发以及攻防有较多的兴趣的同行阅读，如果您是老鸟，请多多指正其中的不足。</p>
+
+<p>本文将主要就是对近期的hack收货进行简单归集，避免忘记。</p>
+
+<h2 id="toc_1">基本知识</h2>
+
+<ul>
+<li>越狱</li>
+<li>动态库dylib</li>
+<li>dlopen指令</li>
+<li>ipa重签名</li>
+</ul>
+
+<h2 id="toc_2">几个工具</h2>
+
+<ul>
+<li><code>pp助手</code>，我也很无语，不过这个用的真心多，越狱，文件查看，ipa安装，ssh打开，真心简单易用。</li>
+<li><code>charles</code>，没的说，网络分析</li>
+<li><code>MachOView</code></li>
+<li><code>010 Editor</code></li>
+<li><code>FLEX</code></li>
+<li><code>THOS</code></li>
+<li><code>iOSOpenDev</code></li>
+</ul>
+
+<h2 id="toc_3">重签名</h2>
+
+<p>如果改了原来代码，势必需要重签名，重签名是个坑，下面写两个对我有帮助的博文，稍后单独一片文章介绍我是如何踩坑的。</p>
+
+<p>先来两张图，这两段代码是最后的完成稿：</p>
+
+<p><img src="media/15378876731318/iOSResign1.png" alt="iOSResign1"/><br/>
+<img src="media/15378876731318/iOSResign2.png" alt="iOSResign2"/></p>
+
+<p><a href="http://www.cnblogs.com/YungMing/p/4016511.html">iOS 证书管理、验证、打包流程</a>，一点基础知识，小白先看看。</p>
+
+<p><a href="http://www.olinone.com/?p=198">iOS证书及ipa包重签名探究</a>，按照网上的一般攻略，总是失败，原来是iOS8.1后增加了安全机制。这篇是针对的一些解法，不过应该企业签名才是最终的王道解决。</p>
+
+<p><a href="http://objccn.io/issue-17-2/">代码签名探析</a>，最详细的解析，代码重签名进阶使用。</p>
+
+<p><a href="http://blog.csdn.net/qinwei008/article/details/42379009">iOS APP反重签名技术详解</a>，知道了怎么重签，就要知道怎么攻防，避免别人用相同的方式搞你。</p>
+
+<h2 id="toc_4">几篇有用的博文</h2>
+
+<p><a href="http://www.blogfshare.com/inject-with-njb.html">http://www.blogfshare.com/inject-with-njb.html</a></p>
+
+<p><a href="http://wiki.jikexueyuan.com/project/ios-security-defense/injection.html">http://wiki.jikexueyuan.com/project/ios-security-defense/injection.html</a></p>
+
+<p><a href="http://www.opensource.apple.com/source/dyld/dyld-210.2.3/src/dyld.cpp">http://www.opensource.apple.com/source/dyld/dyld-210.2.3/src/dyld.cpp</a></p>
+
+<p><a href="http://www.cnblogs.com/xiongwj0910/archive/2012/08/16/2642992.html">http://www.cnblogs.com/xiongwj0910/archive/2012/08/16/2642992.html</a></p>
+
+<p><a href="https://nadavrub.wordpress.com/2015/07/23/injecting-code-to-an-ios-appstore-app/">https://nadavrub.wordpress.com/2015/07/23/injecting-code-to-an-ios-appstore-app/</a></p>
+
+<h2 id="toc_5">推荐的几个很不错的博主</h2>
+
+<p><a href="http://nianxi.net/">念茜</a>的博客，业界知名iOS美女程序员，支付宝的iOS安全工程师</p>
+
+<p><a href="http://www.blogfshare.com/block-code-inject.html">Alone_Monkey</a>的博客，在安全领域也很有研究，真心长江后浪推前浪！</p>
+
+<p><a href="http://www.olinone.com/">庞海礁</a>，在重签名部分从他这里收获了很多，推荐有空看看。</p>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
 		  	<h1 class="entry-title"><a href="15378876730285.html">【读书笔记】iOS编程实践</a></h1>
 			<p class="meta"><time datetime="2015-11-18T23:01:13+08:00" 
 			pubdate data-updated="true">2015/11/18</time></p>
@@ -297,175 +386,6 @@ $(document).ready(function(event) {
     	
 
 	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876730924.html">从开发角度，比较三种iOS图标矢量化方案</a></h1>
-			<p class="meta"><time datetime="2014-10-08T23:01:13+08:00" 
-			pubdate data-updated="true">2014/10/8</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<h3 id="toc_0">1、SVG转Obj-C code</h3>
-
-<h3 id="toc_1">2、PDF vector</h3>
-
-<p>该矢量方案为xcode6的新特性，具体使用方法为  </p>
-
-<p>1 将图片保存成.pdf，图片尺寸就使用@1x时的大小<br/><br/>
-2 在Images.xcassets中新建该矢量图Image Set，在“attributes inspector”栏中，将Types设为Vectors，这是，@1x、@2x、@3x的位置变成一个“Universal”<br/><br/>
-3 将.pdf的矢量图拖拽到“Universal”位置<br/><br/>
-4 其它地方即可以直接使用该Image Set，使用方法和其它的PNG文件一样。</p>
-
-<p>该方法优点：<br/><br/>
-1、使用和PNG一致，具有和使用PNG文件相同的读取速度和内存占用<br/><br/>
-2、使用灵活，管理方便<br/><br/>
-3、虽然是xcode6的新特性，但编包之后能够向下支持到iOS5（iOS4没条件做测试），通用性好<br/><br/>
-4、呈现效果好，与使用PNG文件没有什么区别</p>
-
-<p>缺陷：<br/><br/>
-安装包占用较大，未能解决在增加@3x图片后体积膨胀的问题<br/>
-从模拟器的Application目录比较增加该.pdf文件和未增加的空间占用：<br/><br/>
-<img src="http://y.photo.qq.com/img?s=YmmzrT4Im&amp;l=y.jpg" alt="pic"/><br/><br/>
-上图是未添加，占用32k。<br/><br/>
-<img src="http://y.photo.qq.com/img?s=Qdn6zHOgf&amp;l=y.jpg" alt="pic"/><br/>
-上图是增加后的占用，发现新增了一个Assets.car的文件，大小大概是原.pdf文件的16倍，可以估算@2x文件大小是@1x文件的4倍，@3x文件是@1x文件的9倍，在加上源文件，基本就是16倍的样子，可以确认，xcode在编译pdf vector的方式就是生成了@1x,@2x,@3x三个文件。<br/><br/>
-下面比较下ipa的安装包大小：  </p>
-
-<p>优点：<br/><br/>
-1、和png一样，也就是和过去一样，使用上和性能上没有差别<br/><br/>
-2、UI同学在制图时，一次制作，适配多种<br/><br/>
-缺点：<br/><br/>
-空间占用。微信现在已经不保存@1x的图片，</p>
-
-<h3 id="toc_2">3、Font Icon</h3>
-
-<p>该方案即使用iOS的NSAttributedString对自定义的字体进行渲染，并通过其drawInRect方法将其切割并转成UIImage压入Image栈中。这种方法实现的步骤：<br/><br/>
-1、制作字体图标svg文件，将文件拖入<a href="http://iconfont.io/">http://iconfont.io/</a>下进行字体的转换，会生成ttf文件<br/><br/>
-2、做映射表，映射关系为：<code>“图标在程序中的命名”---“图标在字体文件中的ASCII编码”---“图标在app中的@1x宽度”---“图标在app中的@1x高度”---“图标在app中颜色”</code><br/>
-3、将ttf导入到app的应用字库，在代码中根据图标属性生成对应的NSAttributedString，并转成对应尺寸的UIImage</p>
-
-<h4 id="toc_3">评测：</h4>
-
-<p>1、启动速度<br/><br/>
-测试原因：由于加入了ttf文件，并在每个icon绘制过程中先后经过了生成NSAttributedString和drawInRect两个方法，速度和直接从contentfile中读取png文件肯定存在差别</p>
-
-<p>测试方法：渲染相同大小（30*30）样式的8个UIImageView，并add到viewcontroller中，计算总的时间（每个数据共3组样本，取平均值，时间单位为ms）</p>
-
-<table>
-<thead>
-<tr>
-<th>测试机型</th>
-<th>使用PNG</th>
-<th>使用字体</th>
-<th>ttf字体load进入内存后</th>
-</tr>
-</thead>
-
-<tbody>
-<tr>
-<td>5c真机</td>
-<td>10.939</td>
-<td>16.469</td>
-<td>10.325</td>
-</tr>
-<tr>
-<td>6plus模拟器</td>
-<td>32.511</td>
-<td>5.382</td>
-<td>2.585</td>
-</tr>
-</tbody>
-</table>
-
-<p>单独load 9k共19个图标的字体用时(ms)：8.234, 5.604, 5.486, 5.473, 5.863<br/><br/>
-字体load进入内存后，8张30*30的@2x图标load用时(ms)：7.206, 7.548, 7.084, 7.266, 7.438<br/><br/>
-8张30*30的@2x 的png文件load用时(ms)：5.87, 5.97, 5.757, 6.75, 6.35</p>
-
-<p>上图中，5c会读取@2x的图片，发现在字体文件load进入内存后，速度和使用png基本一致<br/><br/>
-6plus会读取@3x的图片，因此预想中字体的效果会略好一些，但好真么多确实没想到，怀疑模拟器和真机之间存在差异，等有真机在做测试</p>
-
-<p>2、内存占用<br/><br/>
-测试原因：除了和使用png文件一样，在内存中加入image文件外，方法会加入ttf字体文件。而且在渲染image过程中，会生成NSAttributedString并做截<br/>
-屏，这会可能会造成瞬间的内存增加  </p>
-
-<p><code>下表采用xcode默认的memory测试，单位MB</code>   </p>
-
-<table>
-<thead>
-<tr>
-<th>测试机型</th>
-<th>使用PNG(单位：MB)</th>
-<th>使用字体(单位：MB)</th>
-<th>界面空白(单位：MB)</th>
-</tr>
-</thead>
-
-<tbody>
-<tr>
-<td>5c真机</td>
-<td>2.4</td>
-<td>2.3</td>
-<td>2.1</td>
-</tr>
-<tr>
-<td>6plus模拟器</td>
-<td>19</td>
-<td>18.7</td>
-<td>18.4</td>
-</tr>
-</tbody>
-</table>
-
-<p><code>下表为在代码中获取task_basic_info得到，单位MB</code></p>
-
-<table>
-<thead>
-<tr>
-<th>空白页面</th>
-<th>仅load进入字体</th>
-<th>load进入字体和字体的View</th>
-<th>仅load进入png文件</th>
-</tr>
-</thead>
-
-<tbody>
-<tr>
-<td>7.21</td>
-<td>7.24</td>
-<td>7.32</td>
-<td>7.45</td>
-</tr>
-</tbody>
-</table>
-
-<p>结论：  </p>
-
-<ul>
-<li> 大小9k共19个图标的字体进入内存会占用30k<br/></li>
-<li> 8张用字体绘制的30*30的@2x UIImageView占用内存80k<br/></li>
-<li> 8张30*30的@2x png文件绘制的UIImageView内存占用230k</li>
-</ul>
-
-<p>预想中由于多load字体文件会造成内存更大，实测反而更小，@3x下更加明显。可能由于contentfile中的资源文件会有一些冗余数据，而用字体绘制出来的更纯净，反而更小</p>
-
-<p>3、磁盘占用<br/><br/>
-测试原因：使用png文件会有@1x @2x @3x文件，造成安装包较大，而字体只有一个ttf文件  </p>
-
-<p>字体为19个图标的字体，大小9K，压缩后5k<br/><br/>
-png文件一共16个，对应8个图标（没有@1x），大小为22k，其中@3x为14k，@2x为8k  </p>
-
-<p>总结<br/>
-方法优点：</p>
-
-<p>缺点：</p>
-
-
-		</div>
-
-		
-
-	</article>
   
 	<div class="pagination">
 	 <a class="prev" href="all_6.html">&larr; Older</a> 
@@ -481,7 +401,7 @@ png文件一共16个，对应8个图标（没有@1x），大小为22k，其中@3
 	  <ul id="recent_posts">
 	  
 	      <li class="post">
-	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        <a href="tech.html"><strong>技术&nbsp;(58)</strong></a>
 	        
 	        
 	        
@@ -509,6 +429,12 @@ png文件一共16个，对应8个图标（没有@1x），大小为22k，其中@3
 	  
 	      
 		      <li class="post">
+		        <a href="15379393489219.html">【从历年weak看iOS面试】</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
 		        <a href="15378876730248.html">面试常见：iOS Category</a>
 		      </li>
 	     
@@ -528,12 +454,6 @@ png文件一共16个，对应8个图标（没有@1x），大小为22k，其中@3
 	      
 		      <li class="post">
 		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
 		      </li>
 	     
 	  

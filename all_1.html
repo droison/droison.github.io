@@ -84,6 +84,51 @@ $(document).ready(function(event) {
 
 	<article>
 		 <header>
+		  	<h1 class="entry-title"><a href="15378876732321.html">UIResponder 响应链 拾遗</a></h1>
+			<p class="meta"><time datetime="2017-12-21T23:01:13+08:00" 
+			pubdate data-updated="true">2017/12/21</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<h2 id="toc_0">背景</h2>
+
+<p>基于ResponderChain可以做一些事件传递，将所有view的操作最终都送回到ViewController来处理，以实现view的功能单一性。如下：</p>
+
+<pre><code class="language-text">@interface UIResponder (Router)
+- (void)routerEventWithName:(NSString *)eventName userInfo:(NSDictionary *)userInfo;
+@end
+
+@implementation UIResponder (Router)
+- (void)routerEventWithName:(NSString *)eventName userInfo:(NSDictionary *)userInfo
+{
+    [[self nextResponder] routerEventWithName:eventName userInfo:userInfo];
+}
+@end
+</code></pre>
+
+<p>每个cell在做事件请求时，只需要调用<code>routerEventWithName:userInfo:</code>，即可将请求传递给对应的ViewController（也可以是响应链任意一环），然后用EventName来区分事件类型。</p>
+
+<h2 id="toc_1">ChildViewController</h2>
+
+<p>一般来讲 view.nextResponder = view.superView。ViewController的root view的nextResponder是当前ViewController，那childViewController的view的nextResponder是谁呢？如果用nextResponder拦截，childViewController能拦截到其中的view的响应吗？</p>
+
+<h3 id="toc_2">XCode实测：</h3>
+
+<ul>
+<li>如果addChildViewController：</li>
+</ul>
+
+<p>childVC.view.nextResponder == childVC，childVC.nextResponder == childVC.view.superView，相当于在subView&amp;superView的响应联调中，插入了一个VC，与window和VC.view的关系是一致的。</p>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
 		  	<h1 class="entry-title"><a href="15378876732356.html">博客继续记录</a></h1>
 			<p class="meta"><time datetime="2017-12-07T23:01:13+08:00" 
 			pubdate data-updated="true">2017/12/7</time></p>
@@ -1059,43 +1104,6 @@ mReactRootView.startReactApplication(mReactInstanceManager, &quot;adImageLaunch&
     	
 
 	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876732668.html">Android M、N适配踩坑</a></h1>
-			<p class="meta"><time datetime="2016-11-20T23:01:13+08:00" 
-			pubdate data-updated="true">2016/11/20</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<blockquote>
-<p>我们上个月才决定开始进行Android M、N的集中适配，发现很多问题，在此一起进行总结。</p>
-
-<p>首先我们把buildToolsVersion和compileSdkVersion都改为24，相关support的lib也都改为24.*，以此放开了适配，遇上了很多坑。</p>
-
-<p>这里不是一个大而全的适配方案，仅仅是一个小app(好奇心日报)的适配总结。</p>
-
-<p>Android N的适配主要为组内<a href="https://github.com/yuelinghui">同事</a>操刀，所以文内部分内容源于该同事的总结。</p>
-
-<p>ps：此后统一博客文章的路由命名方式，改为文章创见时间命名，如“2016-11-20”，若当天有第二篇则顺序命名为“2016-11-20-1”，以此来统一化，避免未来路由失效问题。</p>
-</blockquote>
-
-<h2 id="toc_0">一、权限适配 -- Android M</h2>
-
-<p>作为一个新闻类app，适配的最主要的部分应该就是权限了。<br/>
-Android6.0引入了动态权限控制，7.0使用了<code>私有目录被限制访问</code>，<code>Strict Mode API 政策</code>。<br/>
-因此权限适配包含app权限获取部分和私有目录访问部分。<br/>
-
-
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876732668.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
   
 	<div class="pagination">
 	 <a class="prev" href="all_2.html">&larr; Older</a> 
@@ -1111,7 +1119,7 @@ Android6.0引入了动态权限控制，7.0使用了<code>私有目录被限制�
 	  <ul id="recent_posts">
 	  
 	      <li class="post">
-	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        <a href="tech.html"><strong>技术&nbsp;(58)</strong></a>
 	        
 	        
 	        
@@ -1139,6 +1147,12 @@ Android6.0引入了动态权限控制，7.0使用了<code>私有目录被限制�
 	  
 	      
 		      <li class="post">
+		        <a href="15379393489219.html">【从历年weak看iOS面试】</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
 		        <a href="15378876730248.html">面试常见：iOS Category</a>
 		      </li>
 	     
@@ -1158,12 +1172,6 @@ Android6.0引入了动态权限控制，7.0使用了<code>私有目录被限制�
 	      
 		      <li class="post">
 		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
 		      </li>
 	     
 	  

@@ -84,6 +84,54 @@ $(document).ready(function(event) {
 
 	<article>
 		 <header>
+		  	<h1 class="entry-title"><a href="15379393489219.html">【从历年weak看iOS面试】</a></h1>
+			<p class="meta"><time datetime="2018-09-26T13:22:28+08:00" 
+			pubdate data-updated="true">2018/9/26</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<ul>
+<li><p>2013年<br/>
+面试官：代理用weak还是strong?<br/>
+我 ：weak 。<br/>
+面试官：明天来上班吧</p></li>
+<li><p>2014年<br/>
+面试官：代理为什么用weak不用strong?<br/>
+我 ： 用strong会造成循环引用。<br/>
+面试官：明天来上班吧</p></li>
+<li><p>2015年<br/>
+面试官：weak是怎么实现的？<br/>
+我 ：weak其实是 系统通过一个hash表来实现对象的弱引用<br/>
+面试官：明天来上班吧</p></li>
+<li><p>2016年<br/>
+面试官：weak是怎么实现的？<br/>
+我 ：runtime维护了一个weak表，用于存储指向某个对象的所有weak指针。weak表其实是一个hash（哈希）表，key是所指对象的地址，Value是weak指针的地址（这个地址的值是所指对象指针的地址）数组。<br/>
+面试官：明天来上班吧</p></li>
+<li><p>2017年<br/>
+面试官：weak是怎么实现的？<br/>
+我 ： 1 初始化时：runtime会调用objc_initWeak函数，初始化一个新的weak指针指向对象的地址。<br/>
+2    添加引用时：objc_initWeak函数会调用 storeWeak() 函数， storeWeak() 的作用是更新指针指向，创建对应的弱引用表。<br/>
+3    释放时,调用clearDeallocating函数。clearDeallocating函数首先根据对象地址获取所有weak指针地址的数组，然后遍历这个数组把其中的数据设为nil，最后把这个entry从weak表中删除，最后清理对象的记录。<br/>
+面试官：明天来上班吧</p></li>
+<li><p>2018年<br/>
+面试官：weak是怎么实现的？<br/>
+我 ：跟2017年说的一样，还详细补充了objc_initWeak, storeWeak, clearDeallocating的实现细节。<br/>
+面试官：小伙子基础不错。13k ,996干不干？干就明天来上班。。   下一个</p></li>
+<li><p>2019年<br/>
+面试官：weak是怎么实现的？<br/>
+我 ：     别说了，拿纸来，我动手实现一个。<br/>
+面试官：等写完后，面试官慢悠悠的说，小伙子不错，我考虑考虑，你先回去吧</p></li>
+</ul>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
 		  	<h1 class="entry-title"><a href="15378876730248.html">面试常见：iOS Category</a></h1>
 			<p class="meta"><time datetime="2018-08-09T23:01:13+08:00" 
 			pubdate data-updated="true">2018/8/9</time></p>
@@ -1069,66 +1117,6 @@ public String getName();
 		
 
 	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876732633.html">RN学习4——QDaily Android app中通信和热修复实践</a></h1>
-			<p class="meta"><time datetime="2016-11-23T23:01:13+08:00" 
-			pubdate data-updated="true">2016/11/23</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<blockquote>
-<p>React Native现在已经到了0.37版本了，在集成RN初期使用的0.30版本还不支持将resources打入bundle实施热更新，0.37版本已经解决了这些问题，如果再不写篇文章，炒炒这份冷饭，那就过气了。</p>
-
-<p>QDaily现在在Android和iOS的版本中都集成了React Native，用其做广告效果页的展示。</p>
-
-<p>本文介绍基于Android平台，在RN进行混合app研发过程中，native部分做过的一些工作和踩过一些坑。</p>
-
-<p>本该双平台一起介绍的，但Android的坑多，先说Android，iOS的对应工作会在<a href="http://www.chaisong.xyz/2016/11/23/2016-11-25/">下个文章</a>描述。</p>
-
-<p>该文章为系列文章，之前的文章为<a href="http://www.chaisong.xyz/2016/06/20/RN%E5%AD%A6%E4%B9%A01%E2%80%94%E2%80%94%E5%89%8D%E5%A5%8F%EF%BC%8Capp%E6%8F%92%E4%BB%B6%E5%8C%96%E5%92%8C%E7%83%AD%E6%9B%B4%E6%96%B0%E7%9A%84%E6%8E%A2%E7%B4%A2/">RN学习1——前奏，app插件化和热更新的探索</a>，<a href="http://www.chaisong.xyz/2016/06/22/RN%E5%AD%A6%E4%B9%A02%E2%80%94%E2%80%94%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84%E4%B8%80%E4%BA%9B%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C/">RN学习2——客户端开发者的一些准备工作</a>，<a href="http://www.chaisong.xyz/2016/08/02/RN%E5%AD%A6%E4%B9%A03%E2%80%94%E2%80%94%E9%9B%86%E6%88%90%E8%BF%9B%E5%B7%B2%E6%9C%89%E5%8E%9F%E7%94%9F%E9%A1%B9%E7%9B%AE/">RN学习3——集成进现有原生项目</a>。</p>
-</blockquote>
-
-<h2 id="toc_0">一、Android中RN的View初始化及传参</h2>
-
-<h3 id="toc_1">马上看代码</h3>
-
-<pre><code class="language-java">//React相关组件初始化
-ReactRootView mReactRootView = new ReactRootView(this);
-mReactInstanceManager = ReactInstanceManager.builder()
-      .setApplication(getApplication())
-      .setJSBundleFile(getBundleFilePath())
-      .setJSMainModuleName(&quot;index.android&quot;)
-      .addPackage(new MainReactPackage())
-      .setUseDeveloperSupport(BuildConfig.DEBUG)
-      .setInitialLifecycleState(LifecycleState.BEFORE_RESUME)
-      .setUseOldBridge(true)
-      .build();
-
-//准备参数
-Bundle bundle = new Bundle();
-bundle.putString(&quot;url&quot;, &quot;http://www.qdaily.com&quot;);
-bundle.putFloat(&quot;totalSeconds&quot;, 12);
-bundle.putInt(&quot;style&quot;, 1);
-bundle.putString(&quot;extras&quot;, &quot;{\&quot;key\&quot; : \&quot;value\&quot;}&quot;);
-bundle.putStringArray(&quot;imagePaths&quot;, new String[]{&quot;url1&quot;, &quot;url1&quot;});
-
-//组件启动
-mReactRootView.startReactApplication(mReactInstanceManager, &quot;adImageLaunch&quot;, bundle);
-</code></pre>
-
-
-
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876732633.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
   
 	<div class="pagination">
 	 <a class="prev" href="tech_1.html">&larr; Older</a> 
@@ -1144,7 +1132,7 @@ mReactRootView.startReactApplication(mReactInstanceManager, &quot;adImageLaunch&
 	  <ul id="recent_posts">
 	  
 	      <li class="post">
-	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        <a href="tech.html"><strong>技术&nbsp;(58)</strong></a>
 	        
 	        
 	        
@@ -1172,6 +1160,12 @@ mReactRootView.startReactApplication(mReactInstanceManager, &quot;adImageLaunch&
 	  
 	      
 		      <li class="post">
+		        <a href="15379393489219.html">【从历年weak看iOS面试】</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
 		        <a href="15378876730248.html">面试常见：iOS Category</a>
 		      </li>
 	     
@@ -1191,12 +1185,6 @@ mReactRootView.startReactApplication(mReactInstanceManager, &quot;adImageLaunch&
 	      
 		      <li class="post">
 		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
 		      </li>
 	     
 	  

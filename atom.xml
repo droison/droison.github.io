@@ -4,7 +4,7 @@
   <title><![CDATA[野火🔥]]></title>
   <link href="http://www.chaisong.xyz/atom.xml" rel="self"/>
   <link href="http://www.chaisong.xyz/"/>
-  <updated>2018-09-26T10:52:46+08:00</updated>
+  <updated>2018-09-26T13:26:48+08:00</updated>
   <id>http://www.chaisong.xyz/</id>
   <author>
     <name><![CDATA[]]></name>
@@ -12,6 +12,48 @@
   </author>
   <generator uri="http://www.coderforart.com/">CoderForArt</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[【从历年weak看iOS面试】]]></title>
+    <link href="http://www.chaisong.xyz/15379393489219.html"/>
+    <updated>2018-09-26T13:22:28+08:00</updated>
+    <id>http://www.chaisong.xyz/15379393489219.html</id>
+    <content type="html"><![CDATA[
+<ul>
+<li><p>2013年<br/>
+面试官：代理用weak还是strong?<br/>
+我 ：weak 。<br/>
+面试官：明天来上班吧</p></li>
+<li><p>2014年<br/>
+面试官：代理为什么用weak不用strong?<br/>
+我 ： 用strong会造成循环引用。<br/>
+面试官：明天来上班吧</p></li>
+<li><p>2015年<br/>
+面试官：weak是怎么实现的？<br/>
+我 ：weak其实是 系统通过一个hash表来实现对象的弱引用<br/>
+面试官：明天来上班吧</p></li>
+<li><p>2016年<br/>
+面试官：weak是怎么实现的？<br/>
+我 ：runtime维护了一个weak表，用于存储指向某个对象的所有weak指针。weak表其实是一个hash（哈希）表，key是所指对象的地址，Value是weak指针的地址（这个地址的值是所指对象指针的地址）数组。<br/>
+面试官：明天来上班吧</p></li>
+<li><p>2017年<br/>
+面试官：weak是怎么实现的？<br/>
+我 ： 1 初始化时：runtime会调用objc_initWeak函数，初始化一个新的weak指针指向对象的地址。<br/>
+2    添加引用时：objc_initWeak函数会调用 storeWeak() 函数， storeWeak() 的作用是更新指针指向，创建对应的弱引用表。<br/>
+3    释放时,调用clearDeallocating函数。clearDeallocating函数首先根据对象地址获取所有weak指针地址的数组，然后遍历这个数组把其中的数据设为nil，最后把这个entry从weak表中删除，最后清理对象的记录。<br/>
+面试官：明天来上班吧</p></li>
+<li><p>2018年<br/>
+面试官：weak是怎么实现的？<br/>
+我 ：跟2017年说的一样，还详细补充了objc_initWeak, storeWeak, clearDeallocating的实现细节。<br/>
+面试官：小伙子基础不错。13k ,996干不干？干就明天来上班。。   下一个</p></li>
+<li><p>2019年<br/>
+面试官：weak是怎么实现的？<br/>
+我 ：     别说了，拿纸来，我动手实现一个。<br/>
+面试官：等写完后，面试官慢悠悠的说，小伙子不错，我考虑考虑，你先回去吧</p></li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[面试常见：iOS Category]]></title>
@@ -1776,220 +1818,6 @@ private void copyFile(String filename) {
 <p>在这一部分，我自己写了一个0.30情况下的shell脚本，在npm install之后运行脚本替换即可。可以点击这个<a href="http://blog-10057491.file.myqcloud.com/0.30RN-AndroidPreBuildShell.zip">链接</a>进行下载。</p>
 
 <p>下一篇文章会介绍iOS部分针对热修复在Native部分需要做的工作。</p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Android M、N适配踩坑]]></title>
-    <link href="http://www.chaisong.xyz/15378876732668.html"/>
-    <updated>2018-09-25T23:01:13+08:00</updated>
-    <id>http://www.chaisong.xyz/15378876732668.html</id>
-    <content type="html"><![CDATA[
-<blockquote>
-<p>我们上个月才决定开始进行Android M、N的集中适配，发现很多问题，在此一起进行总结。</p>
-
-<p>首先我们把buildToolsVersion和compileSdkVersion都改为24，相关support的lib也都改为24.*，以此放开了适配，遇上了很多坑。</p>
-
-<p>这里不是一个大而全的适配方案，仅仅是一个小app(好奇心日报)的适配总结。</p>
-
-<p>Android N的适配主要为组内<a href="https://github.com/yuelinghui">同事</a>操刀，所以文内部分内容源于该同事的总结。</p>
-
-<p>ps：此后统一博客文章的路由命名方式，改为文章创见时间命名，如“2016-11-20”，若当天有第二篇则顺序命名为“2016-11-20-1”，以此来统一化，避免未来路由失效问题。</p>
-</blockquote>
-
-<h2 id="toc_0">一、权限适配 -- Android M</h2>
-
-<p>作为一个新闻类app，适配的最主要的部分应该就是权限了。<br/>
-Android6.0引入了动态权限控制，7.0使用了<code>私有目录被限制访问</code>，<code>Strict Mode API 政策</code>。<br/>
-因此权限适配包含app权限获取部分和私有目录访问部分。<br/>
-<span id="more"></span><!-- more --></p>
-
-<h3 id="toc_1">1、权限申请</h3>
-
-<p>在这里，我们采用的适配方案是<code>关键权限预申请</code>，<code>次要权限动态获取</code>的方式。至于为什么要两者结合，你自己去体会原因``。</p>
-
-<h4 id="toc_2">先说关键权限预申请</h4>
-
-<p>这里我们学习了支付宝和饿了吗针对权限的处理方式，开启app就申请两个一定要拿到的权限：本地文件读写权限和手机识别标识的权限，如下图所示：<br/>
-<img src="http://blog-10057491.file.myqcloud.com/%E5%BC%80%E6%9C%BA%E6%9D%83%E9%99%90%E7%94%B3%E8%AF%B7.png" alt=""/><br/>
-如果权限没有获取成功，或者后来被用户自己关掉，那则弹窗提示用户进行手动权限打开，否则app不允许进入试用，如下图，点击后跳转app的权限设定界面：<br/>
-<img src="http://blog-10057491.file.myqcloud.com/%E6%9C%AA%E8%8E%B7%E5%8F%96%E6%9D%83%E9%99%90%E6%83%85%E5%86%B5.png" alt=""/></p>
-
-<p>权限判断及申请代码如下所示，所有activity的onCreate都判断是否获取了必须权限：</p>
-
-<pre><code class="language-java">if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.M) {
-            // android 6.0及以上版本
-            if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED
-                    || checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                // 有权限没有授予
-                Intent intent = new Intent();
-                intent.setClass(this, CheckPermissionActivity.class);
-                startActivity(intent);
-                finish();
-                return;
-            }
-        }
-</code></pre>
-
-<h4 id="toc_3">动态权限申请</h4>
-
-<p>关键是一下几个api</p>
-
-<ul>
-<li>int checkSelfPermission(String permission) 用来检测应用是否已经具有权限</li>
-<li>void requestPermissions(String[] permissions, int requestCode) 进行请求单个或多个权限</li>
-<li>void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) 用户对请求作出响应后的回调</li>
-</ul>
-
-<p><a href="http://droidyue.com/blog/2016/01/17/understanding-marshmallow-runtime-permission/index.html">聊一聊Android 6.0的运行时权限</a>这篇文章写的已经非常好了，不需要我继续做总结了。</p>
-
-<h3 id="toc_4">2、私有目录目录访问 -- Android N</h3>
-
-<h4 id="toc_5">目录被限制访问</h4>
-
-<p>在Android中应用可以读写手机存储中任何一个目录和文件，这给系统安全带来了很多问题。</p>
-
-<p>7.0中为了提高私有文件的安全性，面向7.0及更高版本的应用私有目录将被限制访问。</p>
-
-<p><u>经测试，File api在应用内读取文件存储依然可以继续使用，应用间（主要指调用部分系统应用）进行共享会直接报错。</u></p>
-
-<ul>
-<li><p>私有文件的文件权限不在放权给所有的应用，在manifest里使用<strong>MODE_WORLD_READABLE</strong>或<strong>MODE_WORL_WRITEABLE</strong>进行的操作将触发<strong>SecurityException。</strong></p></li>
-<li><p>给其他应用传递file://URI这种URI类型，可能导致接收者无法访问该路径。因此，在7.0中尝试传递file://URI会触发<strong>FileUriExposedException。</strong></p></li>
-</ul>
-
-<h3 id="toc_6">应用间共享文件</h3>
-
-<p>在Android7.0版本上，Android系统强制执行了<strong>StrictMode API 政策</strong>，禁止向你的应用外公开File://URI。如果一项包含文件File://URI类型的Intent离开你的应用，应用失败，并出现<strong>FileUriExposedException</strong>，比如<strong>系统相机拍照，裁剪照片</strong></p>
-
-<h4 id="toc_7">在Android 7.0系统调用相机拍照，裁剪照片</h4>
-
-<p>在7.0之前调用系统相机拍照：</p>
-
-<pre><code class="language-text">File file=new File(Environment.getExternalStorageDirectory(),
-&quot;/temp/&quot;+System.currentTimeMillis() + &quot;.jpg&quot;); 
-if (!file.getParentFile().exists()) {
-    file.getParentFile().mkdirs();
-}
-Uri imageUri = Uri.fromFile(file); 
-Intent intent = new Intent();
-intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);//设置Action为拍照 
-intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);//将拍取的照片保存到指定URI 
-startActivityForResult(intent,1006);
-</code></pre>
-
-<p>在7.0上会抛出异常：</p>
-
-<pre><code class="language-text">android.os.FileUriExposedException:file:////storage/emulated/0/temp/1474956193735.jpg exposed beyond app through Intent.getData() 
-at android.os.StrictMode.onFileUriExposed(StrictMode.java:1799) 
-</code></pre>
-
-<p>这是因为7.0执行了“StrictMode API 政策”。</p>
-
-<p><u>应对策略：使用FilrProvider来解决这一个问题</u></p>
-
-<h4 id="toc_8">使用FileProvider</h4>
-
-<ol>
-<li><p>在manifest里注册provider</p>
-<pre><code class="language-text">&lt;provider 
-    android:name=&quot;android.support.v4.content.FileProvider&quot;<br/>
-    android:authorities=&quot;com.jph.takephoto.fileprovider&quot;<br/>
-    android:grantUriPermissions=&quot;true&quot;<br/>
-    android:exported=&quot;false&quot;&gt;<br/>
-     &lt;meta-data <br/>
-        android:name=&quot;android.support.FILE_PROVIDER_PATHS&quot;<br/>
-        android:resource=&quot;@xml/file_paths&quot;/&gt; <br/>
-&lt;/provider&gt;
-</code></pre>
-<p><u>exported必须要求为false，为true则会报安全异常。grantUriPermissions为true，表示授予URI临时访问权限。</u></p></li>
-<li><p>指定共享目录</p>
-<p>为了指定共享的目录我们需要在资源目录下（res）创建一个xml目录，然后创建一个名为“file_paths”（名字可以随便起，只要和在manifest里注册的provider所引用的resource保持一致即可）的资源文件</p>
-<pre><code class="language-text">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-&lt;resources&gt;<br/>
-    &lt;paths&gt;<br/>
-        &lt;external-path path=&quot;&quot; name=&quot;camera_photos&quot; /&gt;<br/>
-    &lt;/paths&gt;<br/>
-&lt;/resources&gt;
-</code></pre>
-<ul>
-<li>代表的根目录： Context.getFilesDir()</li>
-<li>代表的根目录: Environment.getExternalStorageDirectory()</li>
-<li>代表的根目录: getCacheDir()</li>
-</ul>
-<p><u>path=&quot;&quot;是有意义的，它代表根目录，你可以向其他的应用共享根目录及其子目录下的任何一个文件。若设置path=&quot;pictures&quot;，它代表着根目录下的pictures目录，那么你想向其他应用共享pictures目录范围之外的文件是不可行的。</u></p></li>
-<li><p>使用FileProvider</p>
-<p>上述工作做完之后我们就可以使用FileProvider了，以调用相机为例：</p>
-<pre><code class="language-text">File file=new File(Environment.getExternalStorageDirectory(),
-        &quot;/temp/&quot;+System.currentTimeMillis() + &quot;.jpg&quot;);<br/>
-if (!file.getParentFile().exists()) {<br/>
-    file.getParentFile().mkdirs();<br/>
-}<br/>
-Uri imageUri = FileProvider.getUriForFile(context,<br/>
-    &quot;com.jph.takephoto.fileprovider&quot;, file);//通过FileProvider创建一个content类型的Uri<br/>
-Intent intent = new Intent();<br/>
-intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); //添加这一句表示对目标应用临时授权该Uri所代表的文件<br/>
-intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);//设置Action为拍照<br/>
-intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);//将拍取的照片保存到指定URI<br/>
-startActivityForResult(intent,1006);
-</code></pre>
-<p>上面的代码有两处改变：</p>
-<ol>
-<li>将之前Uri的scheme类型为file的Uri改成了有FileProvider创建一个content类型的Uri。</li>
-<li>添加了intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);来对目标应用临时授权该Uri所代表的文件。</li>
-</ol>
-<p><u>通过FileProvider的getUriForFile(Context context, String authority, File file)静态方法来获取URI，方法中的authority就是manifest里注册provider使用的authority。</u></p>
-<p><u>getUriForFile方法返回的Uri为：</u></p>
-<pre><code class="language-text">content://com.jph.takephoto.fileprovider/camera_photos/temp/1474960080319.jpg`
-</code></pre>
-<p>其中<strong>camera_photos</strong>就是file_paths文件中paths的name。</p></li>
-</ol>
-
-<h2 id="toc_9">二、support lib 24下RecyclerView的一些适配</h2>
-
-<p>在23及以前的RecyclerView，会默认忽略ViewHolder的ItemView的layoutParams，直接用wrap_content进行处理；但在24下，默认layoutParams会对其进行支持，如果在写item的xml时使用了match_parent，会让该item的width（height）等于RecyclerView的对应width（height），写死的dp值也会被优先读取。这当然是一种好的优化，使得过去很多需要嵌套来实现的一些“撑开”item的操作直接写在root view即可，但由于机制的修改，不可避免会出现适配的问题（宽高与想象中严重不一致）。</p>
-
-<p>_无脑的适配方案就是将所有item的xml文件的root的layout_width和layout_height都改为wrap_content，就变成了之前一模一样的效果_</p>
-
-<p>不过这里我还是建议针对item进行一些优化，将原来在ViewHolder地方进行的尺寸计划重新赋予ItemView layoutParent和通过嵌套来实现的“撑开”操作都改为在root view上进行，可以减少代码逻辑和UI层级。</p>
-
-<p>RecyclerView的修改代码如下：</p>
-
-<h2 id="toc_10">三、support lib 24下Notification的一点适配</h2>
-
-<p>SDK 24 下的NotificationManager.java的notifyAsUser出现了以下的修改，强迫6.0及以上系统下在使用notification时一定要传入small icon。我们app中仅在小米手机中用了这里的api进行打开app清理所有通知的操作，导致了非常隐蔽的crash，我们app差一点点就携带这个致命crash上线了，特此标记。</p>
-
-<p>出错堆栈：</p>
-
-<pre><code class="language-java">    Caused by:
-    java.lang.IllegalArgumentException:Invalid notification (no valid small icon): Notification(pri=0 contentView=com.qdaily.ui/0x1090090 vibrate=null sound=null tick defaults=0x4 flags=0x11 color=0x00000000 vis=PRIVATE)
-    android.app.NotificationManager.notify(NotificationManager.java:222)
-    android.app.NotificationManager.notify(NotificationManager.java:194)
-    ...
-</code></pre>
-
-<p>源代码如下，google在这里直接采用throw new IllegalArgumentException的方式实在太危险了，感觉这种代码都有点无语，应该让app可以设置在DEBUG模式下才throw的...</p>
-
-<pre><code class="language-java">    NotificationManager.java
-    
-    public void notifyAsUser(String tag, int id, Notification notification, UserHandle user)
-        {
-            ...
-            ...
-            ...
-            if (mContext.getApplicationInfo().targetSdkVersion &gt; Build.VERSION_CODES.LOLLIPOP_MR1) {
-                if (notification.getSmallIcon() == null) {
-                    throw new IllegalArgumentException(&quot;Invalid notification (no valid small icon): &quot;
-                            + notification);
-                }
-            }
-            
-            ...
-            ...
-            ...
-        }
-</code></pre>
 
 ]]></content>
   </entry>
