@@ -1,0 +1,349 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  移动端开发好文20160624 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">移动端开发好文20160624</h1>
+				<p class="meta"><time datetime="2016-06-24T23:01:13+08:00" pubdate data-updated="true">2016/6/24</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<p>个人发现在看公众号或者博客的文章会有问题，就是会留在自己的舒适区域，只看自己想看的那一部分，导致收获会越来越少，有空还是要读书，系统性的学习。</p>
+
+<h3 id="toc_0">1、<a href="http://blog.csdn.net/a1113567888/article/details/50437227">Android性能调优利器StrictMode</a></h3>
+
+<span id="more"></span><!-- more -->
+
+<blockquote>
+<p>android性能调优第一步。打开严格模式和内存泄露检查。严格模式的用法值得学习，不过它检测能力还比较存疑，针对ANR的处理应该不错，不过对FPS的提升应该帮助不大。</p>
+
+<p>预计第二步是Leak检查，这样可以有效的缓解内存峰值问题.<br/>
+再之后是UI优化和FPS优化<br/>
+<!--more--></p>
+
+<h3 id="toc_1">2、<a href="http://wetest.qq.com/lab/view/?id=99">基于Android Studio的内存泄漏检测与解决全攻略</a></h3>
+
+<p>接上面，内存泄漏检查分为使用第三方工具leakcanary进行检查和系统工具检查两种方案。leakcanary检查的原理其实就是在activity dealloc的情况下，遍历所有UI组件。优点是自动化，可视化，傻瓜，缺陷是不够精确（基本没问题），而且只能检测UI组件（也基本够了，内存泄漏UI组件一般是最严重的）。</p>
+
+<p>另一种检测比较精确，就是通过检测heap内存区域，通过主动触发GC来在手动观察未被销毁object，以此进行检测。这里依赖google在android studio 2.0后新升级的功能，具体参见博客，亲测好用。相比于leakcanary，这个相对复杂，麻烦，而且需要开发者主动观测。</p>
+</blockquote>
+
+<h3 id="toc_2">3、<a href="http://www.liaohuqiu.net/cn/posts/leak-canary-read-me/">LeakCanary 中文使用说明</a></h3>
+
+<blockquote>
+<p>这篇就不是一篇新文章了，廖百万针对LeakCanary的中文说明。只不过针对上面的延续。值得使用参考。</p>
+
+<p>FPS相关优化（主要就是UI优化了）会在之后持续关注和学习。</p>
+
+<h3 id="toc_3">4、<a href="https://mp.weixin.qq.com/s?__biz=MjM5OTM0MzIwMQ==&amp;mid=2652546071&amp;idx=4&amp;sn=4f3e44cda870e8a659fc74f8e3ffb2a7">iOS 常用公共方法</a></h3>
+
+<p>mark住，一些可以写进工程的常用static方法，包含一些文件管理的、简单图片处理的、字符串处理的、正则匹配的工具。以后我也整理总结一个</p>
+</blockquote>
+
+<h3 id="toc_4">5、<a href="http://www.jianshu.com/p/e99b5e8bd67b">图解 Android 事件分发机制</a></h3>
+
+<blockquote>
+<p>mark 这个是触摸事件分发，价值很大，经常面试别人问到，自己也需要去了解，稍后就去看看。</p>
+
+<p>还有，既然说了面试，那也分享个面试常见问题，以后有针对性的学习并也做一个自己的总结。<a href="https://www.zhihu.com/question/19765032">Android面试可以问的常见问题</a></p>
+</blockquote>
+
+<h3 id="toc_5">6、<a href="http://www.jianshu.com/p/a79b8765f729">Android线程,线程池使用及原理博文参考</a></h3>
+
+<blockquote>
+<p>mark，稍后去看。</p>
+</blockquote>
+
+<h3 id="toc_6">7、<a href="http://mp.weixin.qq.com/s?__biz=MzI3MDE0NzYwNA==&amp;mid=2651433547&amp;idx=1&amp;sn=15713070d085c2626a4f29b9dcaf1f5c">【干货】一个缓存框架推荐&amp;Android缓存机制</a></h3>
+
+<blockquote>
+<p>作者本来想安利他的开源库ACache，感觉没啥必要去看这个源码。不过坐着对LRU和DISKLRU理解的都很深刻，对客户端内存缓存和磁盘缓存都有非常不错的介绍，有助于理解原理。lru和disklru在ios下都比较忽略这个问题，有必要再深入学习下，然后在ios下移植。</p>
+</blockquote>
+
+<h3 id="toc_7">8、<a href="http://mp.weixin.qq.com/s?__biz=MzI4NjAzODk0OQ==&amp;mid=2652684407&amp;idx=1&amp;sn=709d2c763caa11431470017f100b561b">今年 WWDC 大会有哪些新技术？</a></h3>
+
+<blockquote>
+<p>这个才是已知最全的iOS10特性，持续关注中。iOS10正式版之前要跟进开发新功能。</p>
+</blockquote>
+
+<h3 id="toc_8">9、<a href="http://blog.jobbole.com/101840">程序员、技术领导、管理者各有烦恼，你占了几条？</a></h3>
+
+<blockquote>
+<p>作为一个一线软件开发者和基层技术管理者，很多痛苦深有体会，很有同感。共勉</p>
+</blockquote>
+
+<h3 id="toc_9">10、<a href="http://mp.weixin.qq.com/s?__biz=MjM5NzA1MTcyMA==&amp;mid=2651160918&amp;idx=4&amp;sn=7cc0911523e8886846276006da0a46d7">相似图片搜索的原理</a></h3>
+
+<blockquote>
+<p>大神阮一峰的新文，确实是个传奇经历了，现在也研究这个了。。。</p>
+
+<p>小白都能看懂一些的图片搜索算法，虽然是后台技术，但可以用于吹牛使用，太赞了。</p>
+
+<p>保留个幻想，客户端以后要试试看？</p>
+</blockquote>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876730464.html" 
+	        title="Previous Post: 移动端开发好文20160625">&laquo; 移动端开发好文20160625</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876730534.html" 
+	        title="Next Post: 移动端开发好文20160623">移动端开发好文20160623 &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

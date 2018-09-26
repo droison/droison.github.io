@@ -1,0 +1,331 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  【转载】UML类图绘制指南 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">【转载】UML类图绘制指南</h1>
+				<p class="meta"><time datetime="2015-02-12T23:01:13+08:00" pubdate data-updated="true">2015/2/12</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<h2 id="toc_0">写在最前（独创）</h2>
+
+<p>各个平台下画类图、流程图，强烈建议chrome app的gliffy，强大，跨平台、免费，简单。很难想象这么多优点能够集中于一款软件上。<br/>
+<img src="media/15378876730963/gliffy%E6%88%AA%E5%9B%BE.png" alt="gliffy截图"/></p>
+
+<span id="more"></span><!-- more -->
+
+<h2 id="toc_1">UML类图与类的关系详解（转载）</h2>
+
+<p>在画类图的时候，理清类和类之间的关系是重点。类的关系有泛化(Generalization)、实现（Realization）、依赖(Dependency)和关联(Association)。其中关联又分为一般关联关系和聚合关系(Aggregation)，合成关系(Composition)。下面我们结合实例理解这些关系。</p>
+
+<h3 id="toc_2">基本概念</h3>
+
+<p>类图（Class Diagram）: 类图是面向对象系统建模中最常用和最重要的图，是定义其它图的基础。类图主要是用来显示系统中的类、接口以及它们之间的静态结构和关系的一种静态模型。</p>
+
+<p>类图的3个基本组件：类名、属性、方法。   </p>
+
+<p><img src="media/15378876730963/uml%E7%B1%BB%E5%9B%BE1.jpg" alt="uml类图1"/></p>
+
+<p>泛化(generalization)：表示is-a的关系，是对象之间耦合度最大的一种关系，子类继承父类的所有细节。直接使用语言中的继承表达。在类图中使用带三角箭头的实线表示，箭头从子类指向父类。<br/><br/>
+<img src="media/15378876730963/uml%E7%B1%BB%E5%9B%BE2.jpg" alt="uml类图2"/></p>
+
+<p>实现（Realization）:在类图中就是接口和实现的关系。这个没什么好讲的。在类图中使用带三角箭头的虚线表示，箭头从实现类指向接口。  </p>
+
+<p><img src="media/15378876730963/uml%E7%B1%BB%E5%9B%BE3.jpg" alt="uml类图3"/></p>
+
+<p>依赖(Dependency)：对象之间最弱的一种关联方式，是临时性的关联。代码中一般指由局部变量、函数参数、返回值建立的对于其他对象的调用关系。一个类调用被依赖类中的某些方法而得以完成这个类的一些职责。在类图使用带箭头的虚线表示，箭头从使用类指向被依赖的类。<br/><br/>
+<img src="media/15378876730963/uml%E7%B1%BB%E5%9B%BE4.jpg" alt="uml类图4"/></p>
+
+<p>关联(Association) : 对象之间一种引用关系，比如客户类与订单类之间的关系。这种关系通常使用类的属性表达。关联又分为一般关联、聚合关联与组合关联。后两种在后面分析。在类图使用带箭头的实线表示，箭头从使用类指向被关联的类。可以是单向和双向。<br/><br/>
+<img src="media/15378876730963/uml%E7%B1%BB%E5%9B%BE5.jpg" alt="uml类图5"/></p>
+
+<p>聚合(Aggregation) : 表示has-a的关系，是一种不稳定的包含关系。较强于一般关联,有整体与局部的关系,并且没有了整体,局部也可单独存在。如公司和员工的关系，公司包含员工，但如果公司倒闭，员工依然可以换公司。在类图使用空心的菱形表示，菱形从局部指向整体。  </p>
+
+<p><img src="media/15378876730963/uml%E7%B1%BB%E5%9B%BE6.jpg" alt="uml类图6"/></p>
+
+<p>组合(Composition) : 表示contains-a的关系，是一种强烈的包含关系。组合类负责被组合类的生命周期。是一种更强的聚合关系。部分不能脱离整体存在。如公司和部门的关系，没有了公司，部门也不能存在了；调查问卷中问题和选项的关系；订单和订单选项的关系。在类图使用实心的菱形表示，菱形从局部指向整体。  </p>
+
+<p><img src="media/15378876730963/uml%E7%B1%BB%E5%9B%BE7.jpg" alt="uml类图7"/></p>
+
+<p>多重性(Multiplicity) : 通常在关联、聚合、组合中使用。就是代表有多少个关联对象存在。使用数字..星号（数字）表示。如下图，一个割接通知可以关联0个到N个故障单。  </p>
+
+<p><img src="media/15378876730963/uml%E7%B1%BB%E5%9B%BE8.jpg" alt="uml类图8"/></p>
+
+<h3 id="toc_3">聚合和组合的区别</h3>
+
+<p>这两个比较难理解，重点说一下。聚合和组合的区别在于：聚合关系是“has-a”关系，组合关系是“contains-a”关系；聚合关系表示整体与部分的关系比较弱，而组合比较强；聚合关系中代表部分事物的对象与代表聚合事物的对象的生存期无关，一旦删除了聚合对象不一定就删除了代表部分事物的对象。组合中一旦删除了组合对象，同时也就删除了代表部分事物的对象。</p>
+
+<h3 id="toc_4">实例分析</h3>
+
+<p>联通客户响应OSS。系统有故障单、业务开通、资源核查、割接、业务重保、网络品质性能等功能模块。现在我们抽出部分需求做为例子讲解。</p>
+
+<p>大家可以参照着类图，好好理解。  </p>
+
+<p><img src="media/15378876730963/uml%E7%B1%BB%E5%9B%BE9.jpg" alt="uml类图9"/></p>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876730817.html" 
+	        title="Previous Post: 使用sublime来写markdown">&laquo; 使用sublime来写markdown</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876731145.html" 
+	        title="Next Post: MAC 设置环境变量path的几种方法">MAC 设置环境变量path的几种方法 &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

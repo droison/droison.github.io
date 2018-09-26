@@ -1,0 +1,387 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  Android 开发锁屏屏蔽Home键、原生锁屏界面 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">Android 开发锁屏屏蔽Home键、原生锁屏界面</h1>
+				<p class="meta"><time datetime="2014-03-10T23:01:13+08:00" pubdate data-updated="true">2014/3/10</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<p>最近开发锁屏应用，需要屏蔽返回、音量、Home键，返回和音量很好弄，关键是Home键如何搞。花了很多心思，终于搞定了，项目代码涉密，不方便全传上来，下面主要介绍这个思路。</p>
+
+<h2 id="toc_0">一、原理</h2>
+
+<p>Android2.3版本以前通过AttachWindows就可以很简单实现屏蔽，下面着重说4.0以后的。<br/>
+访谈及结果分析</p>
+
+<h3 id="toc_1">1、向系统注册锁屏界面Activity为启动器</h3>
+
+<p>这块是需要将该应用设定为桌面程序：<br/>
+<span id="more"></span><!-- more --></p>
+
+<pre><code class="language-markup">    &lt;intent-filter &gt;
+      &lt;category android:name=&quot;android.intent.category.HOME&quot; /&gt;
+    &lt;/intent-filter&gt;
+</code></pre>
+
+<h3 id="toc_2">2、设置该应用为默认启动器</h3>
+
+<p>多启动器共存的情况下当HOME事件发生系统会轮询并向用户询问使用哪个启动器并是否作为默认启动器，这一部分不可控，可做为用户引导，让用户选择<strong>本应用</strong>为默认启动器</p>
+
+<h3 id="toc_3">3、选择真正的系统桌面</h3>
+
+<p>第2步骤中若用户选择的是其它桌面作为默认启动器，则无法屏蔽HOME键，此为用户体验问题了。可以在APP中做提醒引导用户去执行第2步操作来实现<strong>本应用</strong>作为默认启动器；<br/>
+当第2步中<strong>本应用</strong>被选作默认启动器，则系统HOME事件将从此会导向<strong>本应用</strong>做处理：</p>
+
+<pre><code class="language-text">注意：此处应该通过getIntent().getCategories()来获取是否是来自与Home事件的启动项。
+android.intent.category.LAUNCHER：点击图标启动
+android.intent.category.HOME：点击Home启动
+</code></pre>
+
+<p>因为<strong>本应用</strong>不具备桌面管理功能，故第一次HOME事件发生时<strong>本应用</strong>应该拦截HOME事件，轮询系统桌面管理应用提供给用户选择（得到的list会包含<strong>本应用</strong>，应remove掉，剩下的给用户选择），记下用户的选择，这样，在非锁屏状态时的HOME事件来到星酷时应当跳转到用户选择的桌面上去，完成“回到桌面”功能，而当锁屏状态，<strong>本应用</strong>正处于最前台进程，可忽略HOME事件，这就完成了“屏蔽HOME”功能了。<br/>
+    判断锁屏是否为前台方法为，判断是否在内存堆栈的栈顶：</p>
+
+<pre><code class="language-java">ActivityManager manager=(ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
+String name = manager.getRunningTasks(1).get(0).topActivity.getClassName();
+name.equals(LockActivity.class.getName())  
+</code></pre>
+
+<p>轮询系统启动器／桌面管理应用方法为:</p>
+
+<pre><code class="language-java">Intent mIntent = new Intent(Intent.ACTION_MAIN);
+mIntent.addCategory(Intent.CATEGORY_HOME);
+packageManager.queryIntentActivities(mIntent, 0);
+</code></pre>
+
+<h3 id="toc_4">4、屏蔽系统原生锁屏界面</h3>
+
+<p>首先需要动态监听系统的开／关屏事件（注意是动态注册监听，不能在manifest中固定注册，否则无法实现），再则事件发生时启动<strong>本应用</strong>的锁屏Activity，在setContentView之前执行</p>
+
+<pre><code class="language-java">getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+</code></pre>
+
+<h3 id="toc_5">5、锁屏状态下电话事件处理</h3>
+
+<p>通话过程中由于距离传感器的原因，会造成屏幕关闭，所以也会触发锁屏，这样便无法进行操作。因此通话过程中应当禁止启动锁屏界面。处理方法如下：</p>
+
+<pre><code class="language-java">TelephonyManager phoneManager = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
+// 手动注册对PhoneStateListener中的listen_call_state状态进行监听
+phoneManager.listen(new PhoneStateListener() {
+    @Override
+    public void onCallStateChanged(int state, String incomingNumber) {
+        switch (state) {
+            case TelephonyManager.CALL_STATE_IDLE:
+                break;
+            case TelephonyManager.CALL_STATE_RINGING:
+                finish();
+                break;
+            case TelephonyManager.CALL_STATE_OFFHOOK:
+                finish();
+            default:
+                break;
+            }
+            super.onCallStateChanged(state, incomingNumber);
+        }
+    }, PhoneStateListener.LISTEN_CALL_STATE);
+</code></pre>
+
+<h3 id="toc_6">6、阻止锁屏界面出现在长按Home键的“最近使用应用列表”中</h3>
+
+<p>在manifest中对锁屏Application加</p>
+
+<pre><code class="language-markup">android:excludeFromRecents=&quot;true&quot;
+</code></pre>
+
+<p>为避免某些异常，最好在锁屏的Activity添加 </p>
+
+<pre><code class="language-markup">android:noHistory=&quot;true&quot;
+android:launchMode=&quot;singleTask&quot;
+</code></pre>
+
+<h3 id="toc_7">7、项目需要的权限</h3>
+
+<pre><code class="language-markup">&lt;uses-permission android:name=&quot;android.permission.DISABLE_KEYGUARD&quot; /&gt;
+&lt;uses-permission android:name=&quot;android.permission.RECEIVE_BOOT_COMPLETED&quot; /&gt;
+&lt;uses-permission android:name=&quot;android.permission.WAKE_LOCK&quot; /&gt;
+&lt;uses-permission android:name=&quot;android.permission.READ_PHONE_STATE&quot; /&gt;
+&lt;uses-permission android:name=&quot;android.permission.PROCESS_OUTGOING_CALLS&quot; /&gt;
+</code></pre>
+
+<h4 id="toc_8">综上，一个锁屏界面需要的操作流程大致如下：</h4>
+
+<ul>
+<li>listenAndHandleScreenOffAction();</li>
+<li>listenAndHandlePhoneAction();</li>
+<li>dismissKeyguard();</li>
+<li>handleHomeIntent();</li>
+<li>processViewEvents();</li>
+<li>handleUnlockEvent();</li>
+</ul>
+
+<h2 id="toc_9">二、关键代码</h2>
+
+<p>暂时无法提供</p>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876731807.html" 
+	        title="Previous Post: JAVA和Ruby的异同">&laquo; JAVA和Ruby的异同</a>
+	    
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,333 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  复杂多人项目Owner思考 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">复杂多人项目Owner思考</h1>
+				<p class="meta"><time datetime="2018-04-18T23:01:13+08:00" pubdate data-updated="true">2018/4/18</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<h2 id="toc_0">1、背景</h2>
+
+<p>UGC方向业务场景比较复杂，易同时出现多职能线和多业务线的大需求，而PM经常要求赶在某个版本前上线，使得频繁出现<strong>“时间倒排”</strong>。<br/>
+当业务复杂遇上需求较大，那么每个业务方人员平均参与人数将大于1人，项目复杂度也会成倍提升。<br/>
+需求完成情况最终体现在“代码合入”时间节点上，分解开来，便是<strong>提测时间点</strong>和<strong>代码质量</strong>。如果开发团队没有应对复杂业务逻辑、多业务线、多人项目工程化能力，最终导致项目delay或者采用加班方式解决问题，会遭各方吐槽，长此以往，则失去信任力。 </p>
+
+<h2 id="toc_1">2、Delay一般原因分析</h2>
+
+<blockquote>
+<p>一般出现这类原因有两点：开发者时间评估不准确；缺乏纠偏。 </p>
+</blockquote>
+
+<h3 id="toc_2">2.1 时间评估问题</h3>
+
+<ul>
+<li>需求点把握不足：没能准确的将需求各个模块分解和细化。</li>
+<li>核心流程图缺失、整体架构设计缺失：整体认知不足，不能高屋建瓴。 </li>
+<li>过UI/UE时间评估不足，联调时间评估不足。 </li>
+</ul>
+
+<h3 id="toc_3">2.2 Owner在项目运行中缺少纠偏</h3>
+
+<ul>
+<li>没有里程碑或者里程碑过于简略 。</li>
+<li>里程碑进展出现问题，不能尽快完成纠偏，导致问题持续、放大，最终导致delay。</li>
+</ul>
+
+<h2 id="toc_4">3、规避问题方式</h2>
+
+<h3 id="toc_5">3.1 重视技术方案设计</h3>
+
+<ul>
+<li>RD在提供排期时，需同时提供详细的分解工期，否则该排期不应予以接受。</li>
+<li>Owner应review各RD的需求分解的合理性。</li>
+<li>RD内部需要做技术方案，并内部进行技术方案review，技术方案需要包含核心业务流程图（后端API调用流程、主干UI交互流程）。</li>
+</ul>
+
+<h3 id="toc_6">3.2 重视站会和里程碑</h3>
+
+<ul>
+<li><strong>过UI/UE时间点</strong>和<strong>联调时间点</strong>是项目进度管理中的重要里程碑。</li>
+<li>表格、看板、甘特图都是可选的项目管理工具，复杂项目运行过程中至少使用一种。</li>
+<li>要有规律的站会，站会重点review进展和里程碑完成情况。</li>
+<li>每次站会需根据实际情况调整<strong>分解排期</strong>和<strong>里程碑</strong>，出现delay风险需提前周知项目利益方。</li>
+</ul>
+
+<h3 id="toc_7">3.3 大需求的分解code review</h3>
+
+<p>项目内部需有code review里程碑，根据里程碑分解code review。<br/>
+--- 分阶段code review思考待续 ---</p>
+
+<h2 id="toc_8">4、总结</h2>
+
+<ul>
+<li>RD职责：做项目拆解及各分解时间安排，做技术方案。</li>
+<li>Owner职责：根据各方拆解建立排期和里程碑，并组织站会，站会中回归项目风险点。</li>
+</ul>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='Anything.html'>胡写</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876732043.html" 
+	        title="Previous Post: -[UIImage imageNamed:]方法导致的卡顿优化">&laquo; -[UIImage imageNamed:]方法导致的卡顿优化</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876732116.html" 
+	        title="Next Post: 【IGListKit】学习与分析2">【IGListKit】学习与分析2 &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

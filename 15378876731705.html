@@ -1,0 +1,339 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  RN学习2——客户端开发者的一些准备工作 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">RN学习2——客户端开发者的一些准备工作</h1>
+				<p class="meta"><time datetime="2016-06-22T23:01:13+08:00" pubdate data-updated="true">2016/6/22</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<p>从具体开发实践的角度，这里本应该是第三步，因为第二步是我将现有项目进行了RN集成，并实现了一些混编的小功能后，才逐步总结出来的下面一些实践经验。下面的部分先写一下，第三章再介绍如何集成现有项目并进行简单开发。</p>
+
+<h3 id="toc_0">一、 RN 开发前的一些必要准备技能</h3>
+
+<blockquote>
+<p>如果你是一个客户端开发，要对js和native的交互很熟悉，起码要懂js的语法，了解react和ES6是怎么回事（本人完全不懂react.js，表示实践起来非常吃力）。</p>
+
+<p>如果你是一个前端开发，那你一定要很熟悉react.js，因为你开发主要靠这个了，混编是一个很有门槛的技术点。</p>
+</blockquote>
+
+<span id="more"></span><!-- more -->
+
+<p>这里主要介绍客户端开发应该具备的知识：</p>
+
+<ul>
+<li><p>1、javascript的基本语法，变量、命名等等。</p>
+<p>如果你是一个老鸟，估计也就10分钟就好了</p></li>
+<li><p>2、react.js。</p>
+<p>react facebook给js的重新定义。现在还只是0.14.7，表示这还是一个飞速发展而且尚有不足的组件。非常性感，非常前卫，值得学习。从一个客户端开发者的角度（区别于前端），它的基本特点就是增加了class的概念和生命周期的概念，以及component的概念（js逻辑代码直接嵌套html的jsx语法）。</p>
+<p>这里建议用半天到一天时间进行学习和研究，因为一方面毕竟react和react native在很多api上有着不同，更多的应该在实践中摸索，那样提高更快。开发时网页要常开react的官方文档。</p></li>
+<li><p>3、ECMAScript 6</p>
+<p>前端开发是程序员届的特殊群体，总是能创造出一些从名字上就高端而又气势磅礴的名词和架构，如果你听到一个新的框架（架构？名称？）后一脸懵逼，这就对了...ES6就是这样一个东西，几乎可以说，ES6只保留了javascript旧版本的一些基本特性（这也就是为什么只要10分钟去看了），它几乎把js变成了一个全新的语言。ES6具有现代语言的各种优点和特性，如果你是一个iOS开发者，那么你就会发现它和swift竟然如此相似。</p>
+<p>ES6要花多少时间看我也不清楚，可能需要一本书。。。<br/>
+<!--more--></p>
+<h3 id="toc_1">二、RN server调试tips</h3>
+<p>如果服务已经开启了，不能启动server，先找到服务的pid，然后杀掉它：</p>
+<p>\(:lsof -n -i4TCP:8081 <br/>
+\):kill -9 <PID> </p></li>
+</ul>
+
+<h3 id="toc_2">三、选择开发工具</h3>
+
+<p>其实无非2个，其它除非很熟悉都不建议。一个是官方推荐的atom+nuclide，另一个是sublime3+若干插件。</p>
+
+<p>第一个的好处是官方推荐，集成各种调试，server，log，断点好多强大功能，缺点是慢，因为这基本是一个IDE。而且在ES6下不能很好的完成代码格式化，亲测2天之后决心放弃。</p>
+
+<p>另一个sublime基本是一个万能的工具了，我一直用它在mac下打开文本文件，写一些脚本，启动超快，而且网上找资料和资源也多。最终决定采用sublime进行开发，具体调试再使用一切其它工具进行辅助，下面简单介绍下sublime针对RN的配置：</p>
+
+<ul>
+<li>1、下载安装 sublime3</li>
+<li><p>2、安装 package controller</p>
+<p>sublime打开状态下下使用快捷键  ctrl+` ，把下面代码输入控制台并回车重启sublime。</p>
+<pre><code class="language-python">import urllib.request,os,hashlib; h = &#39;2915d1851351e5ee549c20394736b442&#39; + &#39;8bc59f460fa1548d1514676163dafc88&#39;; pf = &#39;Package Control.sublime-package&#39;; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( &#39;http://packagecontrol.io/&#39; + pf.replace(&#39; &#39;, &#39;%20&#39;)).read(); dh = hashlib.sha256(by).hexdigest(); print(&#39;Error validating download (got %s instead of %s), please try manual install&#39; % (dh, h)) if dh != h else open(os.path.join( ipp, pf), &#39;wb&#39; ).write(by)
+</code></pre>
+<p>以后安装插件只需要 cmd+shift+p 后选择 package controller:install package就可以安装了</p></li>
+<li><p>3、安装 <a href="https://packagecontrol.io/packages/react-native-snippets">React-native-snippets</a></p>
+<p>这是一堆RN的快捷键，开发很方便，具体可以参见<a href="https://packagecontrol.io/packages/react-native-snippets">https://packagecontrol.io/packages/react-native-snippets</a>。</p></li>
+<li><p>4、安装 <a href="https://github.com/babel/babel-sublime">babel</a></p>
+<p>这个是支持JSX和ES6的语法高亮。安装后需要通过打开菜单<code>view</code> -&gt; <code>Syntax</code> -&gt; <code>Open all with current extension as...</code> -&gt; <code>Babel</code> -&gt; <code>JavaScript (Babel)</code>，选择babel为默认 javascript 打开syntax</p></li>
+<li><p>5、安装 <a href="https://packagecontrol.io/packages/SublimeLinter-jsxhint">jsxhint</a></p>
+<p>JSX 代码审查，实时提示语法错误, 帮助快速定位错误点。这个除了安装package外，还要安装Node.js以及通过npm安装jsxhint。</p>
+<pre><code class="language-text">npm install -g jsxhint
+</code></pre>
+<p>具体可以参考官方文档：<a href="https://packagecontrol.io/packages/SublimeLinter-jsxhint">https://packagecontrol.io/packages/SublimeLinter-jsxhint</a></p></li>
+<li><p>6、安装 <a href="https://github.com/jdc0589/JsFormat">jsformat</a></p>
+<p>代码格式化工具，这个才是最重要的，不能正确格式化RN代码真是一件头疼的问题。format快捷键是<code>ctrl+alt+f</code>，格式化jsx的语法需要在<code>preferences</code>-&gt; <code>Package Settings</code> -&gt; <code>JsFormat</code> -&gt; <code>Setting</code> -&gt; <code>Users</code>,输入以下代码：</p>
+<pre><code class="language-javascript">{
+&quot;e4x&quot;: true,<br/>
+// jsformat options<br/>
+&quot;format_on_save&quot;: true,<br/>
+}
+</code></pre></li>
+</ul>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876730534.html" 
+	        title="Previous Post: 移动端开发好文20160623">&laquo; 移动端开发好文20160623</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876731742.html" 
+	        title="Next Post: RN学习1——前奏，app插件化和热更新的探索">RN学习1——前奏，app插件化和热更新的探索 &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

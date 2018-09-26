@@ -1,0 +1,367 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  AFN源码分析-AFHTTPConnectionOperation - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">AFN源码分析-AFHTTPConnectionOperation</h1>
+				<p class="meta"><time datetime="2016-03-13T23:01:13+08:00" pubdate data-updated="true">2016/3/13</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<blockquote>
+<p>AFHTTPConnectionOperation是AFNetWorking在使用NSURLConnection进行网络请求和下载的基本任务单元，其继承自AFURLConnectionOperation，仅对其进行了一些不太复杂的封装。在整个框架中，AFN并没有直接使用过AFURLConnectionOperation，均为面向AFHTTPConnectionOperation的一些开发工作，但作为抽象更好的Operation，需要进行优先的分析与学习。<br/>
+<!--more--></p>
+
+<h3 id="toc_0">AFURLConnectionOperation</h3>
+
+<p>本类是NSOperation的子类，天然就是做具体任务操作的。由于进行网络请求，所以implement了NSURLConnectionDelegate和NSURLConnectionDataDelegate两个月网络相关的代理。</p>
+</blockquote>
+
+<p>由于过多线程本身会比较吃资源，同时还会有同步问题，AFN将所有网络请求的调用都统一放在了一个名为“AFNetWorking”的thread（以下简称AFThread）中。该thread的创建放在了具体的Operation中，使用懒加载，并用dispatch_once_t进行多线程单例创建。</p>
+
+<p>类中持有一个NSRecursiveLock的lock，进行多线程的同步操作，所有读写调用操作都会lock加锁。</p>
+
+<p>Operation启动后，会在AFThread调起operationDidStart方法，该方法会新建NSURLConnection并加入当前线程runloop中，然后启动网络请求。整个过程会判断isCancel，cancel就会停止该operation。</p>
+
+<p>Operation调用cancel方法后，会在AFThread线程调起cancelConnection方法，该方法会将当前已有的connection断掉并嗲用代理方法connection:didFailWithError:，将封装的cancel error发送出去。cancel的调用加锁，严格线程同步。</p>
+
+<p>pause方法同样是在加锁情况下使用，避免状态不同步问题。会在AFThead线程调用operationDidPause方法，方法会将已有connection cancel掉。</p>
+
+<p>resume是重新调起start方法，调用前需判断是不是在pause状态下，然后将相关的状态初始化。使用也用加锁方式严格线程同步。</p>
+
+<p>数据上传和下载过程中，更新进度的downloadProgress和uploadProgress都会严格在主线程调用，这个不知道为什么？一般应该在completeQueue使用吧。</p>
+
+<p>NSURLConnetion的代理回调线程一定在和调用线程一致，所以只要在主动调起代理方法时候注意当前线程问题即可，不需要在代理方法里进行加锁操作。</p>
+
+<p>一个小技巧要注意：本Operation中的很多状态都使用自定义的state进行识别和标志，用以替代覆写NSOperation中得一些默然方法，为支持KVO，需要将state改变的时候手动调起与状态改变有关的父类对应变量的willChangeValueForKey和didChangeValueForKey方法。</p>
+
+<p>completeQueue在传入为nil时默认使用主线程队列。</p>
+
+<p>在Operation complete时，有一处需要学些的GCD group的使用：</p>
+
+<pre><code class="language-objectivec">dispatch_group_t group = strongSelf.completionGroup ?: url_request_operation_completion_group();
+dispatch_queue_t queue = strongSelf.completionQueue ?: dispatch_get_main_queue();
+dispatch_group_async(group, queue, ^{
+    block();
+});
+dispatch_group_notify(group, url_request_operation_completion_queue(), ^{
+    [strongSelf setCompletionBlock:nil];
+});
+</code></pre>
+
+<p>本operation还提供了一个能够多url请求依赖完成统一回调的方法封装batchOfRequestOperations:progressBlock:completionBlock:，通过封装可以在调用方观察若干个网络请求operation进度和完成情况。方法分别传入需要观察的网络请求operation、进度观察的block和完成观察的block，返回值为一个operation的Array（本质就是为所有operation加了一个相同的groupQueue，并新建一个Operation，将所有的网络请求Operation都加入其依赖）。代码中有一些设计GCD group和operation的dependency相关的使用方法值得学习：</p>
+
+<pre><code class="language-objectivec">__block dispatch_group_t group = dispatch_group_create();
+NSBlockOperation *batchedOperation = [NSBlockOperation blockOperationWithBlock:^{
+    dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+        if (completionBlock) {
+            completionBlock(operations);
+        }
+    });
+}];
+
+for (AFURLConnectionOperation *operation in operations) {
+    operation.completionGroup = group;
+    void (^originalCompletionBlock)(void) = [operation.completionBlock copy];
+    __weak __typeof(operation)weakOperation = operation;
+    operation.completionBlock = ^{
+        __strong __typeof(weakOperation)strongOperation = weakOperation;
+        dispatch_queue_t queue = strongOperation.completionQueue ?: dispatch_get_main_queue();
+        dispatch_group_async(group, queue, ^{
+            if (originalCompletionBlock) {
+                originalCompletionBlock();
+            }
+            NSUInteger numberOfFinishedOperations = [[operations indexesOfObjectsPassingTest:^BOOL(id op, NSUInteger __unused idx,  BOOL __unused *stop) {
+                return [op isFinished];
+            }] count];
+            if (progressBlock) {
+                progressBlock(numberOfFinishedOperations, [operations count]);
+           }
+            dispatch_group_leave(group);
+        });
+    };
+    dispatch_group_enter(group);
+    [batchedOperation addDependency:operation];
+}
+</code></pre>
+
+<p>上面代码技巧包括</p>
+
+<ul>
+<li>异步block使用group需要在对应位置使用dispatch_group_enter和dispatch_group_leave方法，否则block不会执行，这里的group操作只会将block块放到队列里而已。</li>
+<li><strong>weak标记了对象避免block造成循环引用；</strong>strong标记已经被weak标记了得对象，使得对象在block使用过程中不会被释放。</li>
+<li>addDependency:方法可以使在一个queue上的若干个operation增加相互间的依赖关系，使其可以有一定顺序先后执行</li>
+<li>如果block中想修改外部变量指针的指向，需要对变量增加__block修饰关键字，否则block只是copy了一份指针过来，block能修改的，只是指针指向的堆内存中得数据</li>
+</ul>
+
+<p>本类可以比较多得收获到关于线程同步以及多线程一些操作的知识运用。</p>
+
+<h3 id="toc_1">AFHTTPRequestOperation</h3>
+
+<p>作为子类，基本的功能就是对基类的一些封装和扩展</p>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876730358.html" 
+	        title="Previous Post: 自定义Android开源库CSKit介绍">&laquo; 自定义Android开源库CSKit介绍</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876731943.html" 
+	        title="Next Post: AFN源码分析-AFURLRequestSerialization">AFN源码分析-AFURLRequestSerialization &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

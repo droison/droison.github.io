@@ -1,0 +1,329 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  AFN源码分析-AFURLRequestSerialization - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">AFN源码分析-AFURLRequestSerialization</h1>
+				<p class="meta"><time datetime="2016-03-12T23:01:13+08:00" pubdate data-updated="true">2016/3/12</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<h3 id="toc_0">AFURLRequestSerialization</h3>
+
+<p>该Class为用于对<code>请求</code>参数进行拼接、http body组合以及header配置。</p>
+
+<p>包含3个具体的实现类：AFHTTPRequestSerializer、AFJSONRequestSerializer、AFPropertyListRequestSerializer，主要针对3种不同的请求参数组合格式。定义了一个protocol--AFMultipartFormData，用于对数据上传使用。本类中一半篇幅进行POST multi上传情况的处理。</p>
+
+<p>所有HTTPHeaderField的参数都通过一个固定的setValue:forValue的方法进行设定，不再赘述。其它还可以设置需要auth的用户名密码、写在body中数据的编码格式等。有一个比较不错的设计：可以通过传入block的形式将参数部分拼接的具体实现抛回给调用方，用以特殊定制。</p>
+
+<p>比较有意思的在于，本类为几个成员变量默认增加了KVO观察者。观察参数包括：allowsCellularAccess、cachePolicy、HTTPShouldHandleCookies、HTTPShouldUsePipelining、HTTPShouldUsePipelining、networkServiceType、timeoutInterval，这几个参数同时也是NSMutableURLRequest的成员变量的对应key值，通过这种方式实现了动态的参数设定：即设置当前Serializer会自动设置其Request参数。</p>
+
+<h4 id="toc_1">1、请求参数设定</h4>
+
+<p>针对的都是GET、DELETE、HEAD请求，会将传入的NSArray、NSDictionary、NSSet parameters做格式化为URL参数，将PUT、POST、PATCH encode在body中。在对NSArray、NSDictionary、NSSet格式的参数进行处理时，首先会使用向外暴漏block进行拼接，block生成的string在url参数中会直接加载url后，body根据传入的encodeCode进行字符串编码。</p>
+
+<h4 id="toc_2">2、POST文件上传</h4>
+
+<p>仅POST请求可以进行文件上传，content-type为multipart/form-data。本类中一般的篇幅都是对文件上传进行处理的。</p>
+
+<p>在对外使用接口上，针对文件上传会通过block抛回一个id<AFMultipartFormData>对象，调用方在此block进行文件的绑定，包括文件data、fileName以及mime等，这种设计方案在好奇心日报的Android也进行了一次基本类似的实现，经实际使用，直观好用。</p>
+
+<p>具体实现是定义了一个名为AFStreamingMultipartFormData 实现了 AFMultipartFormData protocol，负责回传给调用方加以使用。</p>
+
+<p>针对其中通过NSDictionary这种方式传进来得参数，类中定义个一个名为AFQueryStringPair的对象，主要对参数进行相应的格式化，转成需要key-value形式，然后通过appendPartWithFormData:name:这个方法进行拼装。针对这层数据，再使用一个名叫AFHTTPBodyPart的对象进行第二次封装，这里会封装stringEncoding，本组数据的headers，数据与数据之间的boundary，其中的body（可能是data、inputStream、fileUrl等）和对应数据长度bodyContentLength。<code>这里非常适合在学习HTTP 1.1协议适合进行学习或者查看</code>。</p>
+
+<blockquote>
+<p>此处有两个习惯比较好：一是使用NSParametersAssert对参数进行非空检查，而是对bool值得返回函数进行了error的反馈，具体看代码片段：</p>
+</blockquote>
+
+<pre><code class="language-objectivec">- (BOOL)appendPartWithFileURL:(NSURL *)fileURL
+                         name:(NSString *)name
+                     fileName:(NSString *)fileName
+                     mimeType:(NSString *)mimeType
+                        error:(NSError * __autoreleasing *)error
+{
+    NSParameterAssert(fileURL);
+    NSParameterAssert(name);
+    NSParameterAssert(fileName);
+    NSParameterAssert(mimeType);
+
+    if (![fileURL isFileURL]) {
+        NSDictionary *userInfo = @{NSLocalizedFailureReasonErrorKey: NSLocalizedStringFromTable(@&quot;Expected URL to be a file URL&quot;, @&quot;AFNetworking&quot;, nil)};
+        if (error) {
+            *error = [[NSError alloc] initWithDomain:AFURLRequestSerializationErrorDomain code:NSURLErrorBadURL userInfo:userInfo];
+        }
+        return NO;
+    }
+    ....
+  }
+</code></pre>
+
+<p>上面的最后会拼在一个NSInputSteam的子类AFMultipartBodyStream中，该类最后会进行流的最终拼接和上传。</p>
+
+<p>上传中可以设置上传的大小以及每个具体子资源写入的延迟，用于在3G和EDGE下选择使用。（文档这么讲，不懂，以后了解）</p>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876732010.html" 
+	        title="Previous Post: AFN源码分析-AFHTTPConnectionOperation">&laquo; AFN源码分析-AFHTTPConnectionOperation</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876731909.html" 
+	        title="Next Post: AFN源码分析-开篇">AFN源码分析-开篇 &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

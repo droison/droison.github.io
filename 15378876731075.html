@@ -1,0 +1,483 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  《Effective Objective-C 2.0》读书笔记1---消息发送 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">《Effective Objective-C 2.0》读书笔记1---消息发送</h1>
+				<p class="meta"><time datetime="2016-03-02T23:01:13+08:00" pubdate data-updated="true">2016/3/2</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<blockquote>
+<p>objc在函数调用采用的是发送消息的方式，使得调用方法在编译器不能确定，需要在运行时动态绑定，也就是所谓的runtime特性，可以这么说，objc的对象结构和其消息发送机制，决定了它的runtime特性。</p>
+</blockquote>
+
+<h2 id="toc_0">一、Objective-C对象结构体</h2>
+
+<span id="more"></span><!-- more -->
+
+<p>如下是一个﻿具体实例对象的结构，其中有一个isa指针，指向其对应的Class在堆内存的地址，每个Class在内存中保存一个单例，该isa正是指向这个单例。</p>
+
+<pre><code class="language-text">﻿﻿typedef struct objc_object {
+﻿   Class isa;
+} *id;
+</code></pre>
+
+<p>该类isa指针指向的Class对象（类对象）也定义在运行期程序库的头文件中：</p>
+
+<pre><code class="language-text">typedef struct objc_class *Class;
+struct objc_class {
+﻿   Class isa;
+    Class super_class;
+    const char *name;
+    struct objc_ivar_list *ivars;
+    struct objc_method_list **methodLists;
+    struct objc_cache *cache;
+    struct objc_protocol_list *protocols;
+} *id;
+</code></pre>
+
+<p>这个Class结构体就存储着类的“元数据”，存在isa指针说明这个也是一个OC对象（判断OC对象的方法就是isa指针），该指针指向该类的metaclass，表述类对象本身所具备的元数据。</p>
+
+<h4 id="toc_1">插播Meta Class</h4>
+
+<p>可以把meta class理解为一个Class对象的Class。简单的说：</p>
+
+<ul>
+<li>当我们发送一个消息给一个NSObject对象时，这条消息会在对象的类的方法列表里查找</li>
+<li>当我们发送一个消息给一个类时，这条消息会在类的Meta Class的方法列表里查找</li>
+</ul>
+
+<p>meta class的isa指针指向NSObject的meta class。</p>
+
+<p>一个class的super_class指针指向它父类的class单例地址。</p>
+
+<p>meta class的super_class指针指向原class父类的isa指针指向的meta class。</p>
+
+<p>以此向上查找，一直找到NSObject(Class) 和 Meta Class of NSObject，NSObject的super class指向nil，meta class的super class指向NSObject，meta class的isa指针指向自己，实现了逻辑上的完善。具体关于isa指针的指向如下图所示：</p>
+
+<p><img src="media/15378876731075/Class-MetaClass.001.jpg" alt="Class-MetaClass.001"/></p>
+
+<h4 id="toc_2">再插播一条关于Class内省方法</h4>
+
+<p>isa指针的一个典型应用就是用于oc对象的内省方法isKindOf和isMemberOf</p>
+
+<p>isKindOf就是比较目标类isa指针或者其父类<br/>
+isa指针是否和当前类一致：</p>
+
+<pre><code class="language-text">- (BOOL)isKindOf:aClass
+{
+    Class cls;
+    for (cls = isa; cls; cls = cls-&gt;superclass) 
+        if (cls == (Class)aClass)
+            return YES;
+    return NO;
+}
+</code></pre>
+
+<p>isMemberOf更为粗暴，只比较当前类的isa指针是否一直即可：</p>
+
+<pre><code class="language-text">- (BOOL)isMemberOf:aClass
+{
+    return isa == (Class)aClass;
+}
+</code></pre>
+
+<h4 id="toc_3">指向保存Class成员变量的ivars指针</h4>
+
+<p>objc_ivar_list结构体存储着objc_ivar数组列表，也就是各个成员变量，Class中保存着该结构的指针。</p>
+
+<h4 id="toc_4">指向Class中方法列表指针的methodList指针</h4>
+
+<p>class中得methodList是一个指向指针的指针，所以category才能在已有的类中添加方法，才能通过swizzling动态交换方法，可以说这个methodList是oc中消息发送、动态绑定的关键。具体使用会在下文的“传递消息”介绍。</p>
+
+<h4 id="toc_5">指向保存method查询历史的cache指针</h4>
+
+<p>这个数组列表主要用于优化消息动态查找使用的，因为方法调用实在运行期动态绑定的，相对编译器确定的语言，不可避免会降低调用效率，增加调用时间，该数组就是优化该使用的。具体使用会在下文的“传递消息”介绍。</p>
+
+<h4 id="toc_6">指向保存Class实现的protocol的protocols指针</h4>
+
+<h2 id="toc_7">二、传递消息</h2>
+
+<p>核心就是 objc_msgSend方法：</p>
+
+<pre><code class="language-text">void objc_msgSend(id self, SEL cmd, ...)
+</code></pre>
+
+<p>在我们调用一个函数 </p>
+
+<pre><code class="language-text">id returnValue = [someObj msgName:parameter]
+</code></pre>
+
+<p>编译器会将其转化为如下函数</p>
+
+<pre><code class="language-text">id returnValue = objc_msgSend(someObj, @selector(msgName), parameter);
+</code></pre>
+
+<p>然后编译器会寻找someObj中isa指针指向的Class中methodList指向的那个数组，如果找到相符的代码，则实现，没有找到，就在它的继承体系中继续寻找（找super_class指向的Class的methodList），一直找到NSObject，如果还没有找到，就执行消息转发（下文描述）。</p>
+
+<p>按照上面介绍的查找路径，每个方法在处理过程中会经过比较多的步骤，为优化查找顺序，系统会将已经匹配的IMP缓存到快速映射表里（上文的cache）。</p>
+
+<p>class的methodList会把selector的名称映射到实现方法里，系统的方法会比较靠前，自定义的(category等)方法会在后面，查找过程为从后往前查找。methodList中得这些实现方法均以函数指针的形式表示，即IMP：</p>
+
+<pre><code class="language-text">id (*IMP)(id, SEL, ...)
+</code></pre>
+
+<p>在OC中，我们可以动态替换方法(method swizzling)，就是通过methodList中得这种映射特性，将原来selector的名称映射的IMP和新的做交换，达到替换的目的。一般新建一个方法并替换系统方法的步骤为：</p>
+
+<pre><code class="language-text">Method originalMethod = class_getInstanceMethod([UIView class], @selector(setFrame:));
+Method swappedMethod = class_getInstanceMethod([UIView class], @selector(setNewFrame:));
+method_exchangeImplementations(originalMethod, swappedMethod);
+</code></pre>
+
+<h4 id="toc_8">整理一下消息传递的流程</h4>
+
+<ol>
+<li>检查selector是否需要忽略。(ps: Mac开发中开启GC就会忽略retain,release方法。)</li>
+<li>检查target是否为nil。如果为nil，直接cleanup，然后return。(这就是我们可以向nil发送消息的原因。)</li>
+<li>然后在target的Class中根据Selector去找IMP</li>
+</ol>
+
+<p>具体寻找IMP的过程:</p>
+
+<ol>
+<li>先从当前class的cache方法列表（cache methodLists）里去找</li>
+<li>找到了，跳到对应函数实现</li>
+<li>没找到，就从class的方法列表（methodLists）里找</li>
+<li>还找不到，就到super class的方法列表里找，直到找到基类(NSObject)为止</li>
+<li>最后再找不到，就会进入动态方法解析和消息转发的机制。(第三部分介绍)</li>
+</ol>
+
+<h4 id="toc_9">category同名方法的调用问题</h4>
+
+<p>我们是可以使用category定义和原Class中得相同方法，这些method会添加到Class的methodList数组列表底部，消息传递过程中，会从后查找，相当于覆写了系统方法。</p>
+
+<p>如果两个category定义了同名的方法，这些方法也都会添加到methodList中，添加顺序为Build Phases中Compiles Sources中的文件顺序，后增加进去的会被调用，相当于覆写。</p>
+
+<h2 id="toc_10">三、消息转发</h2>
+
+<p>消息转发发生在上面第二步一直到查找到NSObject得methodList依然没找到对应IMP的情况以后，在我们一般收到“unrecognized selector sent to instance 0x97”这种异常之前。这个异常是NSObject的“doesNotRecognizeSelector:”方法抛出的。</p>
+
+<h3 id="toc_11">（1）先教科书下消息转发过程</h3>
+
+<ol>
+<li><code>动态方法解析</code>(Dynamic Method Resolution或Lazy method resolution)<br/>
+向当前类(Class)发送resolveInstanceMethod:(对于类方法则为resolveClassMethod:)消息，如果返回YES，则系统认为请求的方法已经加入到了，则会重新发送消息。</li>
+<li><code>快速转发路径</code>(Fast forwarding path)<br/>
+若果当前target实现了forwardingTargetForSelector:方法，则调用此方法。如果此方法返回除nil和self的其他对象，则向返回对象重新发送消息。</li>
+<li><code>慢速转发路径</code>(Normal forwarding path)<br/>
+首先runtime发送methodSignatureForSelector:消息查看Selector对应的方法签名，即参数与返回值的类型信息。如果有方法签名返回，runtime则根据方法签名创建描述该消息的NSInvocation，向当前对象发送forwardInvocation:消息，以创建的NSInvocation对象作为参数；若methodSignatureForSelector:无方法签名返回，则向当前对象发送doesNotRecognizeSelector:消息,程序抛出异常退出。</li>
+</ol>
+
+<h4 id="toc_12">所有相关的方法包括：</h4>
+
+<h5 id="toc_13">方案一：</h5>
+
+<pre><code class="language-text">+ (BOOL)resolveInstanceMethod:(SEL)sel
++ (BOOL)resolveClassMethod:(SEL)sel 
+</code></pre>
+
+<p>如方法可见，方案一的懒加载为静态方法，就是用于对类进行动态添加对应IMP，不算是真正意义上的转发消息，只是进行未找到selector的第一个解决办法，会直接修改类对象，在所有的该类的子类都会进行修改。一般针对<code>@dynamic</code>标记的变量进行动态添加get和set方法在这里进行处理。</p>
+
+<h5 id="toc_14">方案二：</h5>
+
+<pre><code class="language-text">- (id)forwardingTargetForSelector:(SEL)aSelector
+</code></pre>
+
+<p>方案二多数是快速转发，将消息原封不动的转发给另一个对象，一般用于实现伪多继承。</p>
+
+<h5 id="toc_15">方案三：</h5>
+
+<pre><code class="language-text">- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector;
+- (void)forwardInvocation:(NSInvocation *)anInvocation;
+</code></pre>
+
+<p>如果方案一和二都没走通，就会走一个完整的消息转发流程。此处会创建一个NSInvocation对象，里面包含target和selector以及所有的参数和返回值。</p>
+
+<p>由于构建NSInvocation会先需要一个NSMethodSignature，这个签名是描述这个selector的返回值和参数的，完整的消息转发必须生成签名，如果签名为nil就会出现“unrecognized selector sent to instance”的错误。</p>
+
+<p>在forwardInvocation中拿到NSInvocation对象后，可以随意修改其参数、selector或者对象。</p>
+
+<p>完整的转发流程如下所示:</p>
+
+<p><img src="media/15378876731075/Class$msgSend.png" alt="Class$msgSend"/></p>
+
+<h3 id="toc_16">（2）NSProxy</h3>
+
+<p>消息转发中得快速转发一个比较大得你应用场景就是多代理和多继承。</p>
+
+<p>Objective-C中有两个根类，一个是NSObject，另一个就是这个NSProxy。</p>
+
+<p>参考：</p>
+
+<p><a href="http://chun.tips/blog/2014/11/06/bao-gen-wen-di-objective%5Bnil%5Dc-runtime(3)%5Bnil%5D-xiao-xi-he-category/">http://chun.tips/blog/2014/11/06/bao-gen-wen-di-objective[nil]c-runtime(3)[nil]-xiao-xi-he-category/</a></p>
+
+<p><a href="http://blog.csdn.net/yanghua_kobe/article/details/8395535">http://blog.csdn.net/yanghua_kobe/article/details/8395535</a></p>
+
+<p><a href="http://tutuge.me/2015/02/16/%E5%88%A9%E7%94%A8NSProxy%E5%AE%9E%E7%8E%B0%E6%B6%88%E6%81%AF%E8%BD%AC%E5%8F%91-%E6%A8%A1%E5%9D%97%E5%8C%96%E7%9A%84%E7%BD%91%E7%BB%9C%E6%8E%A5%E5%8F%A3%E5%B1%82%E8%AE%BE%E8%AE%A1-%E5%8E%9F%E5%88%9B/">http://tutuge.me/2015/02/16/利用NSProxy实现消息转发-模块化的网络接口层设计-原创/</a></p>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876731044.html" 
+	        title="Previous Post: 《Effective Objective-C 2.0》读书笔记3---tips">&laquo; 《Effective Objective-C 2.0》读书笔记3---tips</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876731602.html" 
+	        title="Next Post: SDWebImage源码研究与学习">SDWebImage源码研究与学习 &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

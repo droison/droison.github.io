@@ -1,0 +1,481 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  QDaily - Android MVP改造 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">QDaily - Android MVP改造</h1>
+				<p class="meta"><time datetime="2016-11-01T23:01:13+08:00" pubdate data-updated="true">2016/11/1</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<blockquote>
+<p>演进式框架设计。使得工程未来更有设计感和易于维护。<br/>
+上个月事情多，周末好多时间都周转于河北天津，而且有点懈怠，以后博客继续更新。</p>
+</blockquote>
+
+<p>整个改造思路来源于google的<a href="https://github.com/googlesamples/android-architecture">Android Architecture Blueprints</a>，google这个框架名字就非常霸气，<code>Android架构蓝图</code>，有了这个做参考，给了架构设计一个非常指导性的建议。<br/>
+<span id="more"></span><!-- more --></p>
+
+<h2 id="toc_0">比较MVC和MVP。 MVP到底是什么</h2>
+
+<p><img src="http://obp30zydr.bkt.clouddn.com/2016-11-02-14779833363145.jpg" alt=""/></p>
+
+<p>MVC来源于J2EE（web开发）的一个概念，Model就是一个数据实体，controller在逻辑处理完成后，通知View该更新了，view取model的最新值进行更新。MVC三个对象互相持有依赖。</p>
+
+<p><img src="http://obp30zydr.bkt.clouddn.com/2016-11-02-14779832861420.jpg" alt=""/></p>
+
+<p>主要来源于微软的软件开发（MPF客户端开发）概念。MVP中的M其实是model层的意思，例如我们的getlist、xxxDao类，是一个获取数据的user case。MVC中的model其实属于Presenter的一部分。</p>
+
+<p><img src="http://obp30zydr.bkt.clouddn.com/2016-11-02-14779833189944.jpg" alt=""/><br/>
+一般需要定义的结构。MVP之间的所有依赖都是基于interface。</p>
+
+<p><img src="http://obp30zydr.bkt.clouddn.com/2016-11-02-14779833540807.jpg" alt=""/></p>
+
+<h2 id="toc_1">说下当前的问题</h2>
+
+<ul>
+<li><p>举两个例子</p>
+<pre><code class="language-text">InformationFlowFragment
+LauncherActivity
+</code></pre></li>
+<li><p>最大问题：<code>上帝类</code><br/>
+<img src="http://obp30zydr.bkt.clouddn.com/2016-11-02-14779856223533.jpg" alt=""/></p></li>
+</ul>
+
+<h2 id="toc_2">优劣（改造目标）</h2>
+
+<ul>
+<li>利</li>
+</ul>
+
+<p>可测试（TDD）</p>
+
+<p>可维护（代码复用）</p>
+
+<p>容易Review</p>
+
+<p>信息隐蔽</p>
+
+<ul>
+<li>弊</li>
+</ul>
+
+<p>冗余的，尤其是小型App开发</p>
+
+<p>（有可能）额外的学习曲线</p>
+
+<p>开始编写代码之前需要时间成本</p>
+
+<h2 id="toc_3">改造的要求</h2>
+
+<p>初级目标：VP分离，M可以适当延后。</p>
+
+<ul>
+<li><p>层级结构<br/>
+<img src="http://obp30zydr.bkt.clouddn.com/2016-11-02-14779856369146.jpg" alt=""/></p></li>
+<li><p>Activity用于装配各个MVP组件</p></li>
+</ul>
+
+<p>可见实现，只有装配功能，没有任何具体的业务实现和UI实现。<br/>
+<img src="http://obp30zydr.bkt.clouddn.com/2016-11-02-14779860666565.jpg" alt=""/></p>
+
+<ul>
+<li>Presenter用于实现逻辑。<br/>
+禁止持有任何Context、Application、View、Dialog的UI层信息。与UI渲染所有的联系都来源于view层的抽象。</li>
+</ul>
+
+<p>头文件、成员变量都不能有UI和Android组件。<br/>
+ <img src="http://obp30zydr.bkt.clouddn.com/2016-11-02-14779863995572.jpg" alt=""/></p>
+
+<ul>
+<li>View层用于展示<br/>
+头文件不能有任何逻辑的、网络请求的引用。基本都是UI层和Android组件</li>
+</ul>
+
+<p>成员变量不能有model数据。</p>
+
+<p><img src="http://obp30zydr.bkt.clouddn.com/2016-11-02-14779864656190.jpg" alt=""/></p>
+
+<h3 id="toc_4">关于Model层：</h3>
+
+<ul>
+<li><p>QDaily在网络层（请求，CGI，缓存，prefetcher，download）基本稳定，上层还需要一些小的封装。在现有设计风格上，改造有限。</p></li>
+<li><p>在本地存储方面（sql、xml），因为比较轻，也没有太多值得进行调整和优化的。</p></li>
+<li><p>图片相关的下载和缓存，完全基于glide，在不修改第三方组件的情况下，能做的有限。</p></li>
+</ul>
+
+<p>Model层调整主要在接口封装上。核心还是表现层架构的架构。</p>
+
+<h2 id="toc_5">参考</h2>
+
+<p>参考：<a href="https://github.com/googlesamples/android-architecture">Android Architecture Blueprints</a></p>
+
+<h2 id="toc_6">比较MVC和MVP。 MVP到底是什么</h2>
+
+<p><img src="http://obp30zydr.bkt.clouddn.com/2016-11-02-14779833363145.jpg" alt=""/></p>
+
+<p>MVC来源于J2EE（web开发）的一个概念，Model就是一个数据实体，controller在逻辑处理完成后，通知View该更新了，view取model的最新值进行更新。MVC三个对象互相持有依赖。</p>
+
+<p><img src="http://obp30zydr.bkt.clouddn.com/2016-11-02-14779832861420.jpg" alt=""/></p>
+
+<p>主要来源于微软的软件开发（MPF客户端开发）概念。MVP中的M其实是model层的意思，例如我们的getlist、xxxDao类，是一个获取数据的user case。MVC中的model其实属于Presenter的一部分。</p>
+
+<p><img src="http://obp30zydr.bkt.clouddn.com/2016-11-02-14779833189944.jpg" alt=""/><br/>
+一般需要定义的结构。MVP之间的所有依赖都是基于interface。</p>
+
+<p><img src="http://obp30zydr.bkt.clouddn.com/2016-11-02-14779833540807.jpg" alt=""/></p>
+
+<h2 id="toc_7">说下当前的问题</h2>
+
+<ul>
+<li><p>举两个例子</p>
+<pre><code class="language-text">InformationFlowFragment
+LauncherActivity
+</code></pre></li>
+<li><p>最大问题：<code>上帝类</code><br/>
+<img src="http://obp30zydr.bkt.clouddn.com/2016-11-02-14779856223533.jpg" alt=""/></p></li>
+</ul>
+
+<h2 id="toc_8">优劣（改造目标）</h2>
+
+<ul>
+<li>利</li>
+</ul>
+
+<p>可测试（TDD）</p>
+
+<p>可维护（代码复用）</p>
+
+<p>容易Review</p>
+
+<p>信息隐蔽</p>
+
+<ul>
+<li>弊</li>
+</ul>
+
+<p>冗余的，尤其是小型App开发</p>
+
+<p>（有可能）额外的学习曲线</p>
+
+<p>开始编写代码之前需要时间成本</p>
+
+<h2 id="toc_9">改造的要求</h2>
+
+<p>初级目标：VP分离，M可以适当延后。</p>
+
+<ul>
+<li><p>层级结构<br/>
+<img src="http://obp30zydr.bkt.clouddn.com/2016-11-02-14779856369146.jpg" alt=""/></p></li>
+<li><p>Activity用于装配各个MVP组件</p></li>
+</ul>
+
+<p>可见实现，只有装配功能，没有任何具体的业务实现和UI实现。<br/>
+<img src="http://obp30zydr.bkt.clouddn.com/2016-11-02-14779860666565.jpg" alt=""/></p>
+
+<ul>
+<li>Presenter用于实现逻辑。<br/>
+禁止持有任何Context、Application、View、Dialog的UI层信息。与UI渲染所有的联系都来源于view层的抽象。</li>
+</ul>
+
+<p>头文件、成员变量都不能有UI和Android组件。<br/>
+ <img src="http://obp30zydr.bkt.clouddn.com/2016-11-02-14779863995572.jpg" alt=""/></p>
+
+<ul>
+<li>View层用于展示<br/>
+头文件不能有任何逻辑的、网络请求的引用。基本都是UI层和Android组件</li>
+</ul>
+
+<p>成员变量不能有model数据。</p>
+
+<p><img src="http://obp30zydr.bkt.clouddn.com/2016-11-02-14779864656190.jpg" alt=""/></p>
+
+<h3 id="toc_10">关于Model层：</h3>
+
+<ul>
+<li><p>QDaily在网络层（请求，CGI，缓存，prefetcher，download）基本稳定，上层还需要一些小的封装。在现有设计风格上，改造有限。</p></li>
+<li><p>在本地存储方面（sql、xml），因为比较轻，也没有太多值得进行调整和优化的。</p></li>
+<li><p>图片相关的下载和缓存，完全基于glide，在不修改第三方组件的情况下，能做的有限。</p></li>
+</ul>
+
+<p>Model层调整主要在接口封装上。核心还是表现层架构的架构。</p>
+
+<h2 id="toc_11">参考</h2>
+
+<p>参考：<a href="https://github.com/googlesamples/android-architecture">Android Architecture Blueprints</a></p>
+
+<p>这对于一直困惑于到底该用何种架构的Android开发者来说是好事，开发者只要根据自己项目的情况，在不同的实现中进行选择（app规模、团队状况、维护工作量的大小、平板是否支持、代码简洁程度偏好等等，这些都会影响你的选择），重点是代码结构，整体架构、可测试性和可维护性。</p>
+
+<p>理想状况<br/>
+<img src="http://obp30zydr.bkt.clouddn.com/2016-11-02-14779858041158.jpg" alt=""/></p>
+
+<p>真实案例<br/>
+<img src="http://obp30zydr.bkt.clouddn.com/2016-11-02-14779866246965.jpg" alt=""/></p>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='QDaily.html'>QDaily</a>&nbsp;
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876732737.html" 
+	        title="Previous Post: 闲聊计划">&laquo; 闲聊计划</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876730780.html" 
+	        title="Next Post: 吐槽《盛世的蝼蚁》">吐槽《盛世的蝼蚁》 &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

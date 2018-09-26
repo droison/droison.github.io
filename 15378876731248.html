@@ -1,0 +1,535 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  iOS数据的磁盘缓存实现 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">iOS数据的磁盘缓存实现</h1>
+				<p class="meta"><time datetime="2015-11-19T23:01:13+08:00" pubdate data-updated="true">2015/11/19</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<blockquote>
+<p>虽然第三方框架AFNetworking SDWebImage都有自己的内存缓存和数据缓存，但有时候app内部有一些数据（json、image等）可能有必要单独缓存进行管理，本文就根据最近的需求设计了一个比较简单磁盘缓存工具。</p>
+</blockquote>
+
+<span id="more"></span><!-- more -->
+
+<p>代码前根据需求进行一些分析设计</p>
+
+<ul>
+<li>缓存管理的全局性，使得该类应由单例管理</li>
+<li>因为磁盘缓存，所以有必要在子线程处理，避免卡IO</li>
+<li>缓存应该有过期时间管理，有默认值、也可以自定义</li>
+<li>能够具备 增、删、查的操作</li>
+<li>因为要根据url和params缓存返回的json数据，所以要有对url为key的处理</li>
+</ul>
+
+<p>根据设计，定义h文件的public方法和public的成员变量</p>
+
+<pre><code class="language-text">@interface QDiskCacheService : QService&lt;QService&gt;
+- (void)clearCache;
+- (void)removeCacheForKey:(NSString* __nonnull)key;
+- (BOOL)hasCacheForKey:(NSString* __nonnull)key;
+
+- (NSDictionary * __nullable)jsonForUrl:(NSString * __nonnull)url withParams:(NSDictionary* __nullable)params;
+- (void) setJson:(NSDictionary * __nullable)item forURL:(NSString * __nonnull)url withParams:(NSDictionary* __nullable)params;
+- (void) setJson:(NSDictionary * __nullable)item forURL:(NSString * __nonnull)url withParams:(NSDictionary* __nullable)params withTimeoutInterval:(NSTimeInterval)timeoutInterval;
+
+- (NSData* __nullable)dataForKey:(NSString* __nonnull)key;
+- (void)setData:(NSData* __nonnull)data forKey:(NSString* __nonnull)key;
+- (void)setData:(NSData* __nonnull)data forKey:(NSString* __nonnull)key withTimeoutInterval:(NSTimeInterval)timeoutInterval;
+@property(nonatomic) NSTimeInterval defaultTimeoutInterval; //默认缓存时间 
+@end
+</code></pre>
+
+<p><code>代码中QService为个人定义的一个协议，用于统一管理单例，在工程中，凡是实现该协议的类，均可以通过一个固定的宏实现单例，以后会单独一片文章介绍这个用于单例管理的QServiceCenter</code></p>
+
+<p>由于需要设定保存时间，所以设计一个plist用于保存缓存的key和过期时间，该plist的处理需要一个队列处理，文件保存本地和本地读取的操作在另一个队列完成。</p>
+
+<p>m文件中需要定义一个方法来将params和url合并成一个key的方法。下面是实现细节：</p>
+
+<ol>
+<li><p>init方法需要初始化几个线程队列，初始化目录并把过期缓存清理</p>
+<pre><code class="language-text">_cacheInfoQueue = dispatch_queue_create(&quot;com.qdaily.qcache.info&quot;, DISPATCH_QUEUE_SERIAL);
+dispatch_queue_t priority = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);<br/>
+dispatch_set_target_queue(priority, _cacheInfoQueue);<br/>
+_frozenCacheInfoQueue = dispatch_queue_create(&quot;com.qdaily.qcache.info.frozen&quot;, DISPATCH_QUEUE_SERIAL);<br/>
+priority = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);<br/>
+dispatch_set_target_queue(priority, _frozenCacheInfoQueue);<br/>
+_diskQueue = dispatch_queue_create(&quot;com.qdaily.qcache.disk&quot;, DISPATCH_QUEUE_CONCURRENT);<br/>
+priority = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);<br/>
+dispatch_set_target_queue(priority, _diskQueue);<br/>
+_directory = cacheDirectory;<br/>
+_cacheInfo = [[NSDictionary dictionaryWithContentsOfFile:cachePathForKey(_directory, @&quot;QCache.plist&quot;)] mutableCopy];<br/>
+if(!_cacheInfo) {<br/>
+    _cacheInfo = [[NSMutableDictionary alloc] init];<br/>
+}<br/>
+[[NSFileManager defaultManager] createDirectoryAtPath:_directory withIntermediateDirectories:YES attributes:nil error:NULL];<br/>
+NSTimeInterval now = [[NSDate date] timeIntervalSinceReferenceDate];<br/>
+NSMutableArray* removedKeys = [[NSMutableArray alloc] init];<br/>
+for(NSString* key in _cacheInfo) {<br/>
+    if([_cacheInfo[key] timeIntervalSinceReferenceDate] &lt;= now) {<br/>
+        [[NSFileManager defaultManager] removeItemAtPath:cachePathForKey(_directory, key) error:NULL];<br/>
+        [removedKeys addObject:key];<br/>
+    }<br/>
+}<br/>
+[_cacheInfo removeObjectsForKeys:removedKeys];<br/>
+self.frozenCacheInfo = _cacheInfo;<br/>
+[self setDefaultTimeoutInterval:86400*7];
+</code></pre></li>
+<li><p>缓存的一些必须有的基本操作，清空，删除，多是对缓存列表（plist）的处理</p>
+<pre><code class="language-text">- (void)clearCache {
+    dispatch_sync(_cacheInfoQueue, ^{<br/>
+        for(NSString* key in _cacheInfo) {<br/>
+            [[NSFileManager defaultManager] removeItemAtPath:cachePathForKey(_directory, key) error:NULL];<br/>
+        }<br/>
+        [_cacheInfo removeAllObjects];<br/>
+        dispatch_sync(_frozenCacheInfoQueue, ^{<br/>
+            self.frozenCacheInfo = [_cacheInfo copy];<br/>
+        });<br/>
+        [self setNeedsSave];<br/>
+    });<br/>
+}
+</code></pre></li>
+</ol>
+
+<hr/>
+
+<pre><code class="language-text">    - (void)removeCacheForKey:(NSString*)key {
+        CHECK_FOR_QCACHE_PLIST();
+
+        dispatch_async(_diskQueue, ^{
+            [[NSFileManager defaultManager] removeItemAtPath:cachePathForKey(_directory, key) error:NULL];
+        });
+
+        [self setCacheTimeoutInterval:0 forKey:key];
+    }
+</code></pre>
+
+<hr/>
+
+<pre><code class="language-text">    - (BOOL)hasCacheForKey:(NSString*)key {
+        NSDate* date = [self dateForKey:key];
+        if(date == nil) return NO;
+        if([date timeIntervalSinceReferenceDate] &lt; CFAbsoluteTimeGetCurrent()) return NO;
+
+        return [[NSFileManager defaultManager] fileExistsAtPath:cachePathForKey(_directory, key)];
+    }
+</code></pre>
+
+<hr/>
+
+<pre><code class="language-text">    - (NSDate*)dateForKey:(NSString*)key {
+        __block NSDate* date = nil;
+
+        dispatch_sync(_frozenCacheInfoQueue, ^{
+            date = (self.frozenCacheInfo)[key];
+        });
+
+        return date;
+    }
+</code></pre>
+
+<hr/>
+
+<pre><code class="language-text">    - (NSArray*)allKeys {
+        __block NSArray* keys = nil;
+
+        dispatch_sync(_frozenCacheInfoQueue, ^{
+            keys = [self.frozenCacheInfo allKeys];
+        });
+
+        return keys;
+    }
+</code></pre>
+
+<hr/>
+
+<pre><code class="language-text">    - (void)setCacheTimeoutInterval:(NSTimeInterval)timeoutInterval forKey:(NSString*)key {
+        NSDate* date = timeoutInterval &gt; 0 ? [NSDate dateWithTimeIntervalSinceNow:timeoutInterval] : nil;
+
+        // Temporarily store in the frozen state for quick reads
+        dispatch_sync(_frozenCacheInfoQueue, ^{
+            NSMutableDictionary* info = [self.frozenCacheInfo mutableCopy];
+
+            if(date) {
+                info[key] = date;
+            } else {
+                [info removeObjectForKey:key];
+            }
+
+            self.frozenCacheInfo = info;
+        });
+
+        // Save the final copy (this may be blocked by other operations)
+        dispatch_async(_cacheInfoQueue, ^{
+            if(date) {
+                _cacheInfo[key] = date;
+            } else {
+                [_cacheInfo removeObjectForKey:key];
+            }
+
+            dispatch_sync(_frozenCacheInfoQueue, ^{
+                self.frozenCacheInfo = [_cacheInfo copy];
+            });
+
+            [self setNeedsSave];
+        });
+    }
+</code></pre>
+
+<hr/>
+
+<pre><code class="language-text">    - (void)setNeedsSave {
+        dispatch_async(_cacheInfoQueue, ^{
+            if(_needsSave) return;
+            _needsSave = YES;
+
+            double delayInSeconds = 0.5;
+            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+            dispatch_after(popTime, _cacheInfoQueue, ^(void){
+                if(!_needsSave) return;
+                [_cacheInfo writeToFile:cachePathForKey(_directory, @&quot;QCache.plist&quot;) atomically:YES];
+                _needsSave = NO;
+            });
+        });
+    }
+</code></pre>
+
+<ol>
+<li><p>具体的实现，对于data的实现不列出来了，只标记url的处理，这种保存在debug下按分级目录保存，易于查看和调试，在release下直接采用md5为key</p>
+<pre><code class="language-text">- (NSDictionary *)jsonForUrl:(NSString *)url withParams:(NSDictionary*)params {
+#ifdef DEBUG<br/>
+    NSString* filePath = [self keyForUrl:url params:params]; //debug下其实是一个相对路径<br/>
+    NSDate* date = [self dateForKey:filePath];<br/>
+    if(date == nil || [date timeIntervalSinceReferenceDate] &lt; CFAbsoluteTimeGetCurrent()) return nil;<br/>
+    if ([[NSFileManager defaultManager] fileExistsAtPath:[_directory stringByAppendingPathComponent:filePath]]) {<br/>
+        NSData *data = [NSData dataWithContentsOfFile:[_directory stringByAppendingPathComponent:filePath]];<br/>
+        NSDictionary *item = [NSKeyedUnarchiver unarchiveObjectWithData:data];<br/>
+        return item;<br/>
+    }<br/>
+    return nil;<br/>
+#else<br/>
+    NSString* key = [self keyForUrl:url params:params];<br/>
+    return [NSKeyedUnarchiver unarchiveObjectWithData:[self dataForKey:key]];<br/>
+#endif<br/>
+}
+</code></pre></li>
+</ol>
+
+<hr/>
+
+<pre><code class="language-text">    - (void) setJson:(NSDictionary *)item forURL:(NSString *)url withParams:(NSDictionary*)params {
+        [self setJson:item forURL:url withParams:params withTimeoutInterval:self.defaultTimeoutInterval];
+    }
+</code></pre>
+
+<hr/>
+
+<pre><code class="language-text">    - (void) setJson:(NSDictionary *)item forURL:(NSString *)url withParams:(NSDictionary*)params withTimeoutInterval:(NSTimeInterval)timeoutInterval{
+        if (item == nil || item.count == 0) {
+            return;
+        }
+    #ifdef DEBUG
+        NSString* filePath = [self keyForUrl:url params:params]; //debug下其实是一个相对路径
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:item];
+        dispatch_async(_diskQueue, ^{
+            [data writeToFile:[_directory stringByAppendingPathComponent:filePath] atomically:YES];
+        });
+        [self setCacheTimeoutInterval:timeoutInterval forKey:filePath];
+    #else
+        NSString* key = [self keyForUrl:url params:params];
+        [self setData:[NSKeyedArchiver archivedDataWithRootObject:item] forKey:key withTimeoutInterval:timeoutInterval];
+    #endif
+    }
+</code></pre>
+
+<hr/>
+
+<pre><code class="language-text">    - (NSString*) keyForUrl:(NSString *)url params:(NSDictionary*)params {
+    #ifdef DEBUG
+        NSRange range = [url rangeOfString:@&quot;/&quot; options:NSBackwardsSearch];
+        NSString *cacheName = [NSString stringWithFormat:@&quot;%@%@&quot;, [url substringFromIndex:range.location + range.length], [NSURL queryStringFromParameters:params]];
+
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+
+        NSString* relativePath = [NSString stringWithFormat:@&quot;%@/%@&quot;, @&quot;QUrlCaches&quot;, [url substringToIndex:range.location]];
+        NSString *filePath = [NSString stringWithFormat:@&quot;%@/%@&quot;, _directory, relativePath];
+        BOOL ui;
+        if (![fileManager fileExistsAtPath:filePath isDirectory:&amp;ui])
+        {
+            [fileManager createDirectoryAtPath:filePath withIntermediateDirectories:YES attributes:nil error:nil];
+        }
+        return [NSString stringWithFormat:@&quot;%@/%@&quot;, relativePath, cacheName];
+    #else 
+        NSString *cacheName = [NSString stringWithFormat:@&quot;%@%@&quot;, url, [NSURL queryStringFromParameters:params]]; //非debug直接对url做md5
+        return [cacheName lf_md5Hash];
+    #endif
+    }
+</code></pre>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876731282.html" 
+	        title="Previous Post: iOS hook实践（2）---入门插件实现">&laquo; iOS hook实践（2）---入门插件实现</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876731318.html" 
+	        title="Next Post: iOS hook实践（1）">iOS hook实践（1） &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

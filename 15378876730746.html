@@ -1,0 +1,415 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  在OSX10.10上的Xcode6免证书真机调试图文教程 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">在OSX10.10上的Xcode6免证书真机调试图文教程</h1>
+				<p class="meta"><time datetime="2014-10-19T23:01:13+08:00" pubdate data-updated="true">2014/10/19</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<p>所需设备：越狱后的iPhone一台，并且安装AppSync插件<br/><br/>
+10.10Yosemete，Xcode6.1，iOS6.1上测试通过，可完美调试无报错</p>
+
+<h2 id="toc_0">第一步：制作证书</h2>
+
+<span id="more"></span><!-- more -->
+
+<p>1）打开  Finder－&gt;应用程序－&gt;实用工具 -&gt;  钥匙串访问   </p>
+
+<p><img src="http://y.photo.qq.com/img?s=9oLzWqW03&amp;l=y.jpg" alt="pic1"/></p>
+
+<p>2）单击：&quot;钥匙串访问&quot;选择  &quot;证书&quot; 再选择&quot;创建证书&quot;<br/><br/>
+注意：证书名称必须填写为 iPhone Developer（注意大小写）,并且勾选&quot;让我覆盖这些默认值&quot;<br/><br/>
+<img src="http://y.photo.qq.com/img?s=ZCMxmc1my&amp;l=y.jpg" alt="pic2"/></p>
+
+<p>接下来的步骤一直继续使用默认参数即可.</p>
+
+<h2 id="toc_1">第二步：修改XCode配置文件</h2>
+
+<p>注：如遇到文件无法解锁没有权限不能修改，右键复制，然后修改副本文件，修改好更改名字再替换原来的<br/>
+        plist文件默认会使用Xcode自带的plist编辑器打开,如果无法保存,请用PlistEdit进行plist文件的编辑</p>
+
+<p>1）修改SDKsettings.plist文件<br/>
+打开Finder，点击任务栏的 前往－&gt;前往文件夹，输入   </p>
+
+<pre><code class="language-text">/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdkpropro
+</code></pre>
+
+<p>打开该目录下的SDKSettings.plist文件（修改2项）  </p>
+
+<pre><code class="language-text">CODE_SIGNING_REQUIRED  值改成NO
+ENTITLEMENTS_REQUIRED  值改成NO
+</code></pre>
+
+<p><img src="http://y.photo.qq.com/img?s=mxpPe3w0m&amp;l=y.jpg" alt="pic3"/></p>
+
+<p>2）修改Info.plist文件</p>
+
+<pre><code class="language-text">/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/
+</code></pre>
+
+<p>用XCode打开该目录下的Info.plist文件，右击--Add Row(增加两项)</p>
+
+<pre><code class="language-text">PROVISIONING_PROFILE_ALLOWED   值为 NO
+PROVISIONING_PROFILE_REQUIRED  值为 NO
+</code></pre>
+
+<p><img src="http://y.photo.qq.com/img?s=K5EOkJWRA&amp;l=y.jpg" alt="pic4"/></p>
+
+<p>3）将上面Info.plist文件中的 &quot;XCiPhoneOSCodeSignContext&quot; 替换成&quot;XCCodeSignContext&quot;,即将其中的”iPhoneOS“字段删除（共3处）<br/><br/>
+<img src="http://y.photo.qq.com/img?s=fFPFkAiFL&amp;l=y.jpg" alt="pic5"/></p>
+
+<h2 id="toc_2">第三步：设置脚本权限</h2>
+
+<p>打开Finder，点击任务栏的 前往－&gt;前往文件夹，输入   </p>
+
+<pre><code class="language-text">/Applications/Xcode.app/Contents/Developer/iphoneentitlements
+</code></pre>
+
+<p>新建gen_entitlements.py文件，内容如下  </p>
+
+<pre><code class="language-text">#!/usr/bin/env python
+
+import sys
+import struct
+
+if len(sys.argv) != 3:
+    print &quot;Usage: %s appname dest_file.xcent&quot; % sys.argv[0]
+    sys.exit(-1)
+
+APPNAME = sys.argv[1]
+DEST = sys.argv[2]
+
+if not DEST.endswith(&#39;.xml&#39;) and not DEST.endswith(&#39;.xcent&#39;):
+    print &quot;Dest must be .xml (for ldid) or .xcent (for codesign)&quot;
+    sys.exit(-1)
+
+entitlements = &quot;&quot;&quot;
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;
+&lt;plist version=&quot;1.0&quot;&gt;
+&lt;dict&gt;
+    &lt;key&gt;application-identifier&lt;/key&gt;
+    &lt;string&gt;%s&lt;/string&gt;
+    &lt;key&gt;get-task-allow&lt;/key&gt;
+    &lt;true/&gt;
+&lt;/dict&gt;
+&lt;/plist&gt;
+&quot;&quot;&quot; % APPNAME
+
+f = open(DEST,&#39;w&#39;)
+if DEST.endswith(&#39;.xcent&#39;):
+    f.write(&quot;\xfa\xde\x71\x71&quot;)
+    f.write(struct.pack(&#39;&gt;L&#39;, len(entitlements) + 8))
+f.write(entitlements)
+f.close()
+</code></pre>
+
+<p>然后将gen_entitlements.py文件放到/Applications/Xcode.app/Contents/Developer/iphoneentitlements（新建）下<br/>
+打开终端，输入以下命令（可能需要输入密码,如果没有密码则无法完成此命令,请在用户与群组中新增密码）</p>
+
+<pre><code class="language-text">sudo chmod 777 /Applications/Xcode.app/Contents/Developer/iphoneentitlements/gen_entitlements.py
+</code></pre>
+
+<h2 id="toc_3">第四步：修改项目属性 （每次新建项目都要执行）</h2>
+
+<p>1）点击项目图标，找到&quot;BuildSettings&quot;选项下的&quot;Code Sign Identity&quot;，将&quot;Debug&quot;下的&quot;Any iOS SDK&quot;子项改为第一步添加的证书&quot;iPhone Developer&quot;</p>
+
+<p>然后点击菜单栏File-&gt;New-&gt;File-&gt;iOS-&gt;Resource-&gt;Property List 点击Next,将名字设置为Entitlements.plist（有可能已经存在了）<br/><br/>
+打开Entitlements.plist文件,添加一个Row,名字为&quot;Can be debugged&quot;,Value设置为&quot;YES&quot;<br/><br/>
+<img src="http://y.photo.qq.com/img?s=B91ZbK5t0&amp;l=y.jpg" alt="pic6"/></p>
+
+<p>然后找到&quot;BuildSettings&quot;选项下的&quot;Code Sign Entitlements&quot;,将&quot;Debug&quot;下的&quot;Any iOS SDK&quot;子项改为Entitlements.plist<br/><br/>
+<img src="http://y.photo.qq.com/img?s=MBAdNblmL&amp;l=y.jpg" alt="pic7"/></p>
+
+<p>2）添加脚本，切换到Build Phases选项，点击任务栏</p>
+
+<p>（这里与Xcode5.0以下版本不同）<br/><br/>
+ Editor－&gt;Add Build Phase －&gt; Add Run Script Build Phase</p>
+
+<pre><code class="language-text">export
+CODESIGN_ALLOCATE=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/codesign_allocate
+
+if [ &quot;${PLATFORM_NAME}&quot; ==&quot;iphoneos&quot; ] || [ &quot;${PLATFORM_NAME}&quot; == &quot;ipados&quot;]; then
+
+/Applications/Xcode.app/Contents/Developer/iphoneentitlements/gen_entitlements.py &quot;my.company.${PROJECT_NAME}&quot; &quot;${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/${PROJECT_NAME}.xcent&quot;;
+
+codesign -f -s &quot;iPhone Developer&quot; --entitlements &quot;${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/${PROJECT_NAME}.xcent&quot; &quot;${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/&quot;
+
+fi
+</code></pre>
+
+<p><img src="http://y.photo.qq.com/img?s=OgiQSc1aM&amp;l=y.jpg" alt="pic8"/></p>
+
+<h2 id="toc_4">第五步：连接设备与调试(iphone/ipad)</h2>
+
+<p>关闭一次XCode，插拔一次你的设备，clean一下你的工程，然后选择&quot;Build Settings&quot;-&quot;Code Signing&quot;-&quot;Provisioning profile&quot;，选择一个可用的Provisioning Profile即可调试。</p>
+
+<p><img src="http://y.photo.qq.com/img?s=JB7PvlIVW&amp;l=y.jpg" alt="pic1"/></p>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876731145.html" 
+	        title="Previous Post: MAC 设置环境变量path的几种方法">&laquo; MAC 设置环境变量path的几种方法</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876730924.html" 
+	        title="Next Post: 从开发角度，比较三种iOS图标矢量化方案">从开发角度，比较三种iOS图标矢量化方案 &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

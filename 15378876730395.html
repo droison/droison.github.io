@@ -1,0 +1,358 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  新界面调试工具FLEX简单介绍 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">新界面调试工具FLEX简单介绍</h1>
+				<p class="meta"><time datetime="2014-09-05T23:01:13+08:00" pubdate data-updated="true">2014/9/5</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<p>Flipboard最近开源了他们的应用内调试工具，活生生的客户端版的reveal，功能非常强大。github的地址：<a href="https://github.com/Flipboard/FLEX">https://github.com/Flipboard/FLEX</a>  </p>
+
+<p>现在我们把这个开源库引入了<code>br_trunk</code>，大家可以在<code>debug</code>版下使用该工具调试页面。</p>
+
+<span id="more"></span><!-- more -->
+
+<h2 id="toc_0">启用FLEX工具步骤</h2>
+
+<p><img src="http://y.photo.qq.com/img?s=8gSIe2132&amp;l=y.jpg" alt="pic"/></p>
+
+<h2 id="toc_1">效果</h2>
+
+<p><img src="http://y.photo.qq.com/img?s=yEjquPlRy&amp;l=y.jpg" alt="pic"/></p>
+
+<p>未来我们会对这个工具进行维护和一些定制，大家使用过程中如果有问题可以找<code>billchai</code>和<code>ableliang</code>反馈。</p>
+
+<h1 id="toc_2">功能简介（以下摘自网络）：</h1>
+
+<p>Flipboard/FLEX (Flipboard Explorer)是Flipboard发布的应用内调试工具，开发者可在toolbar中查看和修改运行中的应用。</p>
+
+<p><img src="http://engineering.flipboard.com/assets/flex/basic-view-exploration.gif" alt="View Hierarchy Exploration"/></p>
+
+<h2 id="toc_3">功能：</h2>
+
+<p>可以在层级中检测和调整视图，可查看每个对象上的属性和变量；<br/><br/>
+动态调整任何属性和变量；<br/><br/>
+动态调用实例和类方法；<br/><br/>
+通过扫描 heap访问任何活跃的对象；<br/><br/>
+在app的sandbox中查看文件系统；<br/><br/>
+探究应用中所有类和系统框架（公开的和私有的）；<br/><br/>
+快速访问有用的对象（比如[UIApplication sharedApplication]）、app委托以及关键窗口的根视图控制器等；<br/><br/>
+动态查看和调整 NSUserDefaults 值。</p>
+
+<p>与其他工具不同的是FLEX完全在应用中运行，无需连接至LLDB/Xcode，或者不同的远程调试服务器，在真机和模拟器上运行都很好。</p>
+
+<h2 id="toc_4">用法</h2>
+
+<p>真的是一键启用:</p>
+
+<pre><code class="language-text">[[FLEXManager sharedManager] showExplorer];
+</code></pre>
+
+<h2 id="toc_5">特性示例</h2>
+
+<h3 id="toc_6">调整视图</h3>
+
+<p>选中视图，点击工具栏下的“info bar”展示关于视图的更多信息，可以在此调整属性和调用方法。</p>
+
+<p><img src="http://engineering.flipboard.com/assets/flex/advanced-view-editing.gif" alt="View Modification"/></p>
+
+<h3 id="toc_7">堆上的所有对象</h3>
+
+<p>FLEX要求为所有的内存块分配内存，你可以在此查看所有的内容。</p>
+
+<p><img src="http://engineering.flipboard.com/assets/flex/heap-browser.gif" alt="Heap Exploration"/></p>
+
+<h3 id="toc_8">文件浏览器</h3>
+
+<p>在app的sandbox中查看文件系统，FLEX展示文件大小、图片预览以及 .json 和.plist文件的打印。</p>
+
+<p><img src="http://engineering.flipboard.com/assets/flex/file-browser.gif" alt="File Browser"/></p>
+
+<h3 id="toc_9">探索系统库</h3>
+
+<p>开发者可深挖所有公开和私有的内容。你可以为它创建实例和探索它的 Default state 来学习更多内容。</p>
+
+<p><img src="http://engineering.flipboard.com/assets/flex/system-libraries-browser.gif" alt="System Libraries Browser"/></p>
+
+<h3 id="toc_10">NSUserDefaults 编辑</h3>
+
+<p>FLEX允许你编辑的默认值可以是任意的字符串、数字、数组以及字典的组合。输入被解析为JSON。如果为 defaults key (i.e. NSDate)设置其他类型的对象，那你只能查看但无法编辑。</p>
+
+<p><img src="http://engineering.flipboard.com/assets/flex/nsuserdefaults-editor.gif" alt="NSUserDefaults Editor"/></p>
+
+<h3 id="toc_11">未来计划</h3>
+
+<p>Swift运行时内省 (swift classes, swift objects on the heap, etc.)<br/>
+网络请求日志<br/>
+通过文件浏览器中文件大小在Search bar中进行过滤和排序<br/>
+提升对文件类型的检测以及在文件浏览器中展示功能<br/>
+添加NSUserDefault key/value pairs<br/>
+等等</p>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876730924.html" 
+	        title="Previous Post: 从开发角度，比较三种iOS图标矢量化方案">&laquo; 从开发角度，比较三种iOS图标矢量化方案</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876731177.html" 
+	        title="Next Post: 对于iPad大字体适配的几个可用的参考方法">对于iPad大字体适配的几个可用的参考方法 &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,831 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  【Android&iOS】QDaily基于WebP的流量优化实践 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">【Android&iOS】QDaily基于WebP的流量优化实践</h1>
+				<p class="meta"><time datetime="2016-08-01T23:01:13+08:00" pubdate data-updated="true">2016/8/1</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<hr/>
+
+<blockquote>
+<p>本文属于“好奇心日报app的流量和文章打开速度优化”系列文章第一篇，主要介绍基于图片压缩的流量优化。<br/>
+流量优化对于一个app来讲意义非常重大，能节约用户的流量，节约用户的存储空间，而且能有提高网络请求的回包速度，提高app的速度。因此流量优化历来都是app的优化重点，而且是一个持续优化的点。</p>
+
+<p>QDaily是一个多图片的新闻类应用，采编喜欢上传gif图来提高内容的表现力，这也使得流量消耗非常大。粗略估计，用户在浏览完第一页所有新闻（共48篇），会消耗流量达100m，其中98m为图片，这里值得优化的空间非常大。</p>
+
+<p>针对这种情况，我们先后使用的优化包含：wifi条件下预载所有文章、图片和js、css数据；重用所有已经下载的js、css和图片的缓存；后台图片的压缩以及客户端图片的WebP化。</p>
+
+<p>其中，后台压缩和WebP化依赖第三方多媒体处理服务器，已知比较好的国内服务有腾讯优图和七牛。这里我们采用的七牛的服务，以下很多具体的调用都是基于七牛的。</p>
+
+<p>我们的后台通过七牛的图片压缩（包含质量和分辨率），我们将首页流量由100m减少到了80m，依然有极大的提升空间。因此客户端采用基于WebP的流量压缩方案，将流量由80m压缩到了20m，减少了75%！相对于最初的处理，流量减少了80%！（android大多数机型支持WebP animated，压缩能达到80%，但iOS的压缩率取决于首页中gif图的个数和大小，测试大概优化在60%-80%之间）</p>
+
+<p>下面就介绍下这个效果极好的WebP的流量解决方案。<br/>
+<span id="more"></span><!-- more --></p>
+
+<h1 id="toc_0">一、WebP的介绍</h1>
+
+<h2 id="toc_1">1、什么是 WebP</h2>
+
+<p>WebP (发音 weppy )，是一种同时提供了有损压缩与无损压缩的图片文件格式，是Google新推出的影像技术，它可让网页图档有效进行压缩，同时又不影响图片格式兼容与实际清晰度，进而让整体网页下载速度加快。</p>
+</blockquote>
+
+<ul>
+<li>WebP 无损压缩的图片可以比同样大小的 PNG 小 26%；</li>
+<li>WebP 有损压缩的图片可以比同样大小的 JPEG 小 25-34%；</li>
+<li>WebP 支持无损的透明图层通道，代价只需增加 22% 的字节存储空间；</li>
+<li>WebP 有损透明图像可以比同样大小的 PNG 图像小3倍。</li>
+</ul>
+
+<h2 id="toc_2">2、手机端支持情况</h2>
+
+<ul>
+<li>WebP在手机端浏览器的支持情况（WebView &amp; UIWebView）</li>
+</ul>
+
+<p><img src="media/15378876731000/blog_1473649673.jpg" alt="blog_1473649673"/></p>
+
+<ul>
+<li>Native<br/>
+Android在4.0以上Image直接支持对WebP的解码。iOS可以通过google提供的WebP解析库来实现UIImageView中显示WebP。</li>
+</ul>
+
+<p>QDaily不支持4.0以下手机（现在估计也没啥支持的了吧。。。），所以下面的功能并没有测试，无脑搬运：<br/>
+Android 4.0 以下 WebP 解析库<a href="https://github.com/alexey-pelykh/webp-android-backport">（链接）</a></p>
+
+<p>iOS WebP 解析库<a href="https://github.com/carsonmcdonald/WebP-iOS-example">（链接）</a></p>
+
+<h2 id="toc_3">3、WebP工具在Mac Os下的安装（本地编解码）</h2>
+
+<ul>
+<li>方式一（推荐）：使用Homebrew<br/>
+1.安装Homebrew。参考网页<a href="http://brew.sh/index_zh-cn.html">http://brew.sh/index_zh-cn.html</a></li>
+</ul>
+
+<p>2.安装完成后，用如下命令安装libwebp。</p>
+
+<pre><code class="language-text">brew install webp
+</code></pre>
+
+<ul>
+<li>方式二：使用MacPorts安装</li>
+</ul>
+
+<p>1.到此网站链接下载与系统版本对应的MacPorts，安装MacPorts之前需要安装Xcode。</p>
+
+<p>2.按照此文档对MacPorts进行安装，链接，我选择的是下载.pkg文件进行安装的。整个安装过程中建议准备梯子进行科学上网。</p>
+
+<p>3.安装完成后更新：</p>
+
+<pre><code class="language-text">sudo port -v selfupdate
+</code></pre>
+
+<p>4.然后安装libwebp，</p>
+
+<pre><code class="language-text">sudo port install webp
+</code></pre>
+
+<ul>
+<li>使用工具进行WebP编解码</li>
+</ul>
+
+<p>1.使用 cwebp 将 JPEG 或 PNG 图像转换成 WebP 格式。</p>
+
+<pre><code class="language-text">cwebp [options] -q quality input.jpg -o output.webp
+</code></pre>
+
+<p>2.使用 dwebp 实用程序将 WebP 图像转换回 PNG、PAM、PPM 或 PGM 图像。</p>
+
+<pre><code class="language-text">dwebp input_file.webp [options] [-o output_file]
+</code></pre>
+
+<h1 id="toc_4">二、QDaily iOS客户端中图片流量优化方案</h1>
+
+<h2 id="toc_5">1、iOS Native</h2>
+
+<p>QDaily的Native图片加载使用的SDWebImage，该组件直接支持WebP的解码。需要在将预编译宏&#39;WebP&#39;置为1，并在pod中引入&#39;iOS-WebP&#39;即可。</p>
+
+<p>我们图片显示后台是七牛的，默认传给客户端的参数是一张jpg或者png的图片链接，通过修改url的请求参数实现对WebP图片的获取。亲测iOS下对WebP Animated的支持很差，经常有转码失败情况，所以iOS中并未支持WebP的动图显示。</p>
+
+<p>所有SDWebImage的图片加载都首先经过SDWebImageManager中下面的方法：</p>
+
+<pre><code class="language-text">    - (id &lt;SDWebImageOperation&gt;)downloadImageWithURL:(NSURL *)url
+                                     options:(SDWebImageOptions)options
+                                    progress:(SDWebImageDownloaderProgressBlock)progressBlock
+                                   completed:(SDWebImageCompletionWithFinishedBlock)completedBlock
+</code></pre>
+
+<p>我们通过在该方法最初修改url的参数来实现对请求url的替换和本地缓存的读取：</p>
+
+<pre><code class="language-text">    {
+        if ([url isKindOfClass:NSString.class]) {
+            url = [NSURL URLWithString:(NSString *)url];
+        }
+        if (![url isKindOfClass:NSURL.class]) {
+            url = nil;
+        }
+        url = [url qd_replaceToWebPURLWithScreenWidth];
+        ...
+        ...
+    }
+</code></pre>
+
+<p>为NSURL增加扩展NSURL+ReplaceWebP</p>
+
+<pre><code class="language-objectivec">NSURL+ReplaceWebP.h
+
+@interface NSURL (ReplaceWebP)
+- (NSURL *)qd_replaceToWebPURLWithScreenWidth;
+- (NSString *)qd_defultWebPURLCacheKey;
+- (BOOL)qd_isShouldReplaceImageFormat;
+@end
+</code></pre>
+
+<pre><code class="language-objectivec">NSURL+ReplaceWebP.m
+
+static NSString * const qdailyHost = @&quot;img.qdaily.com&quot;;
+@implementation NSURL (ReplaceWebP)
+- (NSString *)qd_defultWebPURLCacheKey {
+    if (![self qd_isShouldReplaceImageFormat]) {
+        return self.absoluteString;
+    }
+    NSString *key;
+    if ([self isWebPURL]) {
+        key = self.absoluteString;
+    } else {
+        key = [self qd_replaceToWebPURLWithScreenWidth].absoluteString;
+    }
+    return key.lowercaseString;
+}
+
+- (NSURL *)qd_replaceToWebPURLWithImageWidth:(int)width {
+    if ([self qd_isShouldReplaceImageFormat]) {
+        NSString *urlStr;
+        if ([self URLStringcontainFomartString:@&quot;?&quot;]) {
+            if ([self URLStringcontainFomartString:@&quot;format/jpg&quot;]) {
+                urlStr = [self.absoluteString stringByReplacingOccurrencesOfString:@&quot;format/jpg&quot; withString:@&quot;format/webp&quot;];
+            } else {
+                NSString *suffixStr = @&quot;imageView2/0/format/webp/ignore-error/1&quot;;
+                urlStr = [NSString stringWithFormat:@&quot;%@/%@&quot;, self.absoluteString, suffixStr];
+            }
+        } else {
+            NSString *pathExtension = [[self.absoluteString.pathExtension componentsSeparatedByString:@&quot;-&quot;] firstObject];
+            urlStr = [NSString stringWithFormat:@&quot;%@.%@-WebPiOSW%d&quot;,self.absoluteString.stringByDeletingPathExtension, pathExtension, width];
+        }
+        return [NSURL URLWithString:urlStr];
+    }
+    return self;
+}
+
+- (NSURL *)qd_replaceToWebPURLWithScreenWidth {
+    
+    int width = (int)([UIScreen mainScreen].bounds.size.width * [UIScreen mainScreen].scale);
+    return [self qd_replaceToWebPURLWithImageWidth:(int)width];
+}
+
+- (BOOL)isQdailyHost {
+    NSString *nsModel = [UIDevice currentDevice].model;
+    BOOL s_isiPad = [nsModel hasPrefix:@&quot;iPad&quot;];
+    if (s_isiPad) return NO;
+    return [self URLStringcontainFomartString:qdailyHost];
+}
+
+- (BOOL)qd_isShouldReplaceImageFormat {
+    if (![self isQdailyHost]) {
+        return NO;
+    }
+    if ([self isWebPURL]) {
+        return NO;
+    }
+    NSArray *extensions = @[@&quot;.jpg&quot;, @&quot;.jpeg&quot;, @&quot;.png&quot;];
+    for (NSString *extension in extensions) {
+        if ([self.absoluteString.lowercaseString rangeOfString:extension options:NSCaseInsensitiveSearch].location != NSNotFound){
+            return YES;
+        }
+    }
+    return NO;
+}
+
+- (BOOL)URLStringcontainFomartString:(NSString *)string {
+    return ([self.absoluteString.lowercaseString rangeOfString:string options:NSCaseInsensitiveSearch].location != NSNotFound);
+}
+
+- (BOOL)isWebPURL {
+    return [self URLStringcontainFomartString:@&quot;-webp&quot;] || [self URLStringcontainFomartString:@&quot;/webp&quot;];
+}
+@end
+</code></pre>
+
+<p>因修改了url值，若在上层通过SDImageCache判断是否有本地缓存时，也需要对url先做qd_defultWebPURLCacheKey来获取其真实缓存的key。</p>
+
+<h2 id="toc_6">2、iOS WebView中</h2>
+
+<p>苹果系列所有的webkit内核现在都不支持解析WebP格式的图片，QDaily处理这里主要采用的iOS系统的NSURLProtocol来替换其网络请求，再讲网络回包数据进行转码成jpg或者png（为了透明度），再返回给webview进行渲染的。</p>
+
+<p>同样的，iOS在此处依然不对gif进行任何处理。</p>
+
+<p>另外要注意的是，NSURLProtocol会拦截全局的网络流量，为避免误伤，这里需要单独识别是否是WebView发起的请求，可以通过识别request中的ua是否包含&quot;AppleWebKit&quot;来实现。</p>
+
+<p>直接上代码：</p>
+
+<pre><code class="language-objectivec">
+@implementation QDWebURLProtocol
+
++ (BOOL)canInitWithRequest:(NSURLRequest *)request {
+    NSString *ua = [request valueForHTTPHeaderField:@&quot;User-Agent&quot;];
+    if ([request.URL qd_isShouldReplaceImageFormat] &amp;&amp; [ua lf_containsSubString:@&quot;AppleWebKit&quot;]) {
+        return YES;
+    }
+    return NO;
+}
+
++(NSURLRequest *)canonicalRequestForRequest:(NSURLRequest *)request{
+    return request;
+}
+
+- (void)startLoading {
+    if ([self.request.URL qd_isShouldReplaceImageFormat]) {
+        [[SDWebImageManager sharedManager] downloadImageWithURL:self.request.URL
+                                                        options:0
+                                                       progress:nil
+                                                      completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *imageURL)
+                                                    {
+                                                          NSData *data;
+                                                          if ([imageURL.absoluteString.lowercaseString lf_containsSubString:@&quot;.png&quot;]) {
+                                                              data = UIImagePNGRepresentation(image);
+                                                          } else {
+                                                              data = UIImageJPEGRepresentation(image, 1);
+                                                          }
+                                                          [self.client URLProtocol:self didLoadData:data];
+                                                          [self.client URLProtocolDidFinishLoading:self];
+                                                      }];
+        
+    }
+ 
+}
+- (void)stopLoading { 
+}
+@end
+</code></pre>
+
+<p>另外，QDaily实现了内部文章的缓存，包含js、css以及image等。这里通过NSURLCache来实现。相应的，基于WebP的图片缓存的读取也应该在NSURLCache中处理，在先处理完URL后，用新的Key来进行映射。</p>
+
+<p>这里建议所有基于WebView的流量优化都最好用UA的判断包住，避免带来问题。因为无论NSURLProtocol还是NSURLCache都是全局网络控制。</p>
+
+<h1 id="toc_7">三、QDaily Android客户端的图片流量优化方案</h1>
+
+<p>WebP就是google出的编码格式，和Android同宗同源，支持自然会好一些。4.0以上的系统，原生默认支持WebP的展示。不过鉴于国内android手机各种奇葩的系统，有必要在WebView中进行WebP的识别支持。</p>
+
+<h2 id="toc_8">1、Native部分的WebP</h2>
+
+<p>QDaily的Android客户端的图片请求使用的glide，所有请求的缓存通过GlideModule的形式进行全部的本地接管，没有使用他们默认的cache。</p>
+
+<p>为了解耦方便和避免侵入性，我们在glide和业务代码之间封装了ImageManager，所有的图片请求都会走这里进行发送，因此，WebP的优化和处理主要在这里进行。</p>
+
+<p>主要包含以下几个方法：</p>
+
+<pre><code class="language-text">//主处理方法，根据对url进行处理
+public static String getWebpUrl(String url, boolean isWebView);
+//判断当前url是否已经是WebP的请求了
+public static boolean isWebP(String url);
+//url是否支持转成WebP请求
+public static boolean supportConvertWebP(String url);
+//获取文章的host
+public static String getHost(String url);
+//域名判断，限定七牛域名才可以进行转换url
+public static boolean isQiNiuImageHost(String url);
+// url后跟的WebP请求后缀
+public static String getWebpExtBaseScreen();
+// WebView对WebP静图的支持
+public static boolean isWebViewSupportWebp();
+// WebView对WebP动图的支持
+public static boolean isWebViewSupportWebpAnimation();
+ // Native对WebP静图的支持
+public static boolean isSupportWebp();
+// Native对WebP动图的支持
+public static boolean isSupportWebpAnimation();
+</code></pre>
+
+<p>所有Native部分的ImageView在加载图片时候，调用的方法第一步，会先调用getWebpUrl方法对url进行处理，该方法会根据机器情况进行相应的url参数拼凑。具体实现如下：</p>
+
+<pre><code class="language-java"> public static String getWebpUrl(String url, boolean isWebView) {
+        if (TextUtils.isEmpty(url)) {
+            QLog.e(&quot;&quot;, &quot;url 不能为空&quot;);
+            return &quot;&quot;;
+        }
+
+        boolean isSupportWebp = isWebView? isWebViewSupportWebp(): isSupportWebp();
+        boolean isSupportWebpAnimation = isWebView? isWebViewSupportWebpAnimation(): isSupportWebpAnimation();
+
+        if (supportConvertWebP(url) &amp;&amp; isSupportWebp) {
+            String ext = MimeTypeMap.getFileExtensionFromUrl(url);
+            if (TextUtils.isEmpty(ext) || (ext.contains(&quot;gif&quot;) &amp;&amp; !isSupportWebpAnimation)) //扩展名为空就不知道是什么鬼,不转
+                return url;
+
+            if (url.contains(&quot;?&quot;)) {
+                if (url.contains(&quot;format/jpg&quot;)) {
+                    return url.replace(&quot;format/jpg&quot;, &quot;format/webp&quot;);
+                }
+
+                int index = url.indexOf(&quot;gif&quot;);
+                if (index != -1) {
+                    return url.substring(0, index) + &quot;gif&quot; + WebpExtGif;
+                }
+                return url + WebpExtDefault;
+            } else {
+                String query = ext.contains(&quot;gif&quot;) ? WebpExtGif : getWebpExtBaseScreen();
+                int index = url.indexOf(ext);
+                return url.substring(0, index) + ext.split(&quot;-&quot;)[0] + query;
+            }
+        }
+        return url;
+    }
+
+    public static boolean isWebP(String url) {
+        return url.contains(&quot;/format/webp&quot;) || url.contains(&quot;-Webp&quot;);
+    }
+
+    public static boolean supportConvertWebP(String url) {
+        return MManagerCenter.getManager(DevConfigManager.class).isUseWebp() &amp;&amp; isQiNiuImageHost(url) &amp;&amp; !url.contains(&quot;/format/webp&quot;) &amp;&amp; !url.contains(&quot;-Webp&quot;);
+    }
+
+    //获取文章的host
+    public static String getHost(String url) {
+        if (url == null || url.trim().equals(&quot;&quot;)) {
+            return &quot;&quot;;
+        }
+        String host = &quot;&quot;;
+        Pattern p = Pattern.compile(&quot;(http://|https://)?([^/]*)&quot;, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = p.matcher(url);
+        if (matcher.find()) {
+            host = matcher.group();
+        }
+        return host;
+    }
+    
+    public static boolean isQiNiuImageHost(String url) {
+        String host = getHost(url);
+        return host.equals(&quot;http://img.qdaily.com&quot;);
+    }
+
+    public static String getWebpExtBaseScreen(){
+        int width = LocalDisplay.SCREEN_REAL_WIDTH_PIXELS;
+        if (width &gt;= 1080) {
+            return WebpExtW3;
+        }
+        if (width &lt; 540) {
+            return WebpExtW1;
+        }
+        return WebpExtW2;
+    }
+
+    public static boolean isWebViewSupportWebp(){
+        return MManagerCenter.getManager(QDConfigManager.class).isWebViewSupportWebp();
+    }
+
+    public static boolean isWebViewSupportWebpAnimation(){
+        return MManagerCenter.getManager(QDConfigManager.class).isWebViewSupportWebpAnimation();
+    }
+
+     // Native默认支持WebP静图
+    public static boolean isSupportWebp(){
+        return true;
+    }
+
+    // TODO: 16/7/15  所有列表页,最终会用ImageView渲染的,暂时不支持webp animated
+    public static boolean isSupportWebpAnimation(){
+        return false;
+    }
+</code></pre>
+
+<h2 id="toc_9">2、WebView部分的WebP</h2>
+
+<p>基于预加载和缓存的需要，QDaily的文章采用的方式是通过接口下载html文件，在本地加载进webview的方式来实现的，具体方法如下：</p>
+
+<pre><code class="language-text">loadDataWithBaseURL(curUrl, &quot;html string&quot;, &quot;text/html&quot;, &quot;UTF-8&quot;, curUrl);
+</code></pre>
+
+<p>因为android的WebView可以直接解码WebP格式，所以这里直接进行了html中的url替换，即正则取出所有的image请求url，用上面的getWebpUrl的方法进行转换，再替换原来的url即可。具体实现方法如下：</p>
+
+<pre><code class="language-java">public static String converHtmlToWebPHtml(String html){
+   Map&lt;String, String&gt; map = getSupportWebPImgArray(html);
+    if (map != null &amp;&amp; map.size() &gt; 0) {
+        for (Map.Entry&lt;String,String&gt; entry: map.entrySet()) {
+            html = html.replaceAll(entry.getKey(), entry.getValue());
+      }
+   }
+    return html;
+}
+
+private static Map&lt;String, String&gt; getSupportWebPImgArray(String html) {
+    if (!(isWebViewSupportWebp() || isWebViewSupportWebpAnimation()) &amp;&amp; TextUtils.isEmpty(html))
+        return null;
+
+    Map&lt;String, String&gt; result = new HashMap&lt;&gt;();
+    Pattern p = Pattern.compile(&quot;&lt;img[^&gt;]*data-src=\&quot;([^\&quot;]*)\&quot;[^&gt;]*&gt;&quot;);
+    Matcher m = p.matcher(html);
+    while (m.find()) {
+        String url = m.group(1);
+        String value = getWebpUrl(url, true);
+        if (!url.equals(value)) result.put(url, getWebpUrl(url, true));
+    }
+    p = Pattern.compile(&quot;&lt;img[^&gt;]*src=\&quot;([^\&quot;]*)\&quot;[^&gt;]*&gt;&quot;);
+    m = p.matcher(html);
+    while (m.find()) {
+        String url = m.group(1);
+        String value = getWebpUrl(url, true);
+        if (!url.equals(value)) result.put(url, getWebpUrl(url, true));
+    }
+    return result;
+}
+</code></pre>
+
+<h2 id="toc_10">3、判断Android端WebView对WebP Animated的支持</h2>
+
+<p>官方称4.3以上系统直接支持WebP Animated，但亲测部分国产手机（例如华为！）在4.4的EMUI中WebView不能正常解码WebP Animated，解决方案是在App第一次启动时进行WebView的WebP支持情况检查，并将值保存在sp中。</p>
+
+<p>检查方法为在WebView中分别加载1像素的WebP静图和动图，并用JS检测是否成功显示，成功显示即为支持。</p>
+
+<p>直接上代码：</p>
+
+<pre><code class="language-markup">&lt;html&gt;  
+&lt;head&gt;  
+&lt;meta charset=&quot;UTF-8&quot; /&gt;  
+&lt;title&gt;WEBP TEST&lt;/title&gt;
+&lt;script type=&quot;text/javascript&quot;&gt;  
+;(function() {
+    var image = new Image();
+            image.onerror = function() {
+                console.log(&#39;QDaily:supportWebp=false&#39;)
+            };
+            image.onload = function() {
+                if (image.width == 1) {
+                    console.log(&#39;QDaily:supportWebp=true&#39;)
+                } else {
+                    console.log(&#39;QDaily:supportWebp=false&#39;)
+                }
+            } 
+            image.src = &#39;data:image/webp;base64,UklGRiwAAABXRUJQVlA4ICAAAAAUAgCdASoBAAEAL/3+/3+CAB/AAAFzrNsAAP5QAAAAAA==&#39;; 
+})();
+
+;(function() {
+    var image = new Image();
+    image.onerror = function() {
+        console.log(&#39;QDaily:supportWebpAnimation=false&#39;)
+    };
+    image.onload = function() {
+        if (image.width == 1) {
+            console.log(&#39;QDaily:supportWebpAnimation=true&#39;)
+        } else {
+            console.log(&#39;QDaily:supportWebpAnimation=false&#39;)
+        }
+    }
+    image.src = &#39;animation.webp&#39;;
+})();        
+&lt;/script&gt;   
+&lt;/head&gt;  
+&lt;body&gt;
+&lt;/body&gt;  
+&lt;/html&gt;
+</code></pre>
+
+<p>其中，第一个js方法用来检测是否支持静态webp，src对应一段webp图片的base64编码，呈现出来的宽度为1px。第二个方法src对应一个动态webp，由于animated webp的base64比较长，所以直接将一个1k的1px宽的webp animation和这段html一起放在了assets中，用于调用检测。</p>
+
+<p>上面说将html文件以及所用到的图片都放在 assets 目录下。然后在页面上通过WebView来显示。下面上webview的检测代码：</p>
+
+<pre><code class="language-java">//以下代码放在第一个启动的Activity中
+private WebView webView;//必须成员变量，临时变量无效
+private void checkWebpSupport(){
+    if (isInitWebViewCheckSupportWebp)
+        return;
+
+    webView = new WebView(this);
+    webView.setWebChromeClient(new WebChromeClient() {
+        @Override
+        public boolean onConsoleMessage(ConsoleMessage cm) {
+            String log = cm.message();
+            if (!TextUtils.isEmpty(log) &amp;&amp; log.contains(&quot;QDaily:&quot;)) {
+                if (log.equals(&quot;QDaily:supportWebp=true&quot;)) {
+                    setWebViewSupportWebp(true);
+                } else if (log.equals(&quot;QDaily:supportWebp=false&quot;)) {
+                    setWebViewSupportWebp(false);
+                } else if (log.equals(&quot;QDaily:supportWebpAnimation=true&quot;)) {
+                    setWebViewSupportWebpAnimation(true);
+                } else if (log.equals(&quot;QDaily:supportWebpAnimation=false&quot;)) {
+                    setWebViewSupportWebpAnimation(false);
+                }
+                isInitWebViewCheckSupportWebp = true;
+            }
+            return true;
+        }
+    });
+    //注意下面这行一定要加，否则js不能执行！
+    webView.getSettings().setJavaScriptEnabled(true);
+    webView.loadUrl(&quot;file:///android_asset/webp.html&quot;);
+}
+</code></pre>
+
+<h1 id="toc_11">三、其它资源的缓存优化</h1>
+
+<blockquote>
+<p>QDaily在网络请求本身的优化主要有对http请求的gzip压缩，和对图片大小和格式的定制化（根据屏幕尺寸请求大小，根据客户端情况选择是否WebP）。<br/>
+其它部分在流量的优化都在缓存部分，为的是相同资源不再请求第二次。下面将简单介绍这里，一些具体的部分会在以后文章再做展开。</p>
+</blockquote>
+
+<h2 id="toc_12">统一图片的本地缓存处理</h2>
+
+<p>一个app中，WebView和ImageView都会请求图片，Android端和iOS端都定制了自己统一的内存LRU Cache和Disk LRU Cache进行处理，避免重复请求。</p>
+
+<h2 id="toc_13">css和js的缓存</h2>
+
+<p>QDaily里文章用了统一的css和js文件。客户端这边主要进行缓存和复用，以进行重复使用</p>
+
+<h2 id="toc_14">http请求的缓存</h2>
+
+<p>这里主要是将volley的缓存管理起来，通过etag进行更新判断</p>
+
+<p>上面介绍的比较范，后面会有比较具体的介绍。</p>
+
+<hr/>
+
+<h2 id="toc_15">参考链接</h2>
+
+<p><a href="http://chiemy.com/android/android-webp">http://chiemy.com/android/android-webp</a></p>
+
+<p><a href="http://hahack.com/wiki/sundries-webp.html">http://hahack.com/wiki/sundries-webp.html</a></p>
+
+<p><a href="http://blog.teamtreehouse.com/getting-started-webp-image-format">http://blog.teamtreehouse.com/getting-started-webp-image-format</a></p>
+
+<p>谷歌官方文档支持 <a href="https://developers.google.com/speed/webp/">https://developers.google.com/speed/webp/</a></p>
+
+<p><a href="http://www.smarting.me/glide-images-loading-library-introduction-and-usage.html">http://www.smarting.me/glide-images-loading-library-introduction-and-usage.html</a></p>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			
+			    <a class='category' href='QDaily.html'>QDaily</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876731671.html" 
+	        title="Previous Post: 【iOS&Android】RN学习3——集成进现有原生项目">&laquo; 【iOS&Android】RN学习3——集成进现有原生项目</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876730568.html" 
+	        title="Next Post: 今日好文20160726">今日好文20160726 &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

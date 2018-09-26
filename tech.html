@@ -1,0 +1,1272 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  技术 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div class="blog-index">
+
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876730248.html">面试常见：iOS Category</a></h1>
+			<p class="meta"><time datetime="2018-08-09T23:01:13+08:00" 
+			pubdate data-updated="true">2018/8/9</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<hr/>
+
+<blockquote>
+<p>面试非常多候选人，涉及到runtime相关知识Category是一个常见考察点，毕竟这是应用最多的runtime场景。<br/>
+本文会针对这部分知识问题做一下分解。</p>
+</blockquote>
+
+
+
+		</div>
+
+		 
+		 <footer>
+      	<a rel="full-article" href="15378876730248.html#more">read more &rarr;</a>
+    	</footer>
+    	
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a></h1>
+			<p class="meta"><time datetime="2018-05-04T23:01:13+08:00" 
+			pubdate data-updated="true">2018/5/4</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<h3 id="toc_0">引子</h3>
+
+<p>这两天追查app卡顿问题，打开time profiler查看方法耗时，惊奇发现<code>-[UIImage imageNamed:]</code>占用CPU时间很长：</p>
+
+<p>下图是重复打开一个feed页面的CPU占用，发现20%的CPU时间在<code>-[UIImage imageNamed:]</code>中，显然不合理，因为我们知道<code>-[UIImage imageNamed:]</code>相对于<code>-[UIImage imageWithContentsOfFile:]</code>存在图片缓存，重复打开本地图片应该性能影响非常小。</p>
+
+<p><img src="https://lh3.googleusercontent.com/-oDATs6Fc0-k/Wuv5XJRmS9I/AAAAAAAAHQE/vqE-ztABSbs1dbBO53gmD2deAFMqK_aeQCHMYCw/I/15254142315308.jpg" alt=""/></p>
+
+<p>关掉time profiler的Hide System Libraries勾选项，查看系统方法堆栈和对应的耗时：</p>
+
+<p><img src="https://lh3.googleusercontent.com/-jmeXkroBTu0/Wuv5Z1a_vLI/AAAAAAAAHQI/RU1qDJGe0e8sNexcSTpcMhnF7hUg7_XPQCHMYCw/I/15254142400149.jpg" alt=""/></p>
+
+<p>发现<code>-[NSFileManager fileExistsAtPath:]</code>为主要耗时方法，该方法没有本地数据读取，只是判断是否存在，感觉一脸懵逼？难道内存缓存了还会每次线判一次本地存在？苹果的实现不会这么蠢吧？..</p>
+
+<h3 id="toc_1">-[UIImage imageNamed:] 的实现原理</h3>
+
+<p>imageNamed:实际上调用的是一个叫做UIAssetManager的类，每个Bundle有一个UIAssetManager。它有一个strong-strong的NSMapTable<NSString, UIImageAsset>的属性，用来做缓存。。。</p>
+
+<p>如果查询不到缓存，首先命中的是Assets.car，这个是CoreUIFrramework处理的（私有framework），会解压（有缓存）那个Assets.car然后解码取回图。</p>
+
+<p>如果还找不到，会通过Bundle的path按照那个文档描述的，搜索@3x @2x @1x .png忽略等规则，直到找到一个那种非Assets.car的bundle图，然后加载。</p>
+
+<p>如果你的图片不在Assets.car里面，会直接触发到最远的第三部，可能遍历搜索fileExist比较耗时吧</p>
+
+<h3 id="toc_2">最终卡顿原因</h3>
+
+<p>原因找到了：<br/>
+themedImageNamed: 方法会每次都给 imageName 加上后缀先去取图，这个应该是iOS7之前没有Images Assets之前的适配逻辑。现在其实包里面没有-667h、-736h这样的图了，会导致所有图片第一次都取不到。就会发现频繁调用fileExistsAtPath:，而没调取图逻辑。<br/>
+系统缓存了所有找到图片的UIImage，没缓存找不到的黑名单。</p>
+
+<h3 id="toc_3">一些结论和启示</h3>
+
+<p>-[UIImage imageNamed:] 需要hook加保护<br/>
+FPS优化一定要找到瓶颈，别贸然优化 --&gt; 合理使用工具<br/>
+IO操作很恐怖，哪怕只是很轻量级的处理<br/>
+有必要监控一下NSFileManager的IO操作情况</p>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876732116.html">【IGListKit】学习与分析2</a></h1>
+			<p class="meta"><time datetime="2018-04-16T23:01:13+08:00" 
+			pubdate data-updated="true">2018/4/16</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<blockquote>
+<p>源于4月16日在小组内的分享<br/>
+图床为Google相册，看不了自己准备梯子。</p>
+</blockquote>
+
+<p><img src="https://lh3.googleusercontent.com/-FqbGRx5uisM/WtrleujON-I/AAAAAAAAHH4/ZGtWfjnP6D08bAYez34nKgjvThEbB_jZQCHMYCw/I/IGList" alt="IGList学习2.001"/></p>
+
+<p><img src="https://lh3.googleusercontent.com/-gZm3qfRkmlk/WtrkF9Zvm7I/AAAAAAAAHFc/70Ncz1Z5QwUSfJP01lW2RQ3OFSRazLUwgCHMYCw/I/IGList" alt="IGList学习2.002"/></p>
+
+
+
+		</div>
+
+		 
+		 <footer>
+      	<a rel="full-article" href="15378876732116.html#more">read more &rarr;</a>
+    	</footer>
+    	
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a></h1>
+			<p class="meta"><time datetime="2018-04-02T23:01:13+08:00" 
+			pubdate data-updated="true">2018/4/2</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<blockquote>
+<p>源于4月2日在小组内的分享。<br/>
+图床为Google相册，看不了自己准备梯子。</p>
+</blockquote>
+
+<p><img src="https://lh3.googleusercontent.com/-3jEV3avy7vY/WtriDp896UI/AAAAAAAAHDc/lCPKHvEM0CY7Gq1BugbSTZFkf60iD_SbQCHMYCw/I/ListDiff%2B" alt="ListDiff 学习与分析.001"/></p>
+
+<p><img src="https://lh3.googleusercontent.com/-KfR_MU43kyc/WtrjMBGv0XI/AAAAAAAAHE0/aGRivjQBYMgz9LFzDQtIDz4o9QKDwfbSQCHMYCw/I/ListDiff%2B" alt="ListDiff 学习与分析.002"/></p>
+
+
+
+		</div>
+
+		 
+		 <footer>
+      	<a rel="full-article" href="15378876732151.html#more">read more &rarr;</a>
+    	</footer>
+    	
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876732321.html">UIResponder 响应链 拾遗</a></h1>
+			<p class="meta"><time datetime="2017-12-21T23:01:13+08:00" 
+			pubdate data-updated="true">2017/12/21</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<h2 id="toc_0">背景</h2>
+
+<p>基于ResponderChain可以做一些事件传递，将所有view的操作最终都送回到ViewController来处理，以实现view的功能单一性。如下：</p>
+
+<pre><code class="language-text">@interface UIResponder (Router)
+- (void)routerEventWithName:(NSString *)eventName userInfo:(NSDictionary *)userInfo;
+@end
+
+@implementation UIResponder (Router)
+- (void)routerEventWithName:(NSString *)eventName userInfo:(NSDictionary *)userInfo
+{
+    [[self nextResponder] routerEventWithName:eventName userInfo:userInfo];
+}
+@end
+</code></pre>
+
+<p>每个cell在做事件请求时，只需要调用<code>routerEventWithName:userInfo:</code>，即可将请求传递给对应的ViewController（也可以是响应链任意一环），然后用EventName来区分事件类型。</p>
+
+<h2 id="toc_1">ChildViewController</h2>
+
+<p>一般来讲 view.nextResponder = view.superView。ViewController的root view的nextResponder是当前ViewController，那childViewController的view的nextResponder是谁呢？如果用nextResponder拦截，childViewController能拦截到其中的view的响应吗？</p>
+
+<h3 id="toc_2">XCode实测：</h3>
+
+<ul>
+<li>如果addChildViewController：</li>
+</ul>
+
+<p>childVC.view.nextResponder == childVC，childVC.nextResponder == childVC.view.superView，相当于在subView&amp;superView的响应联调中，插入了一个VC，与window和VC.view的关系是一致的。</p>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876732390.html">简单处理不小心调用高版本API的问题</a></h1>
+			<p class="meta"><time datetime="2017-11-02T23:01:13+08:00" 
+			pubdate data-updated="true">2017/11/2</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<h1 id="toc_0">iOS API 版本检查</h1>
+
+<blockquote>
+<p>如果app兼容2个以上版本，那就需要注意低版本不能调用高版本API，为避免开发过程中不小心调用，必要的工具检查是必须的，下面介绍一种简单的方法处理。</p>
+</blockquote>
+
+<h3 id="toc_1">原理 ---- Clang</h3>
+
+<p>2015 年 clang 本身增加 API 版本检查功能，通过 -Wpartial-availability 这个 flag 可以打开，后续版本把 flag 变成了 -Wunguarded-availability。打开之后，clang 会把所有在低版本 iOS 上调用高版本 API 的情况用 warning 暴露出来，如下图所示。</p>
+
+<p><img src="https://lh3.googleusercontent.com/-zIv_o4Cf-0Q/WghOhF1OcuI/AAAAAAAAFiw/LJEY__p7Z_Ig2-FxfgJkOxxpJ_j9Q1c_QCHMYCw/I/15104938281303.jpg" alt=""/></p>
+
+<p><img src="https://lh3.googleusercontent.com/-klYKWIBPS4o/WghOUy4CjqI/AAAAAAAAFis/DqPbsG4IXXAJeg5PuoP-mDIFKQ1721PngCHMYCw/I/15104937777800.jpg" alt=""/></p>
+
+<h3 id="toc_2">具体实现</h3>
+
+<ul>
+<li>1、打开 <code>-Wunguarded-availability</code> 在调用高版本API时候报warning，为避免warning过多而忽视，用 <code>-Werror-unguarded-availability</code> 标记强制编译不过。</li>
+<li>2、针对pod需要在 podspec 中添加<code>compiler_flags</code>。</li>
+<li>3、如果代码本身安全（使用了 <code>respondsToSelector:</code> 保护），可以用 <code>#pragma clang diagnostic ignored</code> 的方式压掉警告，或者 <code>@available</code> 直接解决，如下图。</li>
+</ul>
+
+<p><img src="https://lh3.googleusercontent.com/-eGFR3umcjh8/WghPWGUvNoI/AAAAAAAAFi8/sndudmea1iIL0MiVnPwQvz3llHFqSCu4ACHMYCw/I/15104940402651.jpg" alt=""/></p>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876732528.html">【iOS】从同步锁到多线程</a></h1>
+			<p class="meta"><time datetime="2017-02-06T23:01:13+08:00" 
+			pubdate data-updated="true">2017/2/6</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<blockquote>
+<p>年前年后，忙的事情太多，没有继续更新博客，打算近期总结下过往。</p>
+
+<p>如果每天只是做需求，写UI，可能不需要知道太多多线程的知识。也许简单的GCD会使用，再加几个开源框架，大多数功能都能实现。但如果你想写个框架，开源出来，那多线程就是一个永远绕不开的话题。除非你是一个前端开发者，否则无论在公司里，还是供自己娱乐，如果你想把技术走向深入，那多线程都是必须要明白的事。</p>
+
+<p>本文先从iOS中objective-c的多线程同步开始，给iOS下的多线程做一个概述。</p>
+</blockquote>
+
+<h2 id="toc_0">一、几种线程同步方式</h2>
+
+<h3 id="toc_1">1、自旋锁 <code>OSSpinLock</code></h3>
+
+<p>上测试代码</p>
+
+<pre><code class="language-objectivec">__block OSSpinLock oslock = OS_SPINLOCK_INIT;
+    
+//线程2
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+   NSLog(@&quot;线程2 准备上锁&quot;);
+   OSSpinLockLock(&amp;oslock);
+   NSLog(@&quot;线程2&quot;);
+   OSSpinLockUnlock(&amp;oslock);
+   NSLog(@&quot;线程2 解锁成功&quot;);
+});
+//线程1
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+   NSLog(@&quot;线程1 准备上锁&quot;);
+   OSSpinLockLock(&amp;oslock);
+   NSLog(@&quot;线程1 sleep&quot;);
+   sleep(4);
+   NSLog(@&quot;线程1&quot;);
+   OSSpinLockUnlock(&amp;oslock);
+   NSLog(@&quot;线程1 解锁成功&quot;);
+});
+</code></pre>
+
+<p>虽然YY大神<a href="http://blog.ibireme.com/">http://blog.ibireme.com/</a>说其已经不再安全，但GCD在多线程实际应用过程中，未发现问题，并行线程只要获取到oslock，其它线程一律阻塞（非睡眠），直到之前获取的解锁为止，上述代码QUEUE优先级相差较大，在实际使用中未发生高优先级忙等状态。</p>
+
+<!--more-->
+
+<blockquote>
+<p>低优先级线程拿到锁时，高优先级线程进入忙等(busy-wait)状态，消耗大量 CPU 时间，从而导致低优先级线程拿不到 CPU 时间，也就无法完成任务并释放锁。这种问题被称为<code>优先级反转</code>。</p>
+</blockquote>
+
+<p>可以在同一线程无限制上锁，但必须成对出现解锁，否则会死锁。可以在同一线程无限制调用解锁，但如果没有获取锁，解锁代码无效。</p>
+
+<p><strong><em>结论</em></strong>：QUEUE的优先级和CPU调度的线程优先级可能并不是一回事，实际运用GCD来进行多线程开发时，可以应用自旋锁进行数据同步。</p>
+
+<h3 id="toc_2">2、信号量 <code>dispatch_semaphore</code></h3>
+
+<p>上测试代码</p>
+
+<pre><code class="language-objectivec">dispatch_semaphore_t signal = dispatch_semaphore_create(1);
+dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, 3.0f * NSEC_PER_SEC);
+    
+//线程1
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+   NSLog(@&quot;线程1 等待ing&quot;);
+   dispatch_semaphore_wait(signal, timeout); //signal 值 -1
+   NSLog(@&quot;线程1 sleep&quot;);
+   sleep(2);
+   NSLog(@&quot;线程1&quot;);
+   dispatch_semaphore_signal(signal); //signal 值 +1
+   NSLog(@&quot;线程1 发送信号&quot;);
+});
+    
+//线程2
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+   NSLog(@&quot;线程2 等待ing&quot;);
+   dispatch_semaphore_wait(signal, timeout);
+   NSLog(@&quot;线程2 sleep&quot;);
+   sleep(2);
+   NSLog(@&quot;线程2&quot;);
+   dispatch_semaphore_signal(signal);
+   NSLog(@&quot;线程2 发送信号&quot;);
+});
+</code></pre>
+
+<p>信号量dispatch_semaphore被称为spinlock的替代方案。（引<a href="http://blog.ibireme.com/2016/01/16/spinlock_is_unsafe_in_ios/">http://blog.ibireme.com/2016/01/16/spinlock_is_unsafe_in_ios/</a>）<br/>
+使用方法非常简单，dispatch_semaphore_create(1)为创建信号，数字表示可以同时几个线程使用信号。为1表示同步使用。上述代码如果此处标2就和没设置信号量一样，并发自行运行。如果设置为0，则一律等待overTime时自动释放，所有代码都不执行，理论上也具有同步作用，就是慢点...<br/>
+dispatch_semaphore_wait中传入的timeout表示最长加锁时间，此处sleep如果为4，则在3s后会自动释放锁，其它线程可以获取信号并继续运行。</p>
+
+<p>和厕所坑位类似，dispatch_semaphore_create(1)表示只有1个坑位，timeout = dispatch_time(DISPATCH_TIME_NOW, 3.0f * NSEC_PER_SEC)表示坑位只能占用3秒。无论是否当前线程，坑位都一致。可以在同一线程频繁调用dispatch_semaphore_wait，在只有一个坑位且没有dispatch_semaphore_signal信号情况下，会等到每次的timeout。所以理论上可以不成对出现。</p>
+
+<blockquote>
+<p>semaphore [&#39;sɛməfɔr] ： 信号；旗语；</p>
+</blockquote>
+
+<h3 id="toc_3">3、互斥锁 <code>pthread_mutex</code></h3>
+
+<p>看测试代码</p>
+
+<pre><code class="language-text">static pthread_mutex_t pLock;
+pthread_mutex_init(&amp;pLock, NULL);
+    
+//1.线程2
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+   NSLog(@&quot;线程2 准备上锁&quot;);
+   pthread_mutex_lock(&amp;pLock);
+   NSLog(@&quot;线程2&quot;);
+   pthread_mutex_unlock(&amp;pLock);
+});
+    
+//2.线程1
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+   NSLog(@&quot;线程1 准备上锁&quot;);
+   pthread_mutex_lock(&amp;pLock);
+   sleep(3);
+   NSLog(@&quot;线程1&quot;);
+   pthread_mutex_unlock(&amp;pLock);
+});
+</code></pre>
+
+<p>pthread 表示 POSIX thread，定义了一组跨平台的线程相关的 API，pthread_mutex 表示互斥锁。<br/>
+使用上没啥说的，测试效果和上文一致。<br/>
+非递归锁，同一线程重复调用加锁会造成死锁。</p>
+
+<h4 id="toc_4"><code>pthread_mutex(recursive)</code> 递归锁</h4>
+
+<p>测试代码</p>
+
+<pre><code class="language-text">static pthread_mutex_t pLock;
+pthread_mutexattr_t attr;
+pthread_mutexattr_init(&amp;attr); //初始化attr并且给它赋予默认
+pthread_mutexattr_settype(&amp;attr, PTHREAD_MUTEX_RECURSIVE); //设置锁类型，这边是设置为递归锁
+pthread_mutex_init(&amp;pLock, &amp;attr);
+pthread_mutexattr_destroy(&amp;attr); //销毁一个属性对象，在重新进行初始化之前该结构不能重新使用
+    
+//1.线程1
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+   static void (^RecursiveBlock)(int);
+   RecursiveBlock = ^(int value) {
+       pthread_mutex_lock(&amp;pLock);
+       if (value &gt; 0) {
+           NSLog(@&quot;value: %d&quot;, value);
+           RecursiveBlock(value - 1);
+       }
+       
+   };
+   NSLog(@&quot;线程1 准备上锁&quot;);
+   RecursiveBlock(5);
+   NSLog(@&quot;线程1&quot;);
+   pthread_mutex_unlock(&amp;pLock);
+   NSLog(@&quot;线程1 解锁&quot;);
+});
+    
+//2.线程2
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+   NSLog(@&quot;线程2 准备上锁&quot;);
+   pthread_mutex_lock(&amp;pLock);
+   NSLog(@&quot;线程2&quot;);
+   pthread_mutex_unlock(&amp;pLock);
+   NSLog(@&quot;线程2 解锁&quot;);
+});
+</code></pre>
+
+<p>递归锁比较安全，可以认为同一线程加且仅加一次锁，重复加锁不会造成死锁。无论同一线程加锁多少次，解锁1次即可。</p>
+
+<h3 id="toc_5">4&amp;5、NS前缀的两个锁<code>NSLock</code>、<code>NSRecursiveLock</code></h3>
+
+<p>使用比较简单，效果基本对应上述两种情况</p>
+
+<pre><code class="language-text">NSLock *lock = [NSLock new];
+[lock lock];
+NSLog(@&quot;加锁运行&quot;);
+[lock unlock];
+    
+NSRecursiveLock *recursiveLock = [NSRecursiveLock new];
+[recursiveLock lock];
+NSLog(@&quot;加锁运行&quot;);
+[recursiveLock unlock];
+</code></pre>
+
+<p>NS开头的类都是对CoreFoundation的封装，只是易用一些。NSRecursiveLock为递归锁，可以在循环和递归中使用。<br/>
+这里NSLock和NSRecursiveLock都是封装的互斥锁<code>pthread_mutex</code>。<br/>
+NSLock 只是在内部封装了一个 pthread_mutex，属性为 PTHREAD_MUTEX_ERRORCHECK，它会损失一定性能换来错误提示。理论上 NSLock 和 pthread_mutex 拥有相同的运行效率，实际由于封装的原因，会略慢一点，由于有缓存存在，相差不会很多，属于相同数量级。<br/>
+NSRecursiveLock 与 NSLock 的区别在于内部封装的 pthread_mutex_t 对象的类型不同，NSRecursiveLock 的类型为 PTHREAD_MUTEX_RECURSIVE。</p>
+
+<h3 id="toc_6">6、<code>NSCondition</code></h3>
+
+<p>顾明思意，条件锁，一种生产者---消费者模型。<br/>
+它通常用于标明共享资源是否可被访问或者确保一系列任务能按照指定的执行顺序执行。如果一个线程试图访问一个共享资源，而正在访问该资源的线程将其条件设置为不可访问，那么该线程会被阻塞，直到正在访问该资源的线程将访问条件更改为可访问状态或者说给被阻塞的线程发送信号后，被阻塞的线程才能正常访问这个资源。</p>
+
+<h3 id="toc_7">7、条件锁 <code>NSConditionLock</code></h3>
+
+<p>这里和NSLock主要区别是增加了一个NSInteger类型的condition参数，api很简单，也很少。condition就是一个条件标识。在加锁和解锁时对NSConditionLock做条件判断和修改，相当于if语句。</p>
+
+<pre><code class="language-text">NSConditionLock *cLock = [[NSConditionLock alloc] initWithCondition:0];
+    
+//线程2
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+   [cLock lockWhenCondition:1];
+   NSLog(@&quot;线程2&quot;);
+   [cLock unlockWithCondition:3];
+});
+//线程1
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+   if([cLock tryLockWhenCondition:0]){
+       NSLog(@&quot;线程1&quot;);
+       [cLock unlockWithCondition:1];
+   }else{
+       NSLog(@&quot;失败&quot;);
+   }
+});
+    
+//线程3
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+   [cLock lockWhenCondition:3];
+   NSLog(@&quot;线程3&quot;);
+   [cLock unlockWithCondition:2];
+});
+</code></pre>
+
+<p>上述代码会按照：线程1--&gt;线程2--&gt;线程3按顺序执行。</p>
+
+<p>实际的实现原理就是里面封装了一个NSCondition对象，在lock时判断NSCondition对象的条件是否满足，不满足则wait，unlock时对发送NSCondition的broadcast，属于一个常见的生产者--消费者模型。</p>
+
+<h3 id="toc_8">8、简单易用的条件锁 <code>@synchronized</code></h3>
+
+<pre><code class="language-text">@synchronized (self) {
+   NSLog(@&quot;加锁运行&quot;);
+}
+</code></pre>
+
+<p>只要关键字中的对象一致，则多个线程会互斥等待程序运行完成。<br/>
+@synchronized 实际上是把修饰对象当做锁来使用。这是通过一个哈希表来实现的，OC 在底层使用了一个互斥锁的数组(你可以理解为锁池)，通过对对象去哈希值来得到对应的互斥锁。</p>
+
+<h2 id="toc_9">二、5S下测试一千万次加锁解锁时间测试</h2>
+
+<p><strong>注意</strong> ：线程锁性能的加锁和解锁耗时并不能准确反映锁的效率（因为锁的效率还要综合考虑CPU时间片切换），它只能从一定程度上反映锁的实现复杂度。</p>
+
+<p><img src="http://obp30zydr.bkt.clouddn.com/2017-02-06-1.jpg" alt=""/></p>
+
+<p><img src="http://obp30zydr.bkt.clouddn.com/2017-02-06-2.jpg" alt=""/></p>
+
+<p>上代码：</p>
+
+<pre><code class="language-objectivec">#define ITERATIONS (10000000) // 1千万
++ (void)test
+{
+    double then, now;
+    
+    @autoreleasepool {
+        
+        // 普通锁 NSLock
+        NSLock *lock = [NSLock new];
+        then = CFAbsoluteTimeGetCurrent();
+        for(NSInteger i = 0; i &lt; ITERATIONS; ++i)
+        {
+            [lock lock];
+            [lock unlock];
+        }
+        now = CFAbsoluteTimeGetCurrent();
+        NSLog(@&quot;NSLock: %f sec\n&quot;, now-then);
+        
+        // 互斥锁 pthread_mutex
+        pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+        then = CFAbsoluteTimeGetCurrent();
+        for(NSInteger i = 0; i &lt; ITERATIONS; ++i)
+        {
+            pthread_mutex_lock(&amp;mutex);
+            pthread_mutex_unlock(&amp;mutex);
+        }
+        now = CFAbsoluteTimeGetCurrent();
+        NSLog(@&quot;pthread_mutex: %f sec\n&quot;, now-then);
+        
+        // 递归锁 pthread_mutex(recursive)
+        static pthread_mutex_t pLock;
+        pthread_mutexattr_t attr;
+        pthread_mutexattr_init(&amp;attr); //初始化attr并且给它赋予默认
+        pthread_mutexattr_settype(&amp;attr, PTHREAD_MUTEX_RECURSIVE); //设置锁类型，这边是设置为递归锁
+        pthread_mutex_init(&amp;pLock, &amp;attr);
+        pthread_mutexattr_destroy(&amp;attr); //销毁一个属性对象，在重新进行初始化之前该结构不能重新使用
+        
+        then = CFAbsoluteTimeGetCurrent();
+        for(NSInteger i = 0; i &lt; ITERATIONS; ++i)
+        {
+            pthread_mutex_lock(&amp;pLock);
+            pthread_mutex_unlock(&amp;pLock);
+        }
+        now = CFAbsoluteTimeGetCurrent();
+        NSLog(@&quot;pthread_mutex(recursive): %f sec\n&quot;, now-then);
+        
+        // 自旋锁 OSSpinlock
+        OSSpinLock spinlock = OS_SPINLOCK_INIT;
+        then = CFAbsoluteTimeGetCurrent();
+        for(NSInteger i = 0; i &lt; ITERATIONS; ++i)
+        {
+            OSSpinLockLock(&amp;spinlock);
+            OSSpinLockUnlock(&amp;spinlock);
+        }
+        now = CFAbsoluteTimeGetCurrent();
+        NSLog(@&quot;OSSpinlock: %f sec\n&quot;, now-then);
+        
+        // synchronized
+        id obj = [NSObject new];
+        then = CFAbsoluteTimeGetCurrent();
+        for(NSInteger i = 0; i &lt; ITERATIONS; ++i)
+        {
+            @synchronized(obj)
+            {
+            }
+        }
+        now = CFAbsoluteTimeGetCurrent();
+        NSLog(@&quot;@synchronized: %f sec\n&quot;, now-then);
+        
+        // dispatch_semaphore
+        dispatch_semaphore_t lockSemaphore = dispatch_semaphore_create(1);
+        then = CFAbsoluteTimeGetCurrent();
+        for(NSInteger i = 0; i &lt; ITERATIONS; ++i)
+        {
+            dispatch_semaphore_wait(lockSemaphore, DISPATCH_TIME_FOREVER);
+            dispatch_semaphore_signal(lockSemaphore);
+        }
+        now = CFAbsoluteTimeGetCurrent();
+        NSLog(@&quot;dispatch_semaphore: %f sec\n&quot;, now-then);
+        
+        
+        NSCondition *cLock = [NSCondition new];
+        then = CFAbsoluteTimeGetCurrent();
+        for(NSInteger i = 0; i &lt; ITERATIONS; ++i)
+        {
+            [cLock lock];
+            [cLock unlock];
+        }
+        now = CFAbsoluteTimeGetCurrent();
+        NSLog(@&quot;NSCondition: %f sec\n&quot;, now-then);
+        
+        
+        NSRecursiveLock *rLock = [NSRecursiveLock new];
+        then = CFAbsoluteTimeGetCurrent();
+        for(NSInteger i = 0; i &lt; ITERATIONS; ++i)
+        {
+            [rLock lock];
+            [rLock unlock];
+        }
+        now = CFAbsoluteTimeGetCurrent();
+        NSLog(@&quot;NSRecursiveLock: %f sec\n&quot;, now-then);
+        
+        // dispatch_barrier_async
+        dispatch_queue_t queue = dispatch_queue_create(&quot;xyz.chaisong.lock&quot;, DISPATCH_QUEUE_SERIAL);
+        then = CFAbsoluteTimeGetCurrent();
+        for(NSInteger i = 0; i &lt; ITERATIONS; ++i)
+        {
+            dispatch_barrier_async(queue, ^{
+            });
+        }
+        now = CFAbsoluteTimeGetCurrent();
+        NSLog(@&quot;dispatch_barrier_async: %f sec\n&quot;, now-then);
+    }
+}
+</code></pre>
+
+<p>上述的dispatch_barrier_async只是GCD的一种数据同步方案，并不属于锁，这里只比较多线程同步方案的效率。</p>
+
+<p><strong><em>结论</em></strong>，单从效率上来看<code>dispatch_barrier_async</code>和<code>@synchronized</code>差的比较多，不建议使用，其它整体相差不大；相同类型的锁递归锁和普通锁效率相差接近一倍，如果不会在循环或者递归中频繁使用加锁和解锁，不建议使用递归锁；<code>OSSpinlock</code>各路大神都说有问题，从效率上讲，建议用互斥锁<code>pthread_mutex</code>（YYKit方案）或者信号量<code>dispatch_semaphore</code>（CoreFoundation和protobuf方案）作为替代。<br/>
+OSpinlock为什么效率奇高主要原因是：并没有进入系统kernel，使用它可以节省系统调用和上下文切换。</p>
+
+<h2 id="toc_10">三、一些多线程的基础知识</h2>
+
+<h3 id="toc_11">1、时间片轮转调度算法</h3>
+
+<p>了解多线程加锁必须知道时间片轮转调度算法，才能深切理解其原理、性能瓶颈。<br/>
+现代操作系统在管理普通线程时，通常采用时间片轮转算法(Round Robin，简称 RR)。每个线程会被分配一段时间片(quantum)，通常在 10-100 毫秒左右。当线程用完属于自己的时间片以后，就会被操作系统挂起，放入等待队列中，直到下一次被分配时间片，如果线程在时间片结束前阻塞或结束，则CPU当即进行切换。由于线程切换需要时间，如果时间片太短，会导致大量CPU时间浪费在切换上；而如果这个时间片如果太长，会使得其它线程等待太久；</p>
+
+<h3 id="toc_12">2、原子操作</h3>
+
+<p>狭义上的原子操作表示一条不可打断的操作，也就是说线程在执行操作过程中，不会被操作系统挂起，而是一定会执行完（理论上拥有CPU时间片无限长）。在单处理器环境下，一条汇编指令显然是原子操作，因为中断也要通过指令来实现，但一句高级语言的代码却不是原子的，因为它最终是由多条汇编语言完成，CPU在进行时间片切换时，大多都会在某条代码的执行过程中。<br/>
+但在多核处理器下，则需要硬件支持，没了解过具体实现。</p>
+
+<h3 id="toc_13">3、自旋锁和互斥锁</h3>
+
+<p>都属于CPU时间分片算法下的实现保护共享资源的一种机制。都实现互斥操作，加锁后仅允许一个访问者。<br/>
+却别在于自旋锁不会使线程进入wait状态，而通过轮训不停查看是否该自旋锁的持有者已经释放的锁；对应的，互斥锁在出现锁已经被占用的情况会进入wait状态，CPU会当即切换时间片。</p>
+
+<h4 id="toc_14">自旋锁实现原理</h4>
+
+<p>简单的while循环</p>
+
+<pre><code class="language-text">lock = 0;
+do{
+    while(test_and_set(&amp;lock));
+    临界区
+    lock = 0;
+    其余部分
+} while(1)
+</code></pre>
+
+<p>test_and_set用来保证条件判断的原子性操作，lock为旗标。<br/>
+自旋锁的一大缺陷是会使得线程处于忙等状态。因为如果临界区执行时间过长，其它线程就会在当前整个时间片一直处于忙等状态，浪费大量CPU时间。所以，如果临界区时间很短，可以使用自旋锁，否则建议使用互斥锁。</p>
+
+<h4 id="toc_15">互斥锁的实现原理</h4>
+
+<p>互斥锁在出现锁的争夺时，未获得锁的线程会主动让出时间片，阻塞线程并睡眠，需要进行上下文切换，CPU会切换其它线程继续操作。<br/>
+主动让出时间片并不总是代表效率高。让出时间片会导致操作系统切换到另一个线程，这种上下文切换通常需要 10 微秒左右，而且至少需要两次切换。如果等待时间很短，比如只有几个微秒，忙等就比线程睡眠更高效。</p>
+
+<h4 id="toc_16">信号量的实现</h4>
+
+<pre><code class="language-text">int sem_wait (sem_t *sem) {  
+  int *futex = (int *) sem;
+  if (atomic_decrement_if_positive (futex) &gt; 0)
+    return 0;
+  int err = lll_futex_wait (futex, 0);
+    return -1;
+)
+</code></pre>
+
+<p>信号量和互斥锁类似，都是在获取锁失败后线程进入wait状态，CPU会切换时间片。<br/>
+信号量在最终都是调用一个sem_wait方法，并原子性的判断信号量，如果对其-1后依然大于0，则直接返回，继续临界区操作，否则进入等待状态。</p>
+
+<p>参考：<a href="https://bestswifter.com/ios-lock/">https://bestswifter.com/ios-lock/</a></p>
+
+<h2 id="toc_17">四、多线程中的常见术语</h2>
+
+<ul>
+<li>条件(condition)<br/>
+一个用来同步资源访问的结构。线程等待某一条件来决定是否被允许继续运行，直到其他线程显式的给该条件发送信号。</li>
+<li>临界区(critical section)<br/>
+同一时间只能不被一个线程执行的代码。</li>
+<li>输入源(input source)<br/>
+一个线程的异步事件源。输入源可以是基于端口的或手工触发，并且必须被附加到某一个线程的run loop上面。</li>
+<li>可连接的线程(join thread)<br/>
+退出时资源不会被立即回收的线程。可连接的线程在资源被回收之前必须被显式脱离或由其他线程连接。可连接线程提供了一个返回值给连接它的线程。</li>
+<li>主线程(main thread)<br/>
+当创建进程时一起创建的特定类型的线程。当程序的主线程退出，则程序即退出。</li>
+<li>互斥锁(mutex)<br/>
+提供共享资源互斥访问的锁。一个互斥锁同一时间只能被一个线程拥有。试图获取一个已经被其他线程拥有的互斥锁，会把当前线程置于休眠状态知道该锁被其他线程释放并让当前线程获得。</li>
+<li>操作对象(operation object)<br/>
+NSOperation类的实例。操作对象封装了和某一任务相关的代码和数据到一个执行单元里面。</li>
+<li>操作队列(operation queue)<br/>
+NSOperationQueue类的实例。操作队列管理操作对象的执行。</li>
+<li>进程(process)<br/>
+应用或程序的运行时实例。一个进程拥有独立于分配给其他程序的的内存空间和系统资源（包括端口权限）。进程总是包含至少一个线程（即主线程）和任意数量的额外线程。</li>
+<li>递归锁(recursive lock)<br/>
+可以被同一线程多次锁住的锁。</li>
+<li>信号量(semaphore)<br/>
+一个受保护的变量，它限制共享资源的访问。互斥锁(mutexes)和条件(conditions)都是不同类型的信号量。</li>
+<li>任务(task)<br/>
+要执行的工作数量。尽管一些技术(最显著的是Carbon 多进程服务—Carbon Multiprocessing Services)使用该术语的意义有时不同，但是最通用的用法是表明需要执行的工作数量的抽象概念。</li>
+<li>线程(thread)<br/>
+进程里面的一个执行过程流。每个线程都有它自己的栈空间，但除此之外同一进程的其他线程共享内存。</li>
+</ul>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876732563.html">JSPatch的一些使用注意点</a></h1>
+			<p class="meta"><time datetime="2016-11-30T23:01:13+08:00" 
+			pubdate data-updated="true">2016/11/30</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<p>JSPatch代码量不大，满满的都是神机妙算，到处都是黑科技。</p>
+
+<h2 id="toc_0">主要的坑 -- UIWebView相关</h2>
+
+<p>如果在JSPatch的代码使用前，app没有初始化过UIWebView，那会造成UIWebView中JS不能解析的问题，打开网页根本不能看。解决方案：</p>
+
+<!--more-->
+
+<pre><code class="language-text">JSPatch使用前先alloc一个UIWebView，然后让ARC自动dealloc它就好了：
+
+UIWebView *webView = [[UIWebView alloc]init];   //Useless. Just to load the UIWebview framework.
+webView.frame = CGRectZero;
+
+[JPEngine startEngine];
+
+[self startCache:^(NSString * script) {
+    [JPEngine evaluateScript:script];
+}]; 
+</code></pre>
+
+<p>哪怕初始化过UIWebView，也不能在使用JSPatch代码的时候进行UIWebView的初始化（既不能相同runloop初始化UIWebView），否则会造成WebView不稳定，极容易crash：</p>
+
+<pre><code class="language-text">JavaScriptCore  WTF::equal(WTF::StringImpl const*, unsigned char const*) + 116
+JavaScriptCore  std::__1::pair&lt;std::__1::pair&lt;WTF::StringImpl**, bool&gt;, unsigned int&gt; WTF::HashTable&lt;WTF::StringImpl*, WTF::StringImpl*, WTF::IdentityExtractor, WTF::StringHash, WTF::HashTraits&lt;WTF::StringImpl*&gt;, WTF::HashTraits&lt;WTF::StringImpl*&gt; &gt;::fullLookupForWriting&lt;WTF::HashSetTranslatorAdapter&lt;WTF::CStringTranslator&gt;, unsigned char const*&gt;(unsigned char const* const&amp;) + 268
+JavaScriptCore  WTF::HashTableAddResult&lt;WTF::HashTableIterator&lt;WTF::StringImpl*, WTF::StringImpl*, WTF::IdentityExtractor, WTF::StringHash, WTF::HashTraits&lt;WTF::StringImpl*&gt;, WTF::HashTraits&lt;WTF::StringImpl*&gt; &gt; &gt; WTF::HashTable&lt;WTF::StringImpl*, WTF::StringImpl*, WTF::IdentityExtractor, WTF::StringHash, WTF::HashTraits&lt;WTF::StringImpl*&gt;, WTF::HashTraits&lt;WTF::StringImpl*&gt; &gt;::addPassingHashCode&lt;WTF::HashSetTranslatorAdapter&lt;WTF::CStringTranslator&gt;, unsigned char const* const&amp;, unsigned char const* const&amp;&gt;(unsigned char const* const&amp;&amp;&amp;, unsigned char const* const&amp;&amp;&amp;) + 200
+JavaScriptCore  WTF::AtomicStringImpl::add(unsigned char const*) + 160
+WebCore WebCore::Settings::initializeDefaultFontFamilies() + 720
+WebCore WebCore::Settings::Settings(WebCore::Page*) + 484
+WebCore WebCore::Settings::create(WebCore::Page*) + 36
+WebCore WebCore::Page::Page(WebCore::PageConfiguration&amp;&amp;) + 184
+WebKitLegacy    -[WebView(WebPrivate) _commonInitializationWithFrameName:groupName:] + 1712
+WebKitLegacy    -[WebView(WebPrivate) _initWithFrame:frameName:groupName:] + 132
+UIKit   -[UIWebDocumentView initWithWebView:frame:] + 332
+UIKit   -[UIWebBrowserView initWithWebView:frame:] + 48
+UIKit   -[UIWebBrowserView initWithFrame:] + 44
+UIKit   -[UIWebView _webViewCommonInitWithWebView:scalesPageToFit:] + 244
+UIKit   -[UIWebView initWithFrame:] + 76
+</code></pre>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876732597.html">RN学习5——QDaily iOS app中通信和热修复实践</a></h1>
+			<p class="meta"><time datetime="2016-11-27T23:01:13+08:00" 
+			pubdate data-updated="true">2016/11/27</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<blockquote>
+<p>因为我们还用React Native 0.30版本，以后肯定会换最新版本，所以着急炒炒这份冷饭，总结总结使用经验。</p>
+
+<p><a href="http://www.chaisong.xyz/2016/11/23/2016-11-23/">上一篇</a>介绍了Android的一些React Native应用中Native部分的开发，这篇主要在这个基础上继续介绍下iOS部分。iOS坑会少一点。</p>
+
+<p>该文章为系列文章，之前的文章为<a href="http://www.chaisong.xyz/2016/06/20/RN%E5%AD%A6%E4%B9%A01%E2%80%94%E2%80%94%E5%89%8D%E5%A5%8F%EF%BC%8Capp%E6%8F%92%E4%BB%B6%E5%8C%96%E5%92%8C%E7%83%AD%E6%9B%B4%E6%96%B0%E7%9A%84%E6%8E%A2%E7%B4%A2/">RN学习1——前奏，app插件化和热更新的探索</a>，<a href="http://www.chaisong.xyz/2016/06/22/RN%E5%AD%A6%E4%B9%A02%E2%80%94%E2%80%94%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84%E4%B8%80%E4%BA%9B%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C/">RN学习2——客户端开发者的一些准备工作</a>，<a href="http://www.chaisong.xyz/2016/08/02/RN%E5%AD%A6%E4%B9%A03%E2%80%94%E2%80%94%E9%9B%86%E6%88%90%E8%BF%9B%E5%B7%B2%E6%9C%89%E5%8E%9F%E7%94%9F%E9%A1%B9%E7%9B%AE/">RN学习3——集成进现有原生项目</a>，<a href="http://www.chaisong.xyz/2016/11/23/2016-11-23/">RN学习4——QDaily Android app中通信和热修复实践</a>。</p>
+</blockquote>
+
+<h2 id="toc_0">一、先说针对hot fix的支持</h2>
+
+<h3 id="toc_1">启动时请求JSBundle更新</h3>
+
+<p>直接看流程图，此类用来管理JSBundle的位置以及热更新的版本。</p>
+
+<p><img src="http://obp30zydr.bkt.clouddn.com/RNBundleSync.jpg" alt=""/><br/>
+<!--more--></p>
+
+<h3 id="toc_2">资源文件的指向</h3>
+
+<p>上一篇说过，为支持资源的热更新，我们将所有resource都使用<code>http://qdaily.cage/</code>开头作为标记，在编译Android的JSBundle过程中，将其修改为file://data/*的本地文件路径。</p>
+
+<p>iOS在此处的处理更为简单：在看React Native源码中可以发现，处理ImageView（即RCTImageView）的请求资源的方法在RCTConvert中，负责将传入的source json文件进行识别，如果uri以http开头，最终会调到<code>+ (NSURL *)NSURL:(id)json</code>方法中，最后调用系统方法<code>NSURL *URL = [NSURL URLWithString:path]</code>完成地址的绑定。知道原理就好了，我们只需要改变系统的<code>+(NSURL*) URLWithString:(NSString*)url</code>方法即可：</p>
+
+<pre><code class="language-objectivec">// NSURL+QDAdditions.m
+
++ (void) load {
+    static dispatch_once_t onceToken;
+    dispatch_once(&amp;onceToken, ^{
+        [self swizzleSEL:@selector(URLWithString:) withSEL:@selector(swizzled_URLWithString:)];
+    });
+}
+
++ (void)swizzleSEL:(SEL)originalSEL withSEL:(SEL)swizzledSEL {
+    Class class = object_getClass((id)self); //不是类方法这里写 Class class = [self class];  就好了
+    Method originalMethod = class_getInstanceMethod(class, originalSEL);
+    Method swizzledMethod = class_getInstanceMethod(class, swizzledSEL);
+    
+    BOOL didAddMethod =
+    class_addMethod(class,
+                    originalSEL,
+                    method_getImplementation(swizzledMethod),
+                    method_getTypeEncoding(swizzledMethod));
+    
+    if (didAddMethod) {
+        class_replaceMethod(class,
+                            swizzledSEL,
+                            method_getImplementation(originalMethod),
+                            method_getTypeEncoding(originalMethod));
+    } else {
+        method_exchangeImplementations(originalMethod, swizzledMethod);
+    }
+}
+
++ (NSURL* )swizzled_URLWithString:(NSString*)strUrl {
+    if ([strUrl hasPrefix:RNBundleResourcePrefix]) {
+        strUrl = [GET_SERVICE(QDRNBundleManager) fileURLStringFromRNResourceRequest:strUrl];
+    }
+   return [self swizzled_URLWithString:strUrl];
+}
+</code></pre>
+
+<p>原理很简单，替换NSURL的类方法，针对固定Prefix的url进行处理，下面是处理方法，针对模拟器情况下，为调试方便，会指向本地server的地址，非模拟器情况会按顺序读取沙盒和mainBundle。</p>
+
+<pre><code class="language-objectivec">//非模拟器读缓存
+- (NSString *)fileURLStringFromRNResourceRequest:(NSString *)request {
+#if (TARGET_IPHONE_SIMULATOR)
+    return [request stringByReplacingOccurrencesOfString:RNBundleResourcePrefix withString:@&quot;http://localhost:8081/resources/&quot;];
+#else
+    NSString* strPath = [request stringByReplacingOccurrencesOfString:RNBundleResourcePrefix withString:@&quot;&quot;];
+    
+    //查找沙盒
+    if (_isDirReady) {
+        NSString* file = [_sandBoxBundleResourceDirectory stringByAppendingPathComponent:strPath];
+        if ([_fileManager fileExistsAtPath:file]) {
+            return [NSString stringWithFormat:@&quot;file://%@&quot;, file];
+        }
+    }
+    //查找bundle
+    NSString* file = [[NSBundle mainBundle].resourcePath stringByAppendingPathComponent:strPath];
+    if ([_fileManager fileExistsAtPath:file]) {
+        return [NSString stringWithFormat:@&quot;file://%@&quot;, file];
+    }
+    
+    return request;
+#endif
+}
+
+</code></pre>
+
+<h2 id="toc_3">二、调起一个React Native组件</h2>
+
+<p>这里appdelegate中增加RCTBridge的成员变量bridge，因其初始化时会进行bundle的load操作以及大量的反射来生成module映射表，耗性能还耗内存，而我们又是混合app，很大概率不会使用，所以采用懒加载方式。为调试方便，在模拟器下指向本机server。</p>
+
+<pre><code class="language-objectivec">- (RCTBridge*)bridge {
+    if (_bridge == nil) {
+        _bridge= [[RCTBridge alloc]initWithDelegate:self launchOptions:nil];
+    }
+    return _bridge;
+}
+
+#pragma - mark RCTBridgeDelegate
+- (NSURL*) sourceURLForBridge:(RCTBridge *)bridge {
+#if (TARGET_IPHONE_SIMULATOR)
+    return [NSURL URLWithString:@&quot;http://localhost:8081/index.ios.bundle?platform=ios&amp;dev=true&quot;];
+#else
+    return [NSURL fileURLWithPath:GET_SERVICE(QDRNBundleManager).localReactNativeBundle];
+#endif
+}
+</code></pre>
+
+<p>在使用过程中，iOS没有那么多坑，很简单，初始化rootView并赋给ViewController的self.view就好了，传参可以传字典，所有基本数据类型都可以~</p>
+
+<pre><code class="language-objectivec">- (void) showImageSplash:(QDSplashResource*) source :(QDSplashEntity *)splash{
+    RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:[AppDelegate sharedAppDelegate].bridge
+                                                     moduleName:@&quot;adImageLaunch&quot;
+                                              initialProperties:@{
+                                                                  @&quot;imagePaths&quot; : source.imagePathArray,
+                                                                  @&quot;redirectUrl&quot; : splash.url,
+                                                                  @&quot;feedbackUrl&quot; : splash.feedbackUrl,
+                                                                  @&quot;adTagUrl&quot; : splash.adTagUrl,
+                                                                  @&quot;totalSeconds&quot; : splash.totalSeconds,
+                                                                  @&quot;extras&quot; : source.themeDictionary? source.themeDictionary: @{}
+                                                                  }];
+    [self showAdWithRN:rootView];
+}
+
+- (void) showAdWithRN:(RCTRootView* )rootView {
+    if (rootView == nil) {
+        return;
+    }
+    
+    QDLaunchAdViewController* adControl = [[QDLaunchAdViewController alloc] init];
+    
+    rootView.frame = [UIScreen mainScreen].bounds;
+    UIView *adVideoHub = [[[NSBundle mainBundle] loadNibNamed:@&quot;LaunchVideoHub&quot; owner:nil options:nil] firstObject];
+    adVideoHub.frame = [UIScreen mainScreen].bounds;
+    
+    rootView.loadingView = adVideoHub;
+    adControl.view = rootView;
+    _currentAdController = adControl;
+    adControl.delegate = self;
+    
+    self.adWindow.rootViewController = [[QDNavigationController alloc] initWithRootViewController: adControl];
+}
+</code></pre>
+
+<p>非常小的一个技巧，可以把任意一个xib文件座位RCTRootView的loadingView，作为其没有加载时候的默认图。</p>
+
+<h2 id="toc_4">三、JS端向Native端的通信方式</h2>
+
+<p>先贴一段code，和之前Android部分贴的功能一致：</p>
+
+<pre><code class="language-objectivec">@interface LaunchBridgeModule : NSObject&lt;RCTBridgeModule&gt;
+
+@end
+
+
+@implementation LaunchBridgeModule
+
+RCT_EXPORT_MODULE();
+
+RCT_EXPORT_METHOD(dismissSplash:(RCTResponseSenderBlock)callback)
+{
+    [[QDLaunchADTool shareLaunchTool] clickForRemoveLaunthADView];
+    callback(@[[NSNull null]]);
+}
+
+RCT_EXPORT_METHOD(open:(NSString*) strUrl:(RCTResponseSenderBlock)callback)
+{
+    if (EmptyString(strUrl)) {
+        return;
+    }
+    QDLaunchAdViewController* launchController = [QDLaunchADTool shareLaunchTool].currentAdController;
+    if (launchController) {
+        strUrl = [strUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        [QDViewControllerRouter routeWithURL:[NSURL URLWithString:strUrl] byNavigationController:launchController.navigationController ArticleDetailJumpDelegate:nil];
+        launchController.view.window.windowLevel = UIWindowLevelNormal;
+        launchController.showRedirectURL = YES;
+    }
+    callback(@[[NSNull null]]);
+}
+
+- (dispatch_queue_t)methodQueue
+{
+    return dispatch_get_main_queue();
+}
+@end
+</code></pre>
+
+<p>所有JS能调用的Native都能力都在<code>RCTBridgeModule</code>这个protocol里面做了定义。每个原生模块都以单实例模式限制了嵌入。</p>
+
+<p><code>RCTBridgeModule</code>这个协议只有一个require方法：</p>
+
+<pre><code class="language-text">+ (NSString *)moduleName;
+// 对应Android中：
+public String getName();
+</code></pre>
+
+<p>相对于Android将Module加进react native的映射表要先后生成Packager文件，然后addPackage两步，iOS拥有<code>宏</code>和<code>load</code>方法：在implement中增加<code>RCT_EXPORT_MODULE();</code>一行宏就能解决之前的所有问题，极限解耦。该宏会覆写require方法，默认返回nil，并覆写load方法，该方法会在app启动时候class进入内存就会调用。具体load方法有哪些黑科技请自行google，这里不做介绍。</p>
+
+<p>通过load方法的覆写，会把当前class在ReactBridge中进行注册，如果moduleName为空就直接使用当前class的name（注意，不管是否为空，都要保证最终module name和Android中定义的一致）。</p>
+
+<p>第二个神奇的黑科技是<code>RCT_EXPORT_METHOD()</code>这个宏（Android中一般实现AOP编程--所谓黑科技基本用注解，iOS基本是宏）。这个宏会为其包住的方法再生成一个新的方法：</p>
+
+<pre><code class="language-text">+ (NSArray&lt;NSString *&gt; *)RCT_CONCAT(__rct_export__, \
+    RCT_CONCAT(js_name, RCT_CONCAT(__LINE__, __COUNTER__))) { \
+    return @[@#js_name, @#method]; \
+}
+</code></pre>
+
+<p>看实现可以知道所有用这个宏新生成的方法都以<code>__rct_export__</code>开头，返回值的都包含其方法名，在bridge初始化的时候，通过OC的runtime特性将其添加进入映射表，从而实现了&quot;export&quot;。</p>
+
+<pre><code class="language-objectivec"> while (cls &amp;&amp; cls != [NSObject class] &amp;&amp; cls != [NSProxy class]) {
+      Method *methods = class_copyMethodList(object_getClass(cls), &amp;methodCount);
+
+      for (unsigned int i = 0; i &lt; methodCount; i++) {
+        Method method = methods[i];
+        SEL selector = method_getName(method);
+        if ([NSStringFromSelector(selector) hasPrefix:@&quot;__rct_export__&quot;]) {
+          IMP imp = method_getImplementation(method);
+          NSArray&lt;NSString *&gt; *entries =
+            ((NSArray&lt;NSString *&gt; *(*)(id, SEL))imp)(_moduleClass, selector);
+          id&lt;RCTBridgeMethod&gt; moduleMethod =
+            [[RCTModuleMethod alloc] initWithMethodSignature:entries[1]
+                                                JSMethodName:entries[0]
+                                                 moduleClass:_moduleClass];
+
+          [moduleMethods addObject:moduleMethod];
+        }
+      }
+
+      free(methods);
+      cls = class_getSuperclass(cls);
+    }
+</code></pre>
+
+<p>这些非常好的宏技巧我也在我自己的<a href="https://github.com/droison/iOSBus">iOSBus</a>中进行了广泛的使用，实现了非常好的解耦，还在进行开发调试中，欢迎follow、star。</p>
+
+<p><code>RCTBridgeModule</code>中还定义了一些optional方法，我这里只用了一个methodQueue，规定调用在主线程队列，这个也是默认队列，可以不写，其它请自行发现。</p>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876732633.html">RN学习4——QDaily Android app中通信和热修复实践</a></h1>
+			<p class="meta"><time datetime="2016-11-23T23:01:13+08:00" 
+			pubdate data-updated="true">2016/11/23</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<blockquote>
+<p>React Native现在已经到了0.37版本了，在集成RN初期使用的0.30版本还不支持将resources打入bundle实施热更新，0.37版本已经解决了这些问题，如果再不写篇文章，炒炒这份冷饭，那就过气了。</p>
+
+<p>QDaily现在在Android和iOS的版本中都集成了React Native，用其做广告效果页的展示。</p>
+
+<p>本文介绍基于Android平台，在RN进行混合app研发过程中，native部分做过的一些工作和踩过一些坑。</p>
+
+<p>本该双平台一起介绍的，但Android的坑多，先说Android，iOS的对应工作会在<a href="http://www.chaisong.xyz/2016/11/23/2016-11-25/">下个文章</a>描述。</p>
+
+<p>该文章为系列文章，之前的文章为<a href="http://www.chaisong.xyz/2016/06/20/RN%E5%AD%A6%E4%B9%A01%E2%80%94%E2%80%94%E5%89%8D%E5%A5%8F%EF%BC%8Capp%E6%8F%92%E4%BB%B6%E5%8C%96%E5%92%8C%E7%83%AD%E6%9B%B4%E6%96%B0%E7%9A%84%E6%8E%A2%E7%B4%A2/">RN学习1——前奏，app插件化和热更新的探索</a>，<a href="http://www.chaisong.xyz/2016/06/22/RN%E5%AD%A6%E4%B9%A02%E2%80%94%E2%80%94%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84%E4%B8%80%E4%BA%9B%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C/">RN学习2——客户端开发者的一些准备工作</a>，<a href="http://www.chaisong.xyz/2016/08/02/RN%E5%AD%A6%E4%B9%A03%E2%80%94%E2%80%94%E9%9B%86%E6%88%90%E8%BF%9B%E5%B7%B2%E6%9C%89%E5%8E%9F%E7%94%9F%E9%A1%B9%E7%9B%AE/">RN学习3——集成进现有原生项目</a>。</p>
+</blockquote>
+
+<h2 id="toc_0">一、Android中RN的View初始化及传参</h2>
+
+<h3 id="toc_1">马上看代码</h3>
+
+<pre><code class="language-java">//React相关组件初始化
+ReactRootView mReactRootView = new ReactRootView(this);
+mReactInstanceManager = ReactInstanceManager.builder()
+      .setApplication(getApplication())
+      .setJSBundleFile(getBundleFilePath())
+      .setJSMainModuleName(&quot;index.android&quot;)
+      .addPackage(new MainReactPackage())
+      .setUseDeveloperSupport(BuildConfig.DEBUG)
+      .setInitialLifecycleState(LifecycleState.BEFORE_RESUME)
+      .setUseOldBridge(true)
+      .build();
+
+//准备参数
+Bundle bundle = new Bundle();
+bundle.putString(&quot;url&quot;, &quot;http://www.qdaily.com&quot;);
+bundle.putFloat(&quot;totalSeconds&quot;, 12);
+bundle.putInt(&quot;style&quot;, 1);
+bundle.putString(&quot;extras&quot;, &quot;{\&quot;key\&quot; : \&quot;value\&quot;}&quot;);
+bundle.putStringArray(&quot;imagePaths&quot;, new String[]{&quot;url1&quot;, &quot;url1&quot;});
+
+//组件启动
+mReactRootView.startReactApplication(mReactInstanceManager, &quot;adImageLaunch&quot;, bundle);
+</code></pre>
+
+
+
+		</div>
+
+		 
+		 <footer>
+      	<a rel="full-article" href="15378876732633.html#more">read more &rarr;</a>
+    	</footer>
+    	
+
+	</article>
+  
+	<div class="pagination">
+	 <a class="prev" href="tech_1.html">&larr; Older</a> 
+<a href="archives.html">Blog Archives</a>
+	 
+	    
+	</div>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

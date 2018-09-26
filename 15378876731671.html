@@ -1,0 +1,479 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  【iOS&Android】RN学习3——集成进现有原生项目 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">【iOS&Android】RN学习3——集成进现有原生项目</h1>
+				<p class="meta"><time datetime="2016-08-02T23:01:13+08:00" pubdate data-updated="true">2016/8/2</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<blockquote>
+<p>在做了短暂的技术调研和分析之后，我决心将RN和现有的QDaily项目进行集成，并替换掉其中的广告效果展示页面。</p>
+
+<p>本文开发环境为Mac，在React Native 版本为0.30。同时RN仅仅作为插件形势集成到原有Native工程中，因此主要还是一个Native工程而非RN工程</p>
+
+<p>而且，本文的前提是你已经在本地配好了iOS开发环境或Android开发环境，也就是说，你起码已经是一个Android开发者或者iOS开发者。</p>
+</blockquote>
+
+<span id="more"></span><!-- more -->
+
+<h2 id="toc_0">一、必备的环境配置</h2>
+
+<p>先安装node.js，可以下载pkg包，也可以命令行安装：</p>
+
+<pre><code class="language-text">brew install node
+</code></pre>
+
+<p>然后安装React Native的命令行工具（react-native-cli）</p>
+
+<pre><code class="language-text">npm install -g react-native-cli
+</code></pre>
+
+<p>这样，最重要的东西就安装好了，其它东西都可以自己看个人情况酌情使用。此处出现任何问题，都可以直接<a href="http://facebook.github.io/react-native/docs/getting-started.html">官网</a>或者stackoverflow。<br/>
+<!--more--></p>
+
+<h2 id="toc_1">二、集成进入iOS</h2>
+
+<blockquote>
+<p>iOS稍微复杂点，先介绍。</p>
+
+<p>QDaily的iOS和Android客户端各维护自己的代码和git仓库，但React Native作为一个跨平台的解决方案，应该用单一的仓库进行一套代码统一管理。因此，我们这里采用了git仓库进行RN相关代码的管理，并用git submodule方式分别引入原工程。同时，在两个平台git仓库的根目录增加react文件夹，将所有RN的代码相关都放进去。</p>
+</blockquote>
+
+<p>先截图看下iOS最后的目录结构：<br/>
+<img src="http://7xruw8.com1.z0.glb.clouddn.com/1470152286.jpg" alt="1470152286.jpg"/></p>
+
+<ul>
+<li>node_modules:react native依赖包，rn相关js和android、iOS的依赖lib都在里面。</li>
+<li>package.json：当前项目的npm package的配置文件。有了它才有node_modules文件夹</li>
+<li>index.ios.js:iOS平台加载的JS脚本</li>
+<li>index.android.js：Android平台加载的JS脚本</li>
+</ul>
+
+<h3 id="toc_2">1、init RN项目</h3>
+
+<p>在react文件夹运行React Native初始化命令react-native init [Project Name]</p>
+
+<pre><code class="language-shell">react-native init QDaily
+</code></pre>
+
+<h3 id="toc_3">2、原工程增加依赖</h3>
+
+<p>初始化完成后，打开在react/ios下面的同名工程，会看到下图的依赖proj:<br/>
+<img src="http://7xruw8.com1.z0.glb.clouddn.com/1470152600.jpg" alt="1470152600.jpg"/></p>
+
+<p>再打开原工程，新建个group，把上图的所有proj都拖进去。依赖工程完成。删掉react/ios和react/android文件夹。</p>
+
+<p>然后在原工程的Build Phases界面里的Link Binary With Libraries，点击最下面的+号，吧所有libRCT开头的.a都加进去，如下图：<br/>
+<img src="http://7xruw8.com1.z0.glb.clouddn.com/1470152888.jpg" alt="1470152888.jpg"/></p>
+
+<h3 id="toc_4">3、增加头文件（h文件）</h3>
+
+<p>原工程的TARGETS-&gt;Build Settings-&gt;Header Search Paths中添加一条<code>&quot;$(SRCROOT)/react/node_modules/react-native/React&quot;</code>，选择recursive，如下图：<br/>
+<img src="http://7xruw8.com1.z0.glb.clouddn.com/1470153045.jpg" alt="1470153045.jpg"/></p>
+
+<h3 id="toc_5">4、增加RN PreBuild shell脚本</h3>
+
+<p>这里就是用于模拟器下正确启动node.js服务器，真机下正确编译rn的bundle。</p>
+
+<p>在TARGETS的Build Phases界面，点+号，选择New Run Script Phase添加一个脚本，并命名为Bundle React Native code and images，在内容中填入以下代码：</p>
+
+<pre><code class="language-shell">export NODE_BINARY=node
+./react/node_modules/react-native/packager/react-native-xcode.sh
+</code></pre>
+
+<p>具体如下图所示：<br/>
+<img src="http://7xruw8.com1.z0.glb.clouddn.com/1470153271.jpg" alt="1470153271.jpg"/></p>
+
+<h3 id="toc_6">5、native固定代码配置指向的bundle</h3>
+
+<p>直接看代码：</p>
+
+<pre><code class="language-objectivec">#pragma - mark RCTBridgeDelegate
+- (NSURL*) sourceURLForBridge:(RCTBridge *)bridge {
+#if (TARGET_IPHONE_SIMULATOR)
+    return [NSURL URLWithString:@&quot;http://localhost:8081/index.ios.bundle?platform=ios&amp;dev=true&quot;];
+#else
+    return [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@&quot;main&quot; ofType:@&quot;jsbundle&quot;]];
+#endif
+}
+</code></pre>
+
+<p>到此，原有iOS项目集成React Native完成。有两个简单技巧：</p>
+
+<ol>
+<li>模拟器下cmd+r可以reload刷新</li>
+<li>如果真机下运行，不打算调试RN，请勾选步骤4中图片里的<code>Run script only when installing</code>，可以避免每次都build bundle。如下图：
+<img src="http://7xruw8.com1.z0.glb.clouddn.com/1470153671.jpg" alt="1470153671.jpg"/></li>
+</ol>
+
+<h2 id="toc_7">三、集成进Android现有工程</h2>
+
+<blockquote>
+<p>我们这里假设已经正确完成了<code>二</code>中的iOS集成，并将其react文件夹做git仓库管理（node_modules请ignore）。</p>
+
+<p>我们这里还假设你的工程只支持Android4.1及以上，因为这是RN支持的最低版本。</p>
+</blockquote>
+
+<h3 id="toc_8">1、git配置</h3>
+
+<p>将react工程git仓库链接到Android原有工程，并作为git submodules的形式引入到原工程根目录。pull后目录结构如下：<br/>
+<img src="http://7xruw8.com1.z0.glb.clouddn.com/1470154017.jpg" alt="1470154017.jpg"/></p>
+
+<h3 id="toc_9">2、初始化react</h3>
+
+<p>在react文件夹下运行</p>
+
+<pre><code class="language-shell">npm insall
+</code></pre>
+
+<p>之后你就发现node_modules文件夹又出现了</p>
+
+<h3 id="toc_10">3、gradle配置</h3>
+
+<p>根目录的gradle增加本地的maven依赖：</p>
+
+<pre><code class="language-text">allprojects {
+    repositories {
+        ...
+        maven {
+            url &quot;$projectDir/../react/node_modules/react-native/android&quot;
+        }
+    }
+}
+</code></pre>
+
+<p>需要使用RN的module的gradle文件中增加对react native的依赖：</p>
+
+<pre><code class="language-text">dependencies {
+    ...
+    compile &quot;com.facebook.react:react-native:0.30.0&quot;  
+}
+</code></pre>
+
+<p>该gradle还要在android熟下增加ndk的配置：</p>
+
+<pre><code class="language-text">android {
+    ...
+    defaultConfig {
+        ...
+        ndk {
+            abiFilters &#39;armeabi-v7a&#39;,&#39;armeabi&#39;,&#39;x86&#39;,&#39;mips&#39;
+        }
+    }
+}
+</code></pre>
+
+<p>sync一下，配置完成了。</p>
+
+<h3 id="toc_11">4、运行</h3>
+
+<p>Android这里和iOS不一样，真机不会默认打包到APK中；而且android的模拟器是虚拟机，不能和Mac共享一个localhost，所以一般调试方法如下。</p>
+
+<h4 id="toc_12">如果用server的bundle，需要手动设置server ip：</h4>
+
+<p>现在react文件根目录下把node的server启动：</p>
+
+<pre><code class="language-shell">react-native start
+</code></pre>
+
+<ul>
+<li>模拟器下（geny motion），cmd+m调起开发菜单，选择<code>Dev Settings</code>-<code>Debug server host for device</code>，然后设置Mac的ip和端口号；</li>
+<li>同样的，真机可以通过摇一摇调起上面的开发菜单；</li>
+<li>真机下在4.4以上也可以设置反向代理，将localhost指向Mac，这样就默认可以调试了。代码如下：</li>
+</ul>
+
+<pre><code class="language-shell">adb reverse tcp:8081 tcp:8081 
+</code></pre>
+
+<p>上面的设置完成后，可以选择<code>Reload JS</code>来请求刷新页面，相当于iOS模拟器的<code>cmd+r</code>。</p>
+
+<p>注意：上面说的那个开发菜单，facebook使用悬浮窗的形式实现的，如果你使用的奇葩国产Android系统，那很有可能被系统默认禁掉了这个权限，导致白屏，请自行在各自rom的权限管理把<code>显示悬浮窗</code>权限打开。</p>
+
+<h4 id="toc_13">如果用使用离线bundle，需要手动打包：</h4>
+
+<p>下面这个是我写的QDaily的RN bundle打包脚本，可以做参考。因为一些地方定制化了我们自己的热更新方案，所以和官方的略有不同，我会在下一篇介绍<code>QDaily的react native热更新方案</code>中进行具体介绍。<br/>
+<img src="http://7xruw8.com1.z0.glb.clouddn.com/1470155788.jpg" alt="1470155788.jpg"/></p>
+
+<h2 id="toc_14">四、项目其它开发者</h2>
+
+<p>项目的其它开发者需要完成<code>步骤一</code>，然后在react目录下运行<code>npm install</code>后，就可以正常进行native或者RN开发。</p>
+
+<hr/>
+
+<h4 id="toc_15">参考链接</h4>
+<http://facebook.github.io/react-native/>
+<p><a href="http://www.lcode.org/react-native-integrating">React Native移植iOS原生项目-已更新版本</a></p>
+
+<p><a href="http://www.imbeta.cn/react-native-for-android-huan-jing-da-jian-ji-cai-keng.html">React-Native For Android 环境搭建及踩坑</a></p>
+
+<p><a href="http://www.cocoachina.com/ios/20160510/16174.html">ReactNative之原生模块开发并发布--iOS篇</a></p>
+
+<p><a href="http://my.oschina.net/u/2346786/blog/645781">React Native iOS配置教程</a></p>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876730639.html" 
+	        title="Previous Post: 微信上最近很火很炫的广告是怎么实现的">&laquo; 微信上最近很火很炫的广告是怎么实现的</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876731000.html" 
+	        title="Next Post: 【Android&iOS】QDaily基于WebP的流量优化实践">【Android&iOS】QDaily基于WebP的流量优化实践 &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

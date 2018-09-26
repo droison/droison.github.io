@@ -1,0 +1,550 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  好奇心日报iPad版的分屏适配实现 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">好奇心日报iPad版的分屏适配实现</h1>
+				<p class="meta"><time datetime="2015-11-23T23:01:13+08:00" pubdate data-updated="true">2015/11/23</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<blockquote>
+<p>好奇心日报是一个媒体阅读类app，因此不可能放弃iPad这个平台，恰逢iPad pro上线，我们决定开发iPad版本并直接适配iOS9的新特性----分屏。</p>
+</blockquote>
+
+<span id="more"></span><!-- more -->
+
+<h2 id="toc_0">写在前面</h2>
+
+<p>Apple在iOS9中针对iPad做了一些多任务处理模式，其中分屏模式为“Slide Over”和“Split View”。</p>
+
+<ul>
+<li><p>Slide Over支持全部iPad版本，支持其功能的app会在其它app在前台的情况下，通过侧滑右边，获得一个宽度为320（iPad Pro为375）的空间用于展示。这种为伪多任务，最终其实也只能处理一个app。样式如下：</p>
+<p><img src="https://raw.githubusercontent.com/droison/picture/master/split1.jpg" alt=""/></p></li>
+<li><p>Split View才是我们所理解的真正应用程序分屏功能，可以将屏幕分成大约3：1，2：2，2：1等多种情况（我们遍历宽度，发现一共12种...）。支持的机型现有3中，就是iPad pro，iPad air2，iPad mini4。样式如下<br/>
+<img src="https://raw.githubusercontent.com/droison/picture/master/split2.jpg" alt=""/></p></li>
+</ul>
+
+<p>通过调研，我们发现通过iPad分屏，以及转屏切换等操作，我们开发者将面对的app屏幕宽度足足有11种之多：</p>
+
+<pre><code class="language-text">iPad pro ： 1366，1024，981，678，639，375
+iPad air ： 1024，768，694，507，438，320
+</code></pre>
+
+<p>其中宽度相差很大，可以和混乱的Android市场一拼，写死frame的方式肯定不行，单纯的采用autolayout布局的方式也不可能满足如此跨度宽度的需求。市面上和我们比较类似的应用，同时支持了split view的只发现了豌豆荚一览，参考他们的适配风格，发现他们是1行，在不同情况下只需要更改间距即可。下图是豌豆荚一览的图片，可以看出他们针对split view的适配是比较舒服而且比较简单的</p>
+
+<p><img src="https://raw.githubusercontent.com/droison/picture/master/split6.png" alt=""/></p>
+
+<p>好奇心日报的iPhone版本是一种2列卡片形式的瀑布流，相应的，iPad版本预计也设计成卡片形式，这样我们面对的适配情况要比两列复杂的多，那么确定适配方案将会是最重要的部分。下图是好奇心日报iPhone版本和iPad版本视觉初稿，我们预计要搞成这个样子：</p>
+
+<p><img src="https://raw.githubusercontent.com/droison/picture/master/split5.png" alt=""/></p>
+
+<h2 id="toc_1">适配方案</h2>
+
+<p>即使采用autolayout，split view切分过程中依然要修改其约束值，几套不同参数的适配值不可避免。<br/>
+11种屏幕方案，<code>UI同学不可能出11套视觉稿</code>，所以我们根据宽度和机型不同，将这11种情况划分3个区间：</p>
+
+<pre><code class="language-text">    4列情况：1366，1024，981，768（非mini）
+    3列情况：768（mini），694，478，639
+    2列情况：407，438，375，320
+</code></pre>
+
+<p>UI同学只需要根据出上述3中情况最大尺寸的视觉稿，我们开发根据最大视觉稿做向下兼容适配。在同一个配置文件下，根据宽度的不同，可以让其中的一些间距、字体不变或者等比压缩。</p>
+
+<p>在这种混乱屏幕的适配方面，web页面以及Android的app在这方面远远走在了iOS的前面。在吸取两者优点的情况下，我们<code>最终采用方案</code>是基于css的配置模式，每个css中可以定义当前模式下的间距，颜色，以及字体等与UI相关的参数。具体：</p>
+
+<pre><code class="language-text">定义了3中css，style~iPad4Column.css、style~iPad3Column、style~iPad2Column.css，并约定style~iPad4Column.css为其基础配置。即通过一个theme管理层，使其在2列的情况下先读取2Column.css的数值，如果该值不存在，读取基础类4Column.css的值，3列情况于此相同。
+而且，在css参数内部，定义了一个dynamic属性，使其能够根据宽度自由放缩。例如在4Column.css中定义了一个”1366 dynamic“的值，由于1366、1024、981都会读取该配置，但是却在这三种情况下分别获得的值为1366、1024和981，实现了等比放缩。
+</code></pre>
+
+<p><code>总结，方案基本就是代码层采用autolayout(iOS方案)，theme层用3套配置文件（Android方案---xml）+等比放缩（web方案，css百分比），通过这种方案，基本能够满足我们对多屏幕适配的要求。</code></p>
+
+<p>下面贴一点css部分的代码：<br/>
+    <img src="https://raw.githubusercontent.com/droison/picture/master/split3.png" alt=""/><br/>
+    通过这种配置文件，以后老板如果说，2列下面这个字体有点大吧，我们就不需要到无限的m文件里面去痛苦的查找，直接找到这里改掉就好了，而且编包不需要重新编译，超快~</p>
+
+<p>针对css文件的解析，我是在facebook开源出来的react Native中找到了其中的css解析文件，做了一些适应性修改，拿来用的，文件名如下图，自己去找：<br/>
+    <img src="https://raw.githubusercontent.com/droison/picture/master/split4.png" alt=""/></p>
+
+<p>再贴一部分theme层的代码，这一部分通过css的配置文件将相同的宏变量在不同的宽度下映射出不同的值：</p>
+
+<pre><code class="language-text">ThemeMgr.m
+    //loadcss部分，将3套资源load成3个dictionary，最终的值是一个NSArray对象
+    - (void)loadCSSStyle{
+        NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];
+        NSString *path = [bundleRoot stringByAppendingPathComponent:THEME_STYLE_DEFINE_FILE];
+
+        NSDictionary* parentDic = nil;
+
+        NSString* column2Path = [[[path stringByDeletingPathExtension] stringByAppendingString:THEME_RES_PATH_2COLUMN_SUBFIX] stringByAppendingPathExtension:@&quot;css&quot;];;
+        parentDic = [[[NICSSParser alloc] init] dictionaryForPath:column2Path];
+        [self rebuildThemeDictionaryWithThemeDictionary:parentDic toDictionary:_2ColumnThemeDic];
+        ...重复代码，省略...
+    }
+
+    //根据css的key获取其值，我们定义了一个方法[DeviceInfo iPadColumn]来确认当前需要读取的配置文件。
+    - (NSArray*)getValueOfProperty:(NSString*)property forSeletor:(NSString *)selector
+    {
+        NSArray* result = nil;
+        int column = [DeviceInfo iPadColumn];
+        if (column == 2) {
+            NSDictionary* child2ColumnThemeDic = [_2ColumnThemeDic objectForKey:selector];
+            if (child2ColumnThemeDic) {
+                result = [child2ColumnThemeDic objectForKey:property];
+            }
+            result = [self constantsValue:result];
+        }
+        if (result &amp;&amp; result.count &gt; 0) {
+            return result;
+        }
+        if (column == 3) {
+            NSDictionary* child3ColumnThemeDic = [_3ColumnThemeDic objectForKey:selector];
+            if (child3ColumnThemeDic) {
+                result = [child3ColumnThemeDic objectForKey:property];
+            }
+            result = [self constantsValue:result];
+        }
+        if (result &amp;&amp; result.count &gt; 0) {
+            return result;
+        }
+        //2和3没找到，默认走4
+        NSDictionary* child4ColumnThemeDic = [_4ColumnThemeDic objectForKey:selector];
+        if (child4ColumnThemeDic) {
+            result = [child4ColumnThemeDic objectForKey:property];
+        }
+        result = [self constantsValue:result];
+        return result;
+    }
+
+
+ThemeUtil.m
+    //将传入数组转成对应UIFont
+    +(UIFont*) parseFontFromValues:(NSArray*)value
+    {
+        if (value==nil||[value count]==0) {
+            return [UIFont systemFontOfSize:[UIFont systemFontSize]];
+        }
+
+        NSInteger fontSize = [[value firstObject] integerValue];
+        if (fontSize&lt;=5) {
+            fontSize = 5;
+        }
+        if ([value count]==1) {
+            return [UIFont systemFontOfSize:fontSize];
+        }
+
+        if ([[value lastObject] isEqualToString:@&quot;dynamic&quot;]) {
+            fontSize = (int) (fontSize * [DeviceInfo iPadThemeScale]);
+        }
+
+        if ([value count]==2) {
+            if ([[value objectAtIndex:1] isEqualToString:@&quot;bold&quot;]) {
+                return [UIFont boldSystemFontOfSize:fontSize];
+            }else if([[value objectAtIndex:1] isEqualToString:@&quot;italic&quot;]){
+                return [UIFont italicSystemFontOfSize:fontSize];
+            }else{
+                return [UIFont systemFontOfSize:fontSize];
+            }
+        }
+        return [UIFont systemFontOfSize:[UIFont systemFontSize]];
+    }
+    //传入数组转成对应的CGFloat
+    +(CGFloat) parseFloatFromValues:(NSArray*)value
+    {
+        CGFloat floatValue = [[value firstObject] floatValue];
+        if ([[value lastObject] isEqualToString:@&quot;dynamic&quot;]) {
+            floatValue *= [DeviceInfo iPadThemeScale];
+        }
+       return
+</code></pre>
+
+<h2 id="toc_2">适配过程中定义的一些工具</h2>
+
+<h3 id="toc_3">如何识别iPad pro，iPad mini，以及普通iPad</h3>
+
+<p>有时候要根据设备不同进行区分对待，尤其是mini和air具有相同的分辨率但尺寸不同，就有其需要有一些特殊化操作。贴代码：</p>
+
+<pre><code class="language-text">+ (BOOL) isiPadPro {
+        static BOOL s_isiPadPro = NO;
+
+        static dispatch_once_t onceToken;
+        dispatch_once(&amp;onceToken, ^{
+            if ([self isiPad]) {
+                s_isiPadPro = MAX(QDScreenHeight, QDScreenWidth) &gt; 1024;
+            }
+        });
+
+        return s_isiPadPro;
+    }
+
+    + (BOOL) isiPadMini {
+        static BOOL s_isiPadMini = NO;
+
+        static dispatch_once_t onceToken;
+        dispatch_once(&amp;onceToken, ^{
+            if ([self isiPad]) {
+                NSString *nsPlatform = [UIDevice currentDevice].platform;
+                s_isiPadMini = ([nsPlatform hasPrefix:@&quot;iPad2,5&quot;] || [nsPlatform hasPrefix:@&quot;iPad2,6&quot;] || [nsPlatform hasPrefix:@&quot;iPad2,7&quot;]    //mini
+                                || [nsPlatform hasPrefix:@&quot;iPad4,4&quot;] || [nsPlatform hasPrefix:@&quot;iPad4,5&quot;] || [nsPlatform hasPrefix:@&quot;iPad4,6&quot;] //mini2
+                                || [nsPlatform hasPrefix:@&quot;iPad4,7&quot;] || [nsPlatform hasPrefix:@&quot;iPad4,8&quot;] || [nsPlatform hasPrefix:@&quot;iPad4,9&quot;] //mini3
+                                || [nsPlatform hasPrefix:@&quot;iPad5,1&quot;] || [nsPlatform hasPrefix:@&quot;iPad5,2&quot;] //mini4
+                                );
+            }
+        });
+
+        return s_isiPadMini;
+    }
+
+    + (BOOL) isiPadNormal { //默认认为不是mini和pro的都是normal
+        static BOOL s_isiPadNormal = NO;
+
+        static dispatch_once_t onceToken;
+        dispatch_once(&amp;onceToken, ^{
+            if ([self isiPad]) {
+                s_isiPadNormal = ![self isiPadMini] &amp;&amp; ![self isiPadPro];
+            }
+        });
+
+        return s_isiPadNormal;
+    }
+</code></pre>
+
+<h3 id="toc_4">获得分屏的通知</h3>
+
+<p>系统没有针对分屏发送通知，我们需要自己实现。通过实验，虽然在分屏过程中系统会回掉appdelegate的applicationDidBecomeActive:方法，但我们发现最先获得分屏事件的是可见window的layoutSubviews方法，因此在此做一些操作。贴代码：</p>
+
+<pre><code class="language-text">    - (void) layoutSubviews {
+        [super layoutSubviews];
+        if (self == [AppDelegate sharedAppDelegate].window &amp;&amp; _lastWidth != self.width) {
+             _lastWidth = self.width;
+            [DeviceInfo changeSplitValueIfNeed];
+        }
+    }
+
+    DeviceInfo.m
+    + (void) changeSplitValueIfNeed {
+        if ([DeviceInfo isiPadUniversal] &amp;&amp; [DeviceInfo isiOS9plus]) {
+            UIScreen *screen = [UIScreen mainScreen];
+            CGFloat appWidth = screen.applicationFrame.size.width;
+            BOOL curSplitState = (appWidth != screen.bounds.size.width &amp;&amp; appWidth != screen.bounds.size.height);
+            if (curSplitState != s_biPadSplitState) { //本次后台前台切换了状态
+                s_biPadSplitState = curSplitState;
+            }
+        } else {
+            s_biPadSplitState = NO;
+        }
+        int column = [DeviceInfo getCurrentiPadColumnIfChange];
+        if (column != s_biPadColumnNum) {
+            s_biPadColumnNum = column;
+            [[NSNotificationCenter defaultCenter] postNotificationName:KNotificationColumnChange object:nil];
+        }
+    }
+</code></pre>
+
+<h3 id="toc_5">获取当前宽度</h3>
+
+<p>由于分屏了，使用[UIScreen mainScreen].bounds可能就不能满足了。贴代码：</p>
+
+<pre><code class="language-text">    + (CGFloat) appWidth {
+        UIScreen *screen = [UIScreen mainScreen];
+
+        if ([DeviceInfo isiPadUniversal] &amp;&amp; [DeviceInfo isiOS9plus]) {
+            return screen.applicationFrame.size.width;;
+        }
+        return screen.bounds.size.width;
+    }
+</code></pre>
+
+<h3 id="toc_6">什么时候处理UI布局更新事件</h3>
+
+<p>viewcontroller的viewWillLayoutSubviews，view的layoutSubviews时处理UI的最好时刻，如果使用了collectionview，那么如果在分屏过程中重新定义了layout，那么在cell的applyLayoutAttributes:方法中处理ui也是个不错的时机。</p>
+
+<h2 id="toc_7">一些在适配过程中的注意</h2>
+
+<p>1、window的设定<br/>
+在iOS9下window不要设置它的宽高，它默认init就好了。<br/>
+但是，iOS8及以下版本一定要初始化宽高，要不然发生任何恐怖事情不负责。<br/>
+2、多使用autolayout，如果UI很简单，不需要AutoLayout，起码要记得添加autoResizingMask属性。<br/>
+3、面对的宽度会相差近5倍，所以所有的宽度值都不会是安全的了，每个写死的数值都要考虑如果分屏了怎么办。<br/>
+4、cache、cache、cache！分屏可能会出现多种ui情况，很多宽度高度要不停的计算，如果算过了，请把值缓存下来。<br/>
+5、使用splitview必须要支持4个方向的旋转，so，你可能要改好多交互方案了</p>
+
+<h2 id="toc_8">最后</h2>
+
+<h3 id="toc_9">gif欣赏</h3>
+
+<p>以后加上，或者过两天你去appstore下载个看看</p>
+
+<h3 id="toc_10">最后的最后</h3>
+
+<p>如果你嫌麻烦，可以通过在plist中增加参数来关闭对split view的支持。。。<br/>
+    <key>UIRequiresFullScreen</key><br/>
+    <true/></p>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			
+			    <a class='category' href='QDaily.html'>QDaily</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876731602.html" 
+	        title="Previous Post: SDWebImage源码研究与学习">&laquo; SDWebImage源码研究与学习</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876731282.html" 
+	        title="Next Post: iOS hook实践（2）---入门插件实现">iOS hook实践（2）---入门插件实现 &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

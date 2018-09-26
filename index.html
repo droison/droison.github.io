@@ -1,0 +1,634 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div class="blog-index">
+
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876730248.html">面试常见：iOS Category</a></h1>
+			<p class="meta"><time datetime="2018-08-09T23:01:13+08:00" 
+			pubdate data-updated="true">2018/8/9</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<hr/>
+
+<blockquote>
+<p>面试非常多候选人，涉及到runtime相关知识Category是一个常见考察点，毕竟这是应用最多的runtime场景。<br/>
+本文会针对这部分知识问题做一下分解。</p>
+</blockquote>
+
+
+
+		</div>
+
+		 
+		 <footer>
+      	<a rel="full-article" href="15378876730248.html#more">read more &rarr;</a>
+    	</footer>
+    	
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a></h1>
+			<p class="meta"><time datetime="2018-05-04T23:01:13+08:00" 
+			pubdate data-updated="true">2018/5/4</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<h3 id="toc_0">引子</h3>
+
+<p>这两天追查app卡顿问题，打开time profiler查看方法耗时，惊奇发现<code>-[UIImage imageNamed:]</code>占用CPU时间很长：</p>
+
+<p>下图是重复打开一个feed页面的CPU占用，发现20%的CPU时间在<code>-[UIImage imageNamed:]</code>中，显然不合理，因为我们知道<code>-[UIImage imageNamed:]</code>相对于<code>-[UIImage imageWithContentsOfFile:]</code>存在图片缓存，重复打开本地图片应该性能影响非常小。</p>
+
+<p><img src="https://lh3.googleusercontent.com/-oDATs6Fc0-k/Wuv5XJRmS9I/AAAAAAAAHQE/vqE-ztABSbs1dbBO53gmD2deAFMqK_aeQCHMYCw/I/15254142315308.jpg" alt=""/></p>
+
+<p>关掉time profiler的Hide System Libraries勾选项，查看系统方法堆栈和对应的耗时：</p>
+
+<p><img src="https://lh3.googleusercontent.com/-jmeXkroBTu0/Wuv5Z1a_vLI/AAAAAAAAHQI/RU1qDJGe0e8sNexcSTpcMhnF7hUg7_XPQCHMYCw/I/15254142400149.jpg" alt=""/></p>
+
+<p>发现<code>-[NSFileManager fileExistsAtPath:]</code>为主要耗时方法，该方法没有本地数据读取，只是判断是否存在，感觉一脸懵逼？难道内存缓存了还会每次线判一次本地存在？苹果的实现不会这么蠢吧？..</p>
+
+<h3 id="toc_1">-[UIImage imageNamed:] 的实现原理</h3>
+
+<p>imageNamed:实际上调用的是一个叫做UIAssetManager的类，每个Bundle有一个UIAssetManager。它有一个strong-strong的NSMapTable<NSString, UIImageAsset>的属性，用来做缓存。。。</p>
+
+<p>如果查询不到缓存，首先命中的是Assets.car，这个是CoreUIFrramework处理的（私有framework），会解压（有缓存）那个Assets.car然后解码取回图。</p>
+
+<p>如果还找不到，会通过Bundle的path按照那个文档描述的，搜索@3x @2x @1x .png忽略等规则，直到找到一个那种非Assets.car的bundle图，然后加载。</p>
+
+<p>如果你的图片不在Assets.car里面，会直接触发到最远的第三部，可能遍历搜索fileExist比较耗时吧</p>
+
+<h3 id="toc_2">最终卡顿原因</h3>
+
+<p>原因找到了：<br/>
+themedImageNamed: 方法会每次都给 imageName 加上后缀先去取图，这个应该是iOS7之前没有Images Assets之前的适配逻辑。现在其实包里面没有-667h、-736h这样的图了，会导致所有图片第一次都取不到。就会发现频繁调用fileExistsAtPath:，而没调取图逻辑。<br/>
+系统缓存了所有找到图片的UIImage，没缓存找不到的黑名单。</p>
+
+<h3 id="toc_3">一些结论和启示</h3>
+
+<p>-[UIImage imageNamed:] 需要hook加保护<br/>
+FPS优化一定要找到瓶颈，别贸然优化 --&gt; 合理使用工具<br/>
+IO操作很恐怖，哪怕只是很轻量级的处理<br/>
+有必要监控一下NSFileManager的IO操作情况</p>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876732077.html">复杂多人项目Owner思考</a></h1>
+			<p class="meta"><time datetime="2018-04-18T23:01:13+08:00" 
+			pubdate data-updated="true">2018/4/18</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<h2 id="toc_0">1、背景</h2>
+
+<p>UGC方向业务场景比较复杂，易同时出现多职能线和多业务线的大需求，而PM经常要求赶在某个版本前上线，使得频繁出现<strong>“时间倒排”</strong>。<br/>
+当业务复杂遇上需求较大，那么每个业务方人员平均参与人数将大于1人，项目复杂度也会成倍提升。<br/>
+需求完成情况最终体现在“代码合入”时间节点上，分解开来，便是<strong>提测时间点</strong>和<strong>代码质量</strong>。如果开发团队没有应对复杂业务逻辑、多业务线、多人项目工程化能力，最终导致项目delay或者采用加班方式解决问题，会遭各方吐槽，长此以往，则失去信任力。 </p>
+
+<h2 id="toc_1">2、Delay一般原因分析</h2>
+
+<blockquote>
+<p>一般出现这类原因有两点：开发者时间评估不准确；缺乏纠偏。 </p>
+</blockquote>
+
+<h3 id="toc_2">2.1 时间评估问题</h3>
+
+<ul>
+<li>需求点把握不足：没能准确的将需求各个模块分解和细化。</li>
+<li>核心流程图缺失、整体架构设计缺失：整体认知不足，不能高屋建瓴。 </li>
+<li>过UI/UE时间评估不足，联调时间评估不足。 </li>
+</ul>
+
+<h3 id="toc_3">2.2 Owner在项目运行中缺少纠偏</h3>
+
+<ul>
+<li>没有里程碑或者里程碑过于简略 。</li>
+<li>里程碑进展出现问题，不能尽快完成纠偏，导致问题持续、放大，最终导致delay。</li>
+</ul>
+
+<h2 id="toc_4">3、规避问题方式</h2>
+
+<h3 id="toc_5">3.1 重视技术方案设计</h3>
+
+<ul>
+<li>RD在提供排期时，需同时提供详细的分解工期，否则该排期不应予以接受。</li>
+<li>Owner应review各RD的需求分解的合理性。</li>
+<li>RD内部需要做技术方案，并内部进行技术方案review，技术方案需要包含核心业务流程图（后端API调用流程、主干UI交互流程）。</li>
+</ul>
+
+<h3 id="toc_6">3.2 重视站会和里程碑</h3>
+
+<ul>
+<li><strong>过UI/UE时间点</strong>和<strong>联调时间点</strong>是项目进度管理中的重要里程碑。</li>
+<li>表格、看板、甘特图都是可选的项目管理工具，复杂项目运行过程中至少使用一种。</li>
+<li>要有规律的站会，站会重点review进展和里程碑完成情况。</li>
+<li>每次站会需根据实际情况调整<strong>分解排期</strong>和<strong>里程碑</strong>，出现delay风险需提前周知项目利益方。</li>
+</ul>
+
+<h3 id="toc_7">3.3 大需求的分解code review</h3>
+
+<p>项目内部需有code review里程碑，根据里程碑分解code review。<br/>
+--- 分阶段code review思考待续 ---</p>
+
+<h2 id="toc_8">4、总结</h2>
+
+<ul>
+<li>RD职责：做项目拆解及各分解时间安排，做技术方案。</li>
+<li>Owner职责：根据各方拆解建立排期和里程碑，并组织站会，站会中回归项目风险点。</li>
+</ul>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876732116.html">【IGListKit】学习与分析2</a></h1>
+			<p class="meta"><time datetime="2018-04-16T23:01:13+08:00" 
+			pubdate data-updated="true">2018/4/16</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<blockquote>
+<p>源于4月16日在小组内的分享<br/>
+图床为Google相册，看不了自己准备梯子。</p>
+</blockquote>
+
+<p><img src="https://lh3.googleusercontent.com/-FqbGRx5uisM/WtrleujON-I/AAAAAAAAHH4/ZGtWfjnP6D08bAYez34nKgjvThEbB_jZQCHMYCw/I/IGList" alt="IGList学习2.001"/></p>
+
+<p><img src="https://lh3.googleusercontent.com/-gZm3qfRkmlk/WtrkF9Zvm7I/AAAAAAAAHFc/70Ncz1Z5QwUSfJP01lW2RQ3OFSRazLUwgCHMYCw/I/IGList" alt="IGList学习2.002"/></p>
+
+
+
+		</div>
+
+		 
+		 <footer>
+      	<a rel="full-article" href="15378876732116.html#more">read more &rarr;</a>
+    	</footer>
+    	
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a></h1>
+			<p class="meta"><time datetime="2018-04-02T23:01:13+08:00" 
+			pubdate data-updated="true">2018/4/2</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<blockquote>
+<p>源于4月2日在小组内的分享。<br/>
+图床为Google相册，看不了自己准备梯子。</p>
+</blockquote>
+
+<p><img src="https://lh3.googleusercontent.com/-3jEV3avy7vY/WtriDp896UI/AAAAAAAAHDc/lCPKHvEM0CY7Gq1BugbSTZFkf60iD_SbQCHMYCw/I/ListDiff%2B" alt="ListDiff 学习与分析.001"/></p>
+
+<p><img src="https://lh3.googleusercontent.com/-KfR_MU43kyc/WtrjMBGv0XI/AAAAAAAAHE0/aGRivjQBYMgz9LFzDQtIDz4o9QKDwfbSQCHMYCw/I/ListDiff%2B" alt="ListDiff 学习与分析.002"/></p>
+
+
+
+		</div>
+
+		 
+		 <footer>
+      	<a rel="full-article" href="15378876732151.html#more">read more &rarr;</a>
+    	</footer>
+    	
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876732185.html">更新一下今年的学习计划</a></h1>
+			<p class="meta"><time datetime="2018-03-07T23:01:13+08:00" 
+			pubdate data-updated="true">2018/3/7</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<h2 id="toc_0">1、工作上</h2>
+
+<p>找到新的突破</p>
+
+<h2 id="toc_1">2、学习</h2>
+
+<p>一本英文书<br/>
+Introduction to Computation and Programming Using Python(2nd)</p>
+
+<h2 id="toc_2">3、身体</h2>
+
+<p>一三五去健身，平均每周2小时健身房运动。</p>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876732218.html">Hello 2018</a></h1>
+			<p class="meta"><time datetime="2018-01-08T23:01:13+08:00" 
+			pubdate data-updated="true">2018/1/8</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<blockquote>
+<p>写了两篇17年的感悟，这一篇写一下对18年的一些期望。</p>
+</blockquote>
+
+<h3 id="toc_0">新年寄语</h3>
+
+<blockquote>
+<p><strong>突破、胸怀、守时</strong><br/>
+我希望，这三个寄语，能贯穿一年的主线，引领我一年的成长。</p>
+</blockquote>
+
+<p><strong>突破是我对一年最大的期望了。</strong><br/>
+18年3月27日，是我头条入职1周年，也是我毕业参加工作4整年的日子。毕业后先去了微信，然后是好奇心日报，再到头条，作为一个iOS开发，已经4个年头，虽然成为了一个最基层的技术领导者，但瓶颈也随之出现。<br/>
+今年，努力寻找在工作上肩负起更大的责任，或者在技术方向上寻找一个全新的领域。</p>
+
+<p><strong>胸怀一个男人应有的素质</strong><br/>
+18年，我即将会组建家庭，标志的成为一个完整的自然人，有道是成家立业。<br/>
+随之而来的，是家庭生活，双方长辈的关系，琐事和纠纷也许也会不期而至。<br/>
+有事做得好，有时做的差，其实都是家人，影响本身不大，重要的更多是态度。作为一个男人，在家庭中，尤其要有包容的胸怀，有心胸，能包容女人的脾气，能在婆媳中增加缓冲，永远起到积极的作用。<br/>
+嗯，28年来，心胸这个词第一次进入了我的个人要求中，提到这个词，能感觉到自己的成长。</p>
+
+<p><strong>守时是品德，想表达的更多是一些传统素质</strong><br/>
+守信，应该是立于世界的基本品质，自认为一直坚持的不错，或者并不需要坚持，只需要不被错误引导即可。<br/>
+但守时，毕业后渐渐堕落，和大家同流。虽有太多理由可以原谅自己。但我依旧相信，生活中有些东西，值得一直坚持，18年，言而有信从守时开始做起。</p>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876732252.html">2017年的几点感悟</a></h1>
+			<p class="meta"><time datetime="2018-01-02T23:01:13+08:00" 
+			pubdate data-updated="true">2018/1/2</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<blockquote>
+<p>一年又在没有一丝丝防备中到来而消去，回首一年，感受平静河流下面蕴含的一些汹涌，每天不知所踪的忙碌。<br/>
+随波逐流，又想特立独行；有时怀疑自己，有时信心膨胀；会因别人转瞬的表情而患得患失。索性，那份全力以赴的热情，还未流失。</p>
+
+<p>写这篇文章，主要描述一种感觉，沉淀一下2017年给自己带来的几点感悟，也希望指引一下有些迷茫的自己，寻找下一个突破</p>
+</blockquote>
+
+<h3 id="toc_0">一、初窥堂奥——一个技术领导者的起步</h3>
+
+<p>跳槽还是不期而至，在好奇心日报没能坚持到第三年，之前写过一篇<a href="/2017/03/24/2017-03-24/">总结</a>，回顾了跳槽的心路历程。<br/>
+头条是一家不错的公司，起码福利和待遇还是不错的。选择来头条，是因为相信这是一家一定会成功的公司，而自己，在这里有一个在个人职业阅历下，能拥有的还不错的坑。</p>
+
+
+
+		</div>
+
+		 
+		 <footer>
+      	<a rel="full-article" href="15378876732252.html#more">read more &rarr;</a>
+    	</footer>
+    	
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876732285.html">17年的总结</a></h1>
+			<p class="meta"><time datetime="2017-12-25T23:01:13+08:00" 
+			pubdate data-updated="true">2017/12/25</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<blockquote>
+<p>对我个人来讲，17年有两大收获，一是跳槽来了头条，二是找到了人生的另一半。<br/>
+本该是事业有进步，爱情有收获，但发生了好多别的事情，使得这一年其实有些痛苦和无奈。</p>
+</blockquote>
+
+<h2 id="toc_0">衰老</h2>
+
+<p>妈妈去年底的体检查出了宫颈癌病毒，我刚看到体检报告的时候一下子就懵了，后来发现其实没那么严重，上半年做了个锥切手术，但未能完全痊愈，需要持续观察才行，每念此处，都心绞一阵。<br/>
+妈妈前几年血糖比较高，导致眼底出血，虽然做了激光手术，但也留下了永久的后遗症，前几天回家，发现妈妈视力越发的不好了，心疼。<br/>
+由于我父亲，今年下半年父母发生了非常大的争吵，其中细节无心评述。心里对父亲充满怨念，包括上面说的妈妈两个病因，父亲都有直接或间接原因，也许我永远都不会原谅他了，看着他，心里总带着烦躁和鄙视。</p>
+
+<h2 id="toc_1">投资</h2>
+
+<p>妈妈去年年底像魔障了一样，手里稍微有点钱就想加大杠杆投资房产，在国家政策最为严厉的封口浪尖的4月份，依然坚持买了个门市楼，虽然后来她非常后悔，但木已成舟，悔之晚矣。<br/>
+去年底今年初的慌乱房产投机，损失100多万，而且，彻底毁掉了一家三口人的现金流，同时背负了沉重的贷款债务，今年多次在睡前想起，然后辗转反侧难以入睡。<br/>
+最终贷款压力主要在我身上，父母已老，不想太多说什么，只是这几年要对不住邹韵了。索性，妈妈陆续卖掉一些房产，略微缓解部分燃眉。</p>
+
+<h2 id="toc_2">突破</h2>
+
+<p>还算幸运，今年职场上再获一次突破，从好奇心日报的一个小技术团队的负责人，到了头条的一个小技术团队的技术leader，麻雀虽小，却收获颇多。<br/>
+因为相信头条一定最后能成为一家了不起的公司，相信如果个人能随着公司的成长，会有更大的进步。<br/>
+一年来，学会了一些流程、使用了一些工具、也了解了一些运转方式，有的东西很好玩，有的东西很无奈。<br/>
+软实力提高很多，硬实力提高比较少，工作很忙，有时迷失了自己。<br/>
+但尚好，没有盲目尊大，也没有妄自菲薄。<br/>
+期望，能找到下一个突破。</p>
+
+<h2 id="toc_3">爱情</h2>
+
+<p>儿时好友的婚讯给了我不小的刺激，人有时就是不知道自己最终要的是什么，便如人生哲学有教育别人“今朝有酒今朝醉”，让人及时行乐；也有告诫人们“少壮不努力，老大徒伤悲”的励志警句。很多事情，回忆今天，难保会有遗憾和悔恨。<br/>
+说遍了无病呻吟，今年的爱情其实是很顺利的，认识了邹韵，然后住在了一起，虽有时激情不高，但却和谐美好，邹韵是个可以白头的女孩，我很满意，也很开心。不管酸甜苦辣，愿能永远。</p>
+
+<h2 id="toc_4">有点成绩？</h2>
+
+<ul>
+<li>因为换工作融入比较好，团队给力，所以有了一个还不错的绩效。但其实工作成果自己是不够满意的。</li>
+<li>爱情基本稳定，即将走向婚姻</li>
+<li>买了个还挺满意的房子，生活可以期待</li>
+<li>开了大半年女朋友的车，生活体验高了不少</li>
+</ul>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876732321.html">UIResponder 响应链 拾遗</a></h1>
+			<p class="meta"><time datetime="2017-12-21T23:01:13+08:00" 
+			pubdate data-updated="true">2017/12/21</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<h2 id="toc_0">背景</h2>
+
+<p>基于ResponderChain可以做一些事件传递，将所有view的操作最终都送回到ViewController来处理，以实现view的功能单一性。如下：</p>
+
+<pre><code class="language-text">@interface UIResponder (Router)
+- (void)routerEventWithName:(NSString *)eventName userInfo:(NSDictionary *)userInfo;
+@end
+
+@implementation UIResponder (Router)
+- (void)routerEventWithName:(NSString *)eventName userInfo:(NSDictionary *)userInfo
+{
+    [[self nextResponder] routerEventWithName:eventName userInfo:userInfo];
+}
+@end
+</code></pre>
+
+<p>每个cell在做事件请求时，只需要调用<code>routerEventWithName:userInfo:</code>，即可将请求传递给对应的ViewController（也可以是响应链任意一环），然后用EventName来区分事件类型。</p>
+
+<h2 id="toc_1">ChildViewController</h2>
+
+<p>一般来讲 view.nextResponder = view.superView。ViewController的root view的nextResponder是当前ViewController，那childViewController的view的nextResponder是谁呢？如果用nextResponder拦截，childViewController能拦截到其中的view的响应吗？</p>
+
+<h3 id="toc_2">XCode实测：</h3>
+
+<ul>
+<li>如果addChildViewController：</li>
+</ul>
+
+<p>childVC.view.nextResponder == childVC，childVC.nextResponder == childVC.view.superView，相当于在subView&amp;superView的响应联调中，插入了一个VC，与window和VC.view的关系是一致的。</p>
+
+
+		</div>
+
+		
+
+	</article>
+  
+	<div class="pagination">
+	 <a class="prev" href="all_1.html">&larr; Older</a> 
+<a href="archives.html">Blog Archives</a>
+	 
+	    
+	</div>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

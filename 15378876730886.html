@@ -1,0 +1,351 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  使用iOS APP的Build Configuration区分开发和生产环境 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">使用iOS APP的Build Configuration区分开发和生产环境</h1>
+				<p class="meta"><time datetime="2016-06-29T23:01:13+08:00" pubdate data-updated="true">2016/6/29</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<blockquote>
+<p>前两天看文章<a href="http://swift.gg/2016/04/22/using-xcode-targets/">使用 Xcode 的 Target 区分开发和生产环境</a>，感觉这个虽然是一种区分开发和生产环境比较强大的方法，但也有比较轻量级的，下面就分享下QDaily采用的配置Build Configuration方案。</p>
+</blockquote>
+
+<p>区分测试环境和生产环境的上面的链接已经说了：区分统计数据、区分crash log、区分server地址、区分本地数据库...</p>
+
+<p>每个工程默认会有两个Build Configure，即debug和release，我们就在这里做文章，增加一个releaseBeta版本，用来打包内部测试环境版本。</p>
+
+<p>QDaily在这里主要区分了app name，app icon，app bundleId（测试推送），并增加了一个全局的预处理宏BETA，代码中通过BETA标志进行和DEBUG相似的处理</p>
+
+<!--more-->
+
+<h2 id="toc_0">创建并配置新的Build Configuration</h2>
+
+<h3 id="toc_1">1、新建</h3>
+
+<p>我们主要是测试版需要区分，DEBUG版本并不需要，所以duplicate了release的默认配置。新建完记得改名，下面我已经新建过了，就没有改名那一步了。</p>
+
+<p><img src="media/15378876730886/1467187036.jpg" alt="1467187036"/></p>
+
+<h3 id="toc_2">2、区分app name、bundle Id</h3>
+
+<p>所有步骤看图，非常方便，非常简单。<br/>
+<img src="media/15378876730886/1467187354.jpg" alt="1467187354"/></p>
+
+<h3 id="toc_3">3、设置一个预处理宏和编译器标志BETA</h3>
+
+<p>具体看下图步骤，增加一个BETA：<br/>
+<img src="media/15378876730886/1467187656.jpg" alt="1467187656"/></p>
+
+<p>我们app中现在还没有使用swift，所以也就没有做swift的设置，如果需要可以去参考顶部的引用链接进行设置。</p>
+
+<p>这样代码里就能直接进行调用了。eg：<br/>
+<img src="media/15378876730886/1467187790.jpg" alt="1467187790"/></p>
+
+<h3 id="toc_4">4、修改releaseBeta的app icon</h3>
+
+<p>这里要分两步，先在images.xcassets中新建一个针对beta版本的app icon：<br/>
+<img src="media/15378876730886/1467188193.jpg" alt="1467188193"/></p>
+
+<p>我们这里已经建立过了，下一步就不示范了。这里我们把新icon命名为AppIconBeta。</p>
+
+<p>第二步和上面相似，在对应位置上填上我们对新icon的命名就好了：<br/>
+<img src="media/15378876730886/1467188417.jpg" alt="1467188417"/></p>
+
+<h3 id="toc_5">5、其它区分</h3>
+
+<p>所有build settings中的选项都可以用Build Configuration来进行区分设置，这里就不一一进行示范了。QDaily只有上面这些做了处理，其它都是通过BETA宏在代码里的操作。</p>
+
+<h2 id="toc_6">使用 Build Configuration</h2>
+
+<p>大多时候，我们都只是在编写release包时候需要对线上和开发环境进行区分，我们只需要修改archive中的scheme就好了：</p>
+
+<p>先选择app target的Edit Scheme。<br/>
+<img src="media/15378876730886/1467188720.jpg" alt="1467188720"/></p>
+
+<p>然后在Archive中选择我们新建的那个就好了。<br/>
+<img src="media/15378876730886/1467188810.jpg" alt="1467188810"/></p>
+
+<h2 id="toc_7">关于管理多个 Build Configuration 的一些注意事项</h2>
+
+<p>和新建target相比，亲测没有任何注意事项...你只要注意不要把releaseBeta传到appstore就行了。</p>
+
+<h2 id="toc_8">文章最后的推荐</h2>
+
+<p>安利一个我写的Mac下轻松上传到七牛传图的app，本文加了这么多图片，表示毫无压力，非常简单。</p>
+
+<p>截屏后点击“上传剪切板图片到七牛”这个按钮（也可以拖拽图片文件上传）。<br/>
+<img src="media/15378876730886/1467189012.jpg" alt="1467189012"/></p>
+
+<p>完成后这个外链url会默认在你的剪切板。当然也可以完成后点击“Copy MarkDown URL”，这样会直接copy一个下面这样的字符串在剪切板，你可以在你的md文件中直接使用：</p>
+
+<p><img src="media/15378876730886/1467189147.jpg" alt="1467189147"/></p>
+
+<p>真是markdown博客书写者的福音啊。那么这么NB的app哪里有呢？稍后整理完成我会放出链接来~</p>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876730603.html" 
+	        title="Previous Post: 今日好文20160627-30">&laquo; 今日好文20160627-30</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876730432.html" 
+	        title="Next Post: 移动端开发好文20160626">移动端开发好文20160626 &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

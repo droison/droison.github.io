@@ -1,0 +1,619 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  RN学习4——QDaily Android app中通信和热修复实践 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">RN学习4——QDaily Android app中通信和热修复实践</h1>
+				<p class="meta"><time datetime="2016-11-23T23:01:13+08:00" pubdate data-updated="true">2016/11/23</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<blockquote>
+<p>React Native现在已经到了0.37版本了，在集成RN初期使用的0.30版本还不支持将resources打入bundle实施热更新，0.37版本已经解决了这些问题，如果再不写篇文章，炒炒这份冷饭，那就过气了。</p>
+
+<p>QDaily现在在Android和iOS的版本中都集成了React Native，用其做广告效果页的展示。</p>
+
+<p>本文介绍基于Android平台，在RN进行混合app研发过程中，native部分做过的一些工作和踩过一些坑。</p>
+
+<p>本该双平台一起介绍的，但Android的坑多，先说Android，iOS的对应工作会在<a href="http://www.chaisong.xyz/2016/11/23/2016-11-25/">下个文章</a>描述。</p>
+
+<p>该文章为系列文章，之前的文章为<a href="http://www.chaisong.xyz/2016/06/20/RN%E5%AD%A6%E4%B9%A01%E2%80%94%E2%80%94%E5%89%8D%E5%A5%8F%EF%BC%8Capp%E6%8F%92%E4%BB%B6%E5%8C%96%E5%92%8C%E7%83%AD%E6%9B%B4%E6%96%B0%E7%9A%84%E6%8E%A2%E7%B4%A2/">RN学习1——前奏，app插件化和热更新的探索</a>，<a href="http://www.chaisong.xyz/2016/06/22/RN%E5%AD%A6%E4%B9%A02%E2%80%94%E2%80%94%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84%E4%B8%80%E4%BA%9B%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C/">RN学习2——客户端开发者的一些准备工作</a>，<a href="http://www.chaisong.xyz/2016/08/02/RN%E5%AD%A6%E4%B9%A03%E2%80%94%E2%80%94%E9%9B%86%E6%88%90%E8%BF%9B%E5%B7%B2%E6%9C%89%E5%8E%9F%E7%94%9F%E9%A1%B9%E7%9B%AE/">RN学习3——集成进现有原生项目</a>。</p>
+</blockquote>
+
+<h2 id="toc_0">一、Android中RN的View初始化及传参</h2>
+
+<h3 id="toc_1">马上看代码</h3>
+
+<pre><code class="language-java">//React相关组件初始化
+ReactRootView mReactRootView = new ReactRootView(this);
+mReactInstanceManager = ReactInstanceManager.builder()
+      .setApplication(getApplication())
+      .setJSBundleFile(getBundleFilePath())
+      .setJSMainModuleName(&quot;index.android&quot;)
+      .addPackage(new MainReactPackage())
+      .setUseDeveloperSupport(BuildConfig.DEBUG)
+      .setInitialLifecycleState(LifecycleState.BEFORE_RESUME)
+      .setUseOldBridge(true)
+      .build();
+
+//准备参数
+Bundle bundle = new Bundle();
+bundle.putString(&quot;url&quot;, &quot;http://www.qdaily.com&quot;);
+bundle.putFloat(&quot;totalSeconds&quot;, 12);
+bundle.putInt(&quot;style&quot;, 1);
+bundle.putString(&quot;extras&quot;, &quot;{\&quot;key\&quot; : \&quot;value\&quot;}&quot;);
+bundle.putStringArray(&quot;imagePaths&quot;, new String[]{&quot;url1&quot;, &quot;url1&quot;});
+
+//组件启动
+mReactRootView.startReactApplication(mReactInstanceManager, &quot;adImageLaunch&quot;, bundle);
+</code></pre>
+
+<span id="more"></span><!-- more -->
+
+<h3 id="toc_2">先解释下方法名和对应的参数</h3>
+
+<ul>
+<li>上面的<code>getBundleFilePath()</code>可以指向本地路径，assert://开头或者file://开头，如果是测试情况，也可以以http://开头，最终对应一个JSBundle文件。</li>
+<li>&quot;index.android&quot;为MainModule的名字，相当于当前JSBundle的程序入口。</li>
+<li>addPackage()用来增加支持的package，基本意思就是用于js端调用的native部分，包含函数和原生自定义组件。</li>
+<li>setUseOldBridge(true) 在当前版本需要设定，否则会报错，应该是用于兼容旧版本使用。最新版本（0.37）还没测试</li>
+<li>&quot;adImageLaunch&quot;意思是该view对应的bundle中的对应component，该component会生命在JSBundle的MainModule（当前为&quot;index.android&quot;）中声名。</li>
+</ul>
+
+<h3 id="toc_3">再重点说下支持的传参（android.os.Bundle）。因为同名，为消除歧义，Bundle特指Android中的android.os.Bundle，React Native中的Bundle用JSBundle命名。</h3>
+
+<p>RN的传参仅支持这一种方式（文件、网络自行读取不算），但也不是Bundle支持的全部支持，具体参见Arguments.java源码，它将Bundle转换成为WritableMap组件（类json数据结构）。查看源码可知：</p>
+
+<blockquote>
+<p>仅支持通过Bundle传递<code>Number</code>（int、float、double等基本数据类型）、<code>String</code>、<code>Boolean</code>、或者包含以上类型的<code>数组</code>数据、或者包含以上类型的<code>Bundle</code>数据。</p>
+
+<p>其它无论是否支持Parcelable、Serializable，或List都会在传输过程中收到IllegalArgumentException异常。</p>
+
+<p>此处仅仅Android如此，iOS可以直接传输NSDictionary，系统级转换成JSON数据格式。</p>
+</blockquote>
+
+<p><u>如果传输（透传）复杂数据类型，请自行转成JSON用字符串用String传输，ReactNative端用<code>JSON.parse()</code>进行转换</u></p>
+
+<h2 id="toc_4">二、UI集成</h2>
+
+<p>此处集成可以分为Activity继承和fragment集成，以及View的集成（未测试）<br/>
+参考这里<a href="http://www.voidcn.com/blog/chichengjunma/article/p-6293726.html">http://www.voidcn.com/blog/chichengjunma/article/p-6293726.html</a>，貌似会再集成过程中有问题。</p>
+
+<h3 id="toc_5">Activity集成</h3>
+
+<p>在<code>onCreate</code>方法中，调用<code>setContentView(mReactRootView);</code>，直接将上面生成的ReactRootView赋给Activity的ContentView。</p>
+
+<p>Activity需要 implements DefaultHardwareBackBtnHandler 接口，用于处理返回按键。</p>
+
+<p>同时在生命周期的template方法中透传生命周期给ReactInstanceManager：</p>
+
+<pre><code class="language-text"> @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (mReactInstanceManager != null) {
+            mReactInstanceManager.onHostPause();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (mReactInstanceManager != null) {
+            mReactInstanceManager.onHostResume(this, this);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mReactInstanceManager.destroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mReactInstanceManager != null) {
+            mReactInstanceManager.onBackPressed();
+        } else {
+            super.onBackPressed();
+        }
+    }
+</code></pre>
+
+<h3 id="toc_6">Fragment集成</h3>
+
+<p>和Activity集成相似，不过需要在onCreateView中返回上文的mReactRootView。生命周期自行处理。</p>
+
+<h3 id="toc_7">View的集成（不推荐）</h3>
+
+<p>此处没做测试，感觉在处理生命周期会有问题，仅仅提供方法，欢迎交流</p>
+
+<pre><code class="language-java">mNativeView = (FrameLayout) findViewById(R.id.nativeView);//原生布局中的view
+//上文 mReactRootView 的初始化
+mNativeView.addView(mReactRootView);//添加react布局
+</code></pre>
+
+<h2 id="toc_8">三、Native部分被调用的Module实现</h2>
+
+<blockquote>
+<p>说的太拗口了，其实就是React端调用原生方法时候，java部分需要做的一些工作，参见<a href="http://reactnative.cn/docs/0.30/native-modules-android.html">原生模块</a></p>
+</blockquote>
+
+<h3 id="toc_9">1、定义JavaModule</h3>
+
+<p>官方文档其实很清楚了，我这里简单说下我们这边的使用情况：</p>
+
+<pre><code class="language-java">public class LaunchBridgeModule extends ReactContextBaseJavaModule {
+
+    public LaunchBridgeModule(ReactApplicationContext reactContext) {
+        super(reactContext);
+    }
+
+    @ReactMethod
+    public void dismissSplash(Callback errorCallback) {
+        Activity activity = MManagerCenter.getManager(ActivityController.class).getTopActivity();
+        if (activity != null) {
+            activity.finish();
+        }
+        errorCallback.invoke(&quot;&quot;);
+    }
+
+    @ReactMethod
+    public void open(String url, Callback errorCallback) {
+        Activity activity = MManagerCenter.getManager(ActivityController.class).getTopActivity();
+        if (activity != null) {
+            activity.setResult(Activity.RESULT_OK, new Intent().setData(Uri.parse(url)));
+            activity.finish();
+        }
+        errorCallback.invoke(&quot;&quot;);
+    }
+
+    @Override
+    public String getName() {
+        return &quot;LaunchBridgeModule&quot;;
+    }
+
+    @Override
+    public Map&lt;String, Object&gt; getConstants() {
+        final Map&lt;String, Object&gt; constants =  new HashMap&lt;&gt;();
+        constants.put(&quot;STATUS_BAR_HEIGHT&quot;, LocalDisplay.STATUS_BAR_HEIGHT_DP);
+        constants.put(&quot;SCREEN_HEIGHT&quot;, LocalDisplay.SCREEN_HEIGHT_DP);
+        constants.put(&quot;SCREEN_WIDTH&quot;, LocalDisplay.SCREEN_WIDTH_DP);
+        constants.put(&quot;NAVIGATION_BAR_HEIGHT&quot;, LocalDisplay.NAVIGATION_BAR_HEIGHT_DP);
+        return constants;
+    }
+}
+</code></pre>
+
+<p>此处我们暴露了3个方法给JS端，分别为关闭页面、跳转页面和获取常量3个，其中前两个方法为异步方法，最后一个是同步方法。</p>
+
+<p>异步方法用<code>@ReactMethod</code>注解标记，可以随便自定义方法名，所有被标记的方法会再addPackage后通过反射放在一个映射表中，一个类型的Module在同一ReactInstanceManager中只有一个对象。</p>
+
+<p>同步方法在父类接口里面定义，默认返回null。之所以是同步方法，是因为在ReactInstanceManager时就进行了调用，将返回值封成了固定格式的String给了ReactBridge中，该bridge为配置表，JS端直接有这个表，因此能同步执行，但也存在问题，就是不能运行时动态使用，只能进行常量初始化（名字干脆就叫getConstants......）。方法调用堆栈如下：</p>
+
+<p><img src="http://blog-10057491.file.myqcloud.com/RNConstantsStack.jpg" alt=""/></p>
+
+<p>getName()方法用于JS端调用时候使用的名字（不是类名），请不要重复！</p>
+
+<p>一个注意点：<code>请相同作用的Module在Android和iOS部分getName，getConstants，以及所有异步方法名称完全一致，异步方法的入餐类型完全一致</code>。否则JS端调取原生方法时候还需要判断平台。</p>
+
+<h3 id="toc_10">2、定义ReactPackage</h3>
+
+<p>所有Native部分的定义的方法以及View组件，最终都要用自定义的ReactPackage进行包装，来告诉ReactBridge，bridge用映射表供JS使用。</p>
+
+<pre><code class="language-java">public class LaunchReactPackage implements ReactPackage {
+    @Override
+    public List&lt;Class&lt;? extends JavaScriptModule&gt;&gt; createJSModules() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List&lt;ViewManager&gt; createViewManagers(ReactApplicationContext reactContext) {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List&lt;NativeModule&gt; createNativeModules(
+            ReactApplicationContext reactContext) {
+        List&lt;NativeModule&gt; modules = new ArrayList&lt;&gt;();
+        modules.add(new LaunchBridgeModule(reactContext));
+        return modules;
+    }
+}
+</code></pre>
+
+<p>我们这里没有自定义UI组件（比较复杂，如果自定义还要有JS部分和iOS部分的开发）。ReactPackage中定义的三个方法：</p>
+
+<ul>
+<li><code>createViewManagers</code> 为JS端可以使用的自定义Native View。</li>
+<li><code>createNativeModules</code> 为可使用的方法，我们只用了这里。</li>
+<li><code>createJSModules</code> 没使用过，也没在0.30的代码中看到实现，先忽略。</li>
+</ul>
+
+<p>之后只要在需要使用自定义View或者方法的ReactRootView的ReactInstanceManager的初始化时，将响应的package add进去即可。</p>
+
+<h2 id="toc_11">四、0.30版本下的Android热修复实现</h2>
+
+<p>JSBundle的更新为在app启动之后会向后台sync RN的最新JSBundle，如果server有新的且本地不存在，则下载，否则什么也不做。逻辑很简单，不做介绍了。</p>
+
+<p>这里主要介绍资源的热更新。JS部分默认支持的协议包括<code>assert://</code>、<code>file://</code>以及<code>http://</code>协议，一些资源icon采用http协议肯定是不合适的（那也就没有热更新的必要了），assert是打在app包里的，Android的热更新肯定是file协议了，具体实现分为两个部分：</p>
+
+<h3 id="toc_12">1、java部分将资源从assert copy到data下的固定文件夹中</h3>
+
+<pre><code class="language-java">private void copyFileOrDir(String path) {
+   AssetManager assetManager = mContext.getAssets();
+   String assets[] = null;
+   try {
+       assets = assetManager.list(path);
+       if (assets.length == 0) {
+           copyFile(path);
+       } else {
+           File dir = new File(mContext.getFilesDir(), path);
+           if (!dir.exists())
+               dir.mkdir();
+           for (int i = 0; i &lt; assets.length; ++i) {
+               copyFileOrDir(path + &quot;/&quot; + assets[i]);
+           }
+       }
+   } catch (IOException ex) {
+       QLog.e(&quot;tag&quot;, &quot;I/O Exception&quot;, ex);
+   }
+}
+
+private void copyFile(String filename) {
+   AssetManager assetManager = mContext.getAssets();
+
+   InputStream in = null;
+   OutputStream out = null;
+   try {
+       in = assetManager.open(filename);
+       out = new FileOutputStream(new File(mContext.getFilesDir(), filename));
+
+       byte[] buffer = new byte[1024];
+       int read;
+       while ((read = in.read(buffer)) != -1) {
+           out.write(buffer, 0, read);
+       }
+       in.close();
+       in = null;
+       out.flush();
+       out.close();
+       out = null;
+   } catch (Exception e) {
+       QLog.e(TAG, e.getMessage());
+   }
+
+}
+</code></pre>
+
+<p>这样热更新只需要将资源覆盖到对应的文件夹中进行处理即可。此处Native部分很简单，关键是JS部分操作，因为按照写法，资源路径应该是file:///data/data/packagename/file/*，显然iOS部分不能正常读取，下面介绍JS部分。</p>
+
+<h3 id="toc_13">2、JS部分操作需要在JSBundle动态替换资源路径</h3>
+
+<blockquote>
+<p>此处的规范比较严格，资源需要放在固定路径中，资源请求需要用严格的cage协议</p>
+</blockquote>
+
+<h5 id="toc_14">（1）固定资源存放位置</h5>
+
+<p>首先请将所有资源文件（主要是image）放在根目录的resources下，不允许有嵌套文件夹；</p>
+
+<h5 id="toc_15">（2）固定js中资源访问方式</h5>
+
+<p>将所有js代码中请求的本地资源代码由 <code>require(&#39;./xxx.png&#39;)</code> 改为<code>{uri:&#39;http://qdaily.cage/xxx.png&#39;}</code>。其中xxx.png为<code>上一条</code>中提到的resources目录下的同名资源：</p>
+
+<pre><code class="language-javascript">   &lt;Image source={require(&#39;./cancel.png&#39;)&gt;
+   改为
+   &lt;Image source={{uri:&#39;http://qdaily.cage/cancel.png&#39;}}&gt;
+</code></pre>
+
+<h5 id="toc_16">（3）修改0.30中react-native的js源码</h5>
+
+<ul>
+<li>1、node_modules/react-native/Libraries/Image/image.android.js</li>
+</ul>
+
+<pre><code class="language-javascript">render: function() {
+  ...
+  ...
+  
+  //else后的代码块为新增
+  if (source &amp;&amp; source.uri === &#39;&#39;) {
+    console.warn(&#39;source.uri should not be an empty string&#39;);
+  } else {
+    var prefix = &#39;http://qdaily.cage/&#39;;
+    var match = source.uri.indexOf(prefix);
+    if (match == 0) { //qdaily.cage://开头  
+      console.log(__DEV__);
+      var realUrl = source.uri.substring(prefix.length, source.uri.length);
+      if (__DEV__) { //debug 情况  RN 服务器 
+        source.uri = resolveAssetSource.getDevServerURL() + &#39;react/resources/&#39; + realUrl;
+      } else { //release 情况
+        source.uri = &#39;file://&#39; + &#39;/data/data/com.qdaily.ui/files/rnimgs/&#39; + realUrl;
+      }
+    }
+  }
+  
+  ...
+  ...
+}
+</code></pre>
+
+<ul>
+<li>2、node_modules/react-native/Libraries/Image/resolveAssetSource.js<br/>
+在文件结尾处增加：</li>
+</ul>
+
+<pre><code class="language-javascript">module.exports.getDevServerURL = getDevServerURL;
+</code></pre>
+
+<p>在这一部分，我自己写了一个0.30情况下的shell脚本，在npm install之后运行脚本替换即可。可以点击这个<a href="http://blog-10057491.file.myqcloud.com/0.30RN-AndroidPreBuildShell.zip">链接</a>进行下载。</p>
+
+<p>下一篇文章会介绍iOS部分针对热修复在Native部分需要做的工作。</p>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876732597.html" 
+	        title="Previous Post: RN学习5——QDaily iOS app中通信和热修复实践">&laquo; RN学习5——QDaily iOS app中通信和热修复实践</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876732668.html" 
+	        title="Next Post: Android M、N适配踩坑">Android M、N适配踩坑 &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

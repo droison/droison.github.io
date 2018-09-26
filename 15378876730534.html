@@ -1,0 +1,324 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  移动端开发好文20160623 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">移动端开发好文20160623</h1>
+				<p class="meta"><time datetime="2016-06-23T23:01:13+08:00" pubdate data-updated="true">2016/6/23</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<h3 id="toc_0">1、<a href="http://mp.weixin.qq.com/s?__biz=MzA4ODIxMzg5MQ==&amp;mid=2653995898&amp;idx=1&amp;sn=a13badac7d9fc2a4e86b861accea7e3c">开发者所需要知道的 iOS 10 SDK 新特性</a></h3>
+
+<blockquote>
+<p>iOS10来了，也该了解下能做点什么了。</p>
+
+<p>1、SiriKit虽然很美，但开放不多，可能用处不大</p>
+
+<p>2、大量Extension，有意思的是iMessage、User Notifications以及上面的siri的intents。app间交互意义很大，值得研究</p>
+
+<p>3、swift3还没来，可以再观望下<br/>
+<span id="more"></span><!-- more --></p>
+
+<h3 id="toc_1">2、<a href="http://www.lcode.org/react-native%E8%BF%9B%E9%98%B6%E4%B9%8Banimated%E5%8A%A8%E7%94%BB%E5%BA%93%E8%AF%A6%E8%A7%A3-%E5%9F%BA%E7%A1%80%E7%AF%8764">【React Native开发】React Native进阶之Animated动画库详解-基础篇(64)</a></h3>
+
+<p>mark住，动画可能会用上。学了个react生命周期的技巧，初学者挺有收获：</p>
+</blockquote>
+
+<pre><code class="language-jsx">    constructor(props: any) {
+        super(props);
+        this.state = {
+        bounceValue: new Animated.Value(0),
+        };
+    }
+</code></pre>
+
+<h3 id="toc_2">3、<a href="https://segmentfault.com/a/1190000005768791">React Native植入原生Android应用的流程解析</a></h3>
+
+<blockquote>
+<p>mark住，刚刚完成了RN对iOS项目的集成，下周可能会集成Android了，文章应该比较有借鉴。本周我会出一篇RN在iOS下集成、混编、调试的文章，之后应该就会慢慢研究Android的了。</p>
+</blockquote>
+
+<h3 id="toc_3">4、<a href="http://mp.weixin.qq.com/s?__biz=MzAxMzE2Mjc2Ng==&amp;mid=2652154952&amp;idx=1&amp;sn=abd41adecbe7b003636f191b86906395">block实现(一)</a> <a href="http://mp.weixin.qq.com/s?__biz=MzAxMzE2Mjc2Ng==&amp;mid=2652154952&amp;idx=2&amp;sn=a601c50643db0083cdeffba75ff135ab">block实现(二)</a></h3>
+
+<blockquote>
+<p>内容来自于《Objective-C高级编程》这本书，有精力先去看书，这个毕竟是总结，结合看有好处，毕竟书上内容也不多，这本书本来也很薄。</p>
+</blockquote>
+
+<h3 id="toc_4">5、<a href="http://www.jianshu.com/p/bf3e222c102a">旅行喵的react native实践</a></h3>
+
+<blockquote>
+<p>最近就是在研究原生和rn混编，利用rn强大的插件化和热更新能力为app增加灵活性。这篇文章基本就是雪中送炭，详细阅读了文章，了解了在这个技术点行业先行者的方案。虽然没介绍细节，但在大方向和框架方面却是满满的干货，能够了解rn的使用场景和技术边界。从一个客户端开发者介绍了其优劣，值得若有对rn感兴趣的客户端开发者阅读。</p>
+</blockquote>
+
+<h3 id="toc_5">6、<a href="http://mp.weixin.qq.com/s?__biz=MzAxMzE2Mjc2Ng==&amp;mid=2652154946&amp;idx=2&amp;sn=a41e9e2545eb9b709d711c028e460fec">IOS热更新－JSPatch实现原理+Patch现场恢复</a></h3>
+
+<blockquote>
+<p>又一个我一直关注的点，jspatch很多远离和使用不用看了，这篇介绍的也很范，建议直接找原作者bang的文章看。本文干货在于remove掉已经运行的patch（文中叫还原现场），这对于处理连续patch修复很有必要。过去下发新的patch都需要kill掉app重来，下周就研究下，集成进我的app。</p>
+</blockquote>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876730498.html" 
+	        title="Previous Post: 移动端开发好文20160624">&laquo; 移动端开发好文20160624</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876731705.html" 
+	        title="Next Post: RN学习2——客户端开发者的一些准备工作">RN学习2——客户端开发者的一些准备工作 &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

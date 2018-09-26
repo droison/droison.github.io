@@ -1,0 +1,718 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  【iOS】从同步锁到多线程 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">【iOS】从同步锁到多线程</h1>
+				<p class="meta"><time datetime="2017-02-06T23:01:13+08:00" pubdate data-updated="true">2017/2/6</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<blockquote>
+<p>年前年后，忙的事情太多，没有继续更新博客，打算近期总结下过往。</p>
+
+<p>如果每天只是做需求，写UI，可能不需要知道太多多线程的知识。也许简单的GCD会使用，再加几个开源框架，大多数功能都能实现。但如果你想写个框架，开源出来，那多线程就是一个永远绕不开的话题。除非你是一个前端开发者，否则无论在公司里，还是供自己娱乐，如果你想把技术走向深入，那多线程都是必须要明白的事。</p>
+
+<p>本文先从iOS中objective-c的多线程同步开始，给iOS下的多线程做一个概述。</p>
+</blockquote>
+
+<h2 id="toc_0">一、几种线程同步方式</h2>
+
+<h3 id="toc_1">1、自旋锁 <code>OSSpinLock</code></h3>
+
+<p>上测试代码</p>
+
+<pre><code class="language-objectivec">__block OSSpinLock oslock = OS_SPINLOCK_INIT;
+    
+//线程2
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+   NSLog(@&quot;线程2 准备上锁&quot;);
+   OSSpinLockLock(&amp;oslock);
+   NSLog(@&quot;线程2&quot;);
+   OSSpinLockUnlock(&amp;oslock);
+   NSLog(@&quot;线程2 解锁成功&quot;);
+});
+//线程1
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+   NSLog(@&quot;线程1 准备上锁&quot;);
+   OSSpinLockLock(&amp;oslock);
+   NSLog(@&quot;线程1 sleep&quot;);
+   sleep(4);
+   NSLog(@&quot;线程1&quot;);
+   OSSpinLockUnlock(&amp;oslock);
+   NSLog(@&quot;线程1 解锁成功&quot;);
+});
+</code></pre>
+
+<p>虽然YY大神<a href="http://blog.ibireme.com/">http://blog.ibireme.com/</a>说其已经不再安全，但GCD在多线程实际应用过程中，未发现问题，并行线程只要获取到oslock，其它线程一律阻塞（非睡眠），直到之前获取的解锁为止，上述代码QUEUE优先级相差较大，在实际使用中未发生高优先级忙等状态。</p>
+
+<!--more-->
+
+<blockquote>
+<p>低优先级线程拿到锁时，高优先级线程进入忙等(busy-wait)状态，消耗大量 CPU 时间，从而导致低优先级线程拿不到 CPU 时间，也就无法完成任务并释放锁。这种问题被称为<code>优先级反转</code>。</p>
+</blockquote>
+
+<p>可以在同一线程无限制上锁，但必须成对出现解锁，否则会死锁。可以在同一线程无限制调用解锁，但如果没有获取锁，解锁代码无效。</p>
+
+<p><strong><em>结论</em></strong>：QUEUE的优先级和CPU调度的线程优先级可能并不是一回事，实际运用GCD来进行多线程开发时，可以应用自旋锁进行数据同步。</p>
+
+<h3 id="toc_2">2、信号量 <code>dispatch_semaphore</code></h3>
+
+<p>上测试代码</p>
+
+<pre><code class="language-objectivec">dispatch_semaphore_t signal = dispatch_semaphore_create(1);
+dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, 3.0f * NSEC_PER_SEC);
+    
+//线程1
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+   NSLog(@&quot;线程1 等待ing&quot;);
+   dispatch_semaphore_wait(signal, timeout); //signal 值 -1
+   NSLog(@&quot;线程1 sleep&quot;);
+   sleep(2);
+   NSLog(@&quot;线程1&quot;);
+   dispatch_semaphore_signal(signal); //signal 值 +1
+   NSLog(@&quot;线程1 发送信号&quot;);
+});
+    
+//线程2
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+   NSLog(@&quot;线程2 等待ing&quot;);
+   dispatch_semaphore_wait(signal, timeout);
+   NSLog(@&quot;线程2 sleep&quot;);
+   sleep(2);
+   NSLog(@&quot;线程2&quot;);
+   dispatch_semaphore_signal(signal);
+   NSLog(@&quot;线程2 发送信号&quot;);
+});
+</code></pre>
+
+<p>信号量dispatch_semaphore被称为spinlock的替代方案。（引<a href="http://blog.ibireme.com/2016/01/16/spinlock_is_unsafe_in_ios/">http://blog.ibireme.com/2016/01/16/spinlock_is_unsafe_in_ios/</a>）<br/>
+使用方法非常简单，dispatch_semaphore_create(1)为创建信号，数字表示可以同时几个线程使用信号。为1表示同步使用。上述代码如果此处标2就和没设置信号量一样，并发自行运行。如果设置为0，则一律等待overTime时自动释放，所有代码都不执行，理论上也具有同步作用，就是慢点...<br/>
+dispatch_semaphore_wait中传入的timeout表示最长加锁时间，此处sleep如果为4，则在3s后会自动释放锁，其它线程可以获取信号并继续运行。</p>
+
+<p>和厕所坑位类似，dispatch_semaphore_create(1)表示只有1个坑位，timeout = dispatch_time(DISPATCH_TIME_NOW, 3.0f * NSEC_PER_SEC)表示坑位只能占用3秒。无论是否当前线程，坑位都一致。可以在同一线程频繁调用dispatch_semaphore_wait，在只有一个坑位且没有dispatch_semaphore_signal信号情况下，会等到每次的timeout。所以理论上可以不成对出现。</p>
+
+<blockquote>
+<p>semaphore [&#39;sɛməfɔr] ： 信号；旗语；</p>
+</blockquote>
+
+<h3 id="toc_3">3、互斥锁 <code>pthread_mutex</code></h3>
+
+<p>看测试代码</p>
+
+<pre><code class="language-text">static pthread_mutex_t pLock;
+pthread_mutex_init(&amp;pLock, NULL);
+    
+//1.线程2
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+   NSLog(@&quot;线程2 准备上锁&quot;);
+   pthread_mutex_lock(&amp;pLock);
+   NSLog(@&quot;线程2&quot;);
+   pthread_mutex_unlock(&amp;pLock);
+});
+    
+//2.线程1
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+   NSLog(@&quot;线程1 准备上锁&quot;);
+   pthread_mutex_lock(&amp;pLock);
+   sleep(3);
+   NSLog(@&quot;线程1&quot;);
+   pthread_mutex_unlock(&amp;pLock);
+});
+</code></pre>
+
+<p>pthread 表示 POSIX thread，定义了一组跨平台的线程相关的 API，pthread_mutex 表示互斥锁。<br/>
+使用上没啥说的，测试效果和上文一致。<br/>
+非递归锁，同一线程重复调用加锁会造成死锁。</p>
+
+<h4 id="toc_4"><code>pthread_mutex(recursive)</code> 递归锁</h4>
+
+<p>测试代码</p>
+
+<pre><code class="language-text">static pthread_mutex_t pLock;
+pthread_mutexattr_t attr;
+pthread_mutexattr_init(&amp;attr); //初始化attr并且给它赋予默认
+pthread_mutexattr_settype(&amp;attr, PTHREAD_MUTEX_RECURSIVE); //设置锁类型，这边是设置为递归锁
+pthread_mutex_init(&amp;pLock, &amp;attr);
+pthread_mutexattr_destroy(&amp;attr); //销毁一个属性对象，在重新进行初始化之前该结构不能重新使用
+    
+//1.线程1
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+   static void (^RecursiveBlock)(int);
+   RecursiveBlock = ^(int value) {
+       pthread_mutex_lock(&amp;pLock);
+       if (value &gt; 0) {
+           NSLog(@&quot;value: %d&quot;, value);
+           RecursiveBlock(value - 1);
+       }
+       
+   };
+   NSLog(@&quot;线程1 准备上锁&quot;);
+   RecursiveBlock(5);
+   NSLog(@&quot;线程1&quot;);
+   pthread_mutex_unlock(&amp;pLock);
+   NSLog(@&quot;线程1 解锁&quot;);
+});
+    
+//2.线程2
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+   NSLog(@&quot;线程2 准备上锁&quot;);
+   pthread_mutex_lock(&amp;pLock);
+   NSLog(@&quot;线程2&quot;);
+   pthread_mutex_unlock(&amp;pLock);
+   NSLog(@&quot;线程2 解锁&quot;);
+});
+</code></pre>
+
+<p>递归锁比较安全，可以认为同一线程加且仅加一次锁，重复加锁不会造成死锁。无论同一线程加锁多少次，解锁1次即可。</p>
+
+<h3 id="toc_5">4&amp;5、NS前缀的两个锁<code>NSLock</code>、<code>NSRecursiveLock</code></h3>
+
+<p>使用比较简单，效果基本对应上述两种情况</p>
+
+<pre><code class="language-text">NSLock *lock = [NSLock new];
+[lock lock];
+NSLog(@&quot;加锁运行&quot;);
+[lock unlock];
+    
+NSRecursiveLock *recursiveLock = [NSRecursiveLock new];
+[recursiveLock lock];
+NSLog(@&quot;加锁运行&quot;);
+[recursiveLock unlock];
+</code></pre>
+
+<p>NS开头的类都是对CoreFoundation的封装，只是易用一些。NSRecursiveLock为递归锁，可以在循环和递归中使用。<br/>
+这里NSLock和NSRecursiveLock都是封装的互斥锁<code>pthread_mutex</code>。<br/>
+NSLock 只是在内部封装了一个 pthread_mutex，属性为 PTHREAD_MUTEX_ERRORCHECK，它会损失一定性能换来错误提示。理论上 NSLock 和 pthread_mutex 拥有相同的运行效率，实际由于封装的原因，会略慢一点，由于有缓存存在，相差不会很多，属于相同数量级。<br/>
+NSRecursiveLock 与 NSLock 的区别在于内部封装的 pthread_mutex_t 对象的类型不同，NSRecursiveLock 的类型为 PTHREAD_MUTEX_RECURSIVE。</p>
+
+<h3 id="toc_6">6、<code>NSCondition</code></h3>
+
+<p>顾明思意，条件锁，一种生产者---消费者模型。<br/>
+它通常用于标明共享资源是否可被访问或者确保一系列任务能按照指定的执行顺序执行。如果一个线程试图访问一个共享资源，而正在访问该资源的线程将其条件设置为不可访问，那么该线程会被阻塞，直到正在访问该资源的线程将访问条件更改为可访问状态或者说给被阻塞的线程发送信号后，被阻塞的线程才能正常访问这个资源。</p>
+
+<h3 id="toc_7">7、条件锁 <code>NSConditionLock</code></h3>
+
+<p>这里和NSLock主要区别是增加了一个NSInteger类型的condition参数，api很简单，也很少。condition就是一个条件标识。在加锁和解锁时对NSConditionLock做条件判断和修改，相当于if语句。</p>
+
+<pre><code class="language-text">NSConditionLock *cLock = [[NSConditionLock alloc] initWithCondition:0];
+    
+//线程2
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+   [cLock lockWhenCondition:1];
+   NSLog(@&quot;线程2&quot;);
+   [cLock unlockWithCondition:3];
+});
+//线程1
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+   if([cLock tryLockWhenCondition:0]){
+       NSLog(@&quot;线程1&quot;);
+       [cLock unlockWithCondition:1];
+   }else{
+       NSLog(@&quot;失败&quot;);
+   }
+});
+    
+//线程3
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+   [cLock lockWhenCondition:3];
+   NSLog(@&quot;线程3&quot;);
+   [cLock unlockWithCondition:2];
+});
+</code></pre>
+
+<p>上述代码会按照：线程1--&gt;线程2--&gt;线程3按顺序执行。</p>
+
+<p>实际的实现原理就是里面封装了一个NSCondition对象，在lock时判断NSCondition对象的条件是否满足，不满足则wait，unlock时对发送NSCondition的broadcast，属于一个常见的生产者--消费者模型。</p>
+
+<h3 id="toc_8">8、简单易用的条件锁 <code>@synchronized</code></h3>
+
+<pre><code class="language-text">@synchronized (self) {
+   NSLog(@&quot;加锁运行&quot;);
+}
+</code></pre>
+
+<p>只要关键字中的对象一致，则多个线程会互斥等待程序运行完成。<br/>
+@synchronized 实际上是把修饰对象当做锁来使用。这是通过一个哈希表来实现的，OC 在底层使用了一个互斥锁的数组(你可以理解为锁池)，通过对对象去哈希值来得到对应的互斥锁。</p>
+
+<h2 id="toc_9">二、5S下测试一千万次加锁解锁时间测试</h2>
+
+<p><strong>注意</strong> ：线程锁性能的加锁和解锁耗时并不能准确反映锁的效率（因为锁的效率还要综合考虑CPU时间片切换），它只能从一定程度上反映锁的实现复杂度。</p>
+
+<p><img src="http://obp30zydr.bkt.clouddn.com/2017-02-06-1.jpg" alt=""/></p>
+
+<p><img src="http://obp30zydr.bkt.clouddn.com/2017-02-06-2.jpg" alt=""/></p>
+
+<p>上代码：</p>
+
+<pre><code class="language-objectivec">#define ITERATIONS (10000000) // 1千万
++ (void)test
+{
+    double then, now;
+    
+    @autoreleasepool {
+        
+        // 普通锁 NSLock
+        NSLock *lock = [NSLock new];
+        then = CFAbsoluteTimeGetCurrent();
+        for(NSInteger i = 0; i &lt; ITERATIONS; ++i)
+        {
+            [lock lock];
+            [lock unlock];
+        }
+        now = CFAbsoluteTimeGetCurrent();
+        NSLog(@&quot;NSLock: %f sec\n&quot;, now-then);
+        
+        // 互斥锁 pthread_mutex
+        pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+        then = CFAbsoluteTimeGetCurrent();
+        for(NSInteger i = 0; i &lt; ITERATIONS; ++i)
+        {
+            pthread_mutex_lock(&amp;mutex);
+            pthread_mutex_unlock(&amp;mutex);
+        }
+        now = CFAbsoluteTimeGetCurrent();
+        NSLog(@&quot;pthread_mutex: %f sec\n&quot;, now-then);
+        
+        // 递归锁 pthread_mutex(recursive)
+        static pthread_mutex_t pLock;
+        pthread_mutexattr_t attr;
+        pthread_mutexattr_init(&amp;attr); //初始化attr并且给它赋予默认
+        pthread_mutexattr_settype(&amp;attr, PTHREAD_MUTEX_RECURSIVE); //设置锁类型，这边是设置为递归锁
+        pthread_mutex_init(&amp;pLock, &amp;attr);
+        pthread_mutexattr_destroy(&amp;attr); //销毁一个属性对象，在重新进行初始化之前该结构不能重新使用
+        
+        then = CFAbsoluteTimeGetCurrent();
+        for(NSInteger i = 0; i &lt; ITERATIONS; ++i)
+        {
+            pthread_mutex_lock(&amp;pLock);
+            pthread_mutex_unlock(&amp;pLock);
+        }
+        now = CFAbsoluteTimeGetCurrent();
+        NSLog(@&quot;pthread_mutex(recursive): %f sec\n&quot;, now-then);
+        
+        // 自旋锁 OSSpinlock
+        OSSpinLock spinlock = OS_SPINLOCK_INIT;
+        then = CFAbsoluteTimeGetCurrent();
+        for(NSInteger i = 0; i &lt; ITERATIONS; ++i)
+        {
+            OSSpinLockLock(&amp;spinlock);
+            OSSpinLockUnlock(&amp;spinlock);
+        }
+        now = CFAbsoluteTimeGetCurrent();
+        NSLog(@&quot;OSSpinlock: %f sec\n&quot;, now-then);
+        
+        // synchronized
+        id obj = [NSObject new];
+        then = CFAbsoluteTimeGetCurrent();
+        for(NSInteger i = 0; i &lt; ITERATIONS; ++i)
+        {
+            @synchronized(obj)
+            {
+            }
+        }
+        now = CFAbsoluteTimeGetCurrent();
+        NSLog(@&quot;@synchronized: %f sec\n&quot;, now-then);
+        
+        // dispatch_semaphore
+        dispatch_semaphore_t lockSemaphore = dispatch_semaphore_create(1);
+        then = CFAbsoluteTimeGetCurrent();
+        for(NSInteger i = 0; i &lt; ITERATIONS; ++i)
+        {
+            dispatch_semaphore_wait(lockSemaphore, DISPATCH_TIME_FOREVER);
+            dispatch_semaphore_signal(lockSemaphore);
+        }
+        now = CFAbsoluteTimeGetCurrent();
+        NSLog(@&quot;dispatch_semaphore: %f sec\n&quot;, now-then);
+        
+        
+        NSCondition *cLock = [NSCondition new];
+        then = CFAbsoluteTimeGetCurrent();
+        for(NSInteger i = 0; i &lt; ITERATIONS; ++i)
+        {
+            [cLock lock];
+            [cLock unlock];
+        }
+        now = CFAbsoluteTimeGetCurrent();
+        NSLog(@&quot;NSCondition: %f sec\n&quot;, now-then);
+        
+        
+        NSRecursiveLock *rLock = [NSRecursiveLock new];
+        then = CFAbsoluteTimeGetCurrent();
+        for(NSInteger i = 0; i &lt; ITERATIONS; ++i)
+        {
+            [rLock lock];
+            [rLock unlock];
+        }
+        now = CFAbsoluteTimeGetCurrent();
+        NSLog(@&quot;NSRecursiveLock: %f sec\n&quot;, now-then);
+        
+        // dispatch_barrier_async
+        dispatch_queue_t queue = dispatch_queue_create(&quot;xyz.chaisong.lock&quot;, DISPATCH_QUEUE_SERIAL);
+        then = CFAbsoluteTimeGetCurrent();
+        for(NSInteger i = 0; i &lt; ITERATIONS; ++i)
+        {
+            dispatch_barrier_async(queue, ^{
+            });
+        }
+        now = CFAbsoluteTimeGetCurrent();
+        NSLog(@&quot;dispatch_barrier_async: %f sec\n&quot;, now-then);
+    }
+}
+</code></pre>
+
+<p>上述的dispatch_barrier_async只是GCD的一种数据同步方案，并不属于锁，这里只比较多线程同步方案的效率。</p>
+
+<p><strong><em>结论</em></strong>，单从效率上来看<code>dispatch_barrier_async</code>和<code>@synchronized</code>差的比较多，不建议使用，其它整体相差不大；相同类型的锁递归锁和普通锁效率相差接近一倍，如果不会在循环或者递归中频繁使用加锁和解锁，不建议使用递归锁；<code>OSSpinlock</code>各路大神都说有问题，从效率上讲，建议用互斥锁<code>pthread_mutex</code>（YYKit方案）或者信号量<code>dispatch_semaphore</code>（CoreFoundation和protobuf方案）作为替代。<br/>
+OSpinlock为什么效率奇高主要原因是：并没有进入系统kernel，使用它可以节省系统调用和上下文切换。</p>
+
+<h2 id="toc_10">三、一些多线程的基础知识</h2>
+
+<h3 id="toc_11">1、时间片轮转调度算法</h3>
+
+<p>了解多线程加锁必须知道时间片轮转调度算法，才能深切理解其原理、性能瓶颈。<br/>
+现代操作系统在管理普通线程时，通常采用时间片轮转算法(Round Robin，简称 RR)。每个线程会被分配一段时间片(quantum)，通常在 10-100 毫秒左右。当线程用完属于自己的时间片以后，就会被操作系统挂起，放入等待队列中，直到下一次被分配时间片，如果线程在时间片结束前阻塞或结束，则CPU当即进行切换。由于线程切换需要时间，如果时间片太短，会导致大量CPU时间浪费在切换上；而如果这个时间片如果太长，会使得其它线程等待太久；</p>
+
+<h3 id="toc_12">2、原子操作</h3>
+
+<p>狭义上的原子操作表示一条不可打断的操作，也就是说线程在执行操作过程中，不会被操作系统挂起，而是一定会执行完（理论上拥有CPU时间片无限长）。在单处理器环境下，一条汇编指令显然是原子操作，因为中断也要通过指令来实现，但一句高级语言的代码却不是原子的，因为它最终是由多条汇编语言完成，CPU在进行时间片切换时，大多都会在某条代码的执行过程中。<br/>
+但在多核处理器下，则需要硬件支持，没了解过具体实现。</p>
+
+<h3 id="toc_13">3、自旋锁和互斥锁</h3>
+
+<p>都属于CPU时间分片算法下的实现保护共享资源的一种机制。都实现互斥操作，加锁后仅允许一个访问者。<br/>
+却别在于自旋锁不会使线程进入wait状态，而通过轮训不停查看是否该自旋锁的持有者已经释放的锁；对应的，互斥锁在出现锁已经被占用的情况会进入wait状态，CPU会当即切换时间片。</p>
+
+<h4 id="toc_14">自旋锁实现原理</h4>
+
+<p>简单的while循环</p>
+
+<pre><code class="language-text">lock = 0;
+do{
+    while(test_and_set(&amp;lock));
+    临界区
+    lock = 0;
+    其余部分
+} while(1)
+</code></pre>
+
+<p>test_and_set用来保证条件判断的原子性操作，lock为旗标。<br/>
+自旋锁的一大缺陷是会使得线程处于忙等状态。因为如果临界区执行时间过长，其它线程就会在当前整个时间片一直处于忙等状态，浪费大量CPU时间。所以，如果临界区时间很短，可以使用自旋锁，否则建议使用互斥锁。</p>
+
+<h4 id="toc_15">互斥锁的实现原理</h4>
+
+<p>互斥锁在出现锁的争夺时，未获得锁的线程会主动让出时间片，阻塞线程并睡眠，需要进行上下文切换，CPU会切换其它线程继续操作。<br/>
+主动让出时间片并不总是代表效率高。让出时间片会导致操作系统切换到另一个线程，这种上下文切换通常需要 10 微秒左右，而且至少需要两次切换。如果等待时间很短，比如只有几个微秒，忙等就比线程睡眠更高效。</p>
+
+<h4 id="toc_16">信号量的实现</h4>
+
+<pre><code class="language-text">int sem_wait (sem_t *sem) {  
+  int *futex = (int *) sem;
+  if (atomic_decrement_if_positive (futex) &gt; 0)
+    return 0;
+  int err = lll_futex_wait (futex, 0);
+    return -1;
+)
+</code></pre>
+
+<p>信号量和互斥锁类似，都是在获取锁失败后线程进入wait状态，CPU会切换时间片。<br/>
+信号量在最终都是调用一个sem_wait方法，并原子性的判断信号量，如果对其-1后依然大于0，则直接返回，继续临界区操作，否则进入等待状态。</p>
+
+<p>参考：<a href="https://bestswifter.com/ios-lock/">https://bestswifter.com/ios-lock/</a></p>
+
+<h2 id="toc_17">四、多线程中的常见术语</h2>
+
+<ul>
+<li>条件(condition)<br/>
+一个用来同步资源访问的结构。线程等待某一条件来决定是否被允许继续运行，直到其他线程显式的给该条件发送信号。</li>
+<li>临界区(critical section)<br/>
+同一时间只能不被一个线程执行的代码。</li>
+<li>输入源(input source)<br/>
+一个线程的异步事件源。输入源可以是基于端口的或手工触发，并且必须被附加到某一个线程的run loop上面。</li>
+<li>可连接的线程(join thread)<br/>
+退出时资源不会被立即回收的线程。可连接的线程在资源被回收之前必须被显式脱离或由其他线程连接。可连接线程提供了一个返回值给连接它的线程。</li>
+<li>主线程(main thread)<br/>
+当创建进程时一起创建的特定类型的线程。当程序的主线程退出，则程序即退出。</li>
+<li>互斥锁(mutex)<br/>
+提供共享资源互斥访问的锁。一个互斥锁同一时间只能被一个线程拥有。试图获取一个已经被其他线程拥有的互斥锁，会把当前线程置于休眠状态知道该锁被其他线程释放并让当前线程获得。</li>
+<li>操作对象(operation object)<br/>
+NSOperation类的实例。操作对象封装了和某一任务相关的代码和数据到一个执行单元里面。</li>
+<li>操作队列(operation queue)<br/>
+NSOperationQueue类的实例。操作队列管理操作对象的执行。</li>
+<li>进程(process)<br/>
+应用或程序的运行时实例。一个进程拥有独立于分配给其他程序的的内存空间和系统资源（包括端口权限）。进程总是包含至少一个线程（即主线程）和任意数量的额外线程。</li>
+<li>递归锁(recursive lock)<br/>
+可以被同一线程多次锁住的锁。</li>
+<li>信号量(semaphore)<br/>
+一个受保护的变量，它限制共享资源的访问。互斥锁(mutexes)和条件(conditions)都是不同类型的信号量。</li>
+<li>任务(task)<br/>
+要执行的工作数量。尽管一些技术(最显著的是Carbon 多进程服务—Carbon Multiprocessing Services)使用该术语的意义有时不同，但是最通用的用法是表明需要执行的工作数量的抽象概念。</li>
+<li>线程(thread)<br/>
+进程里面的一个执行过程流。每个线程都有它自己的栈空间，但除此之外同一进程的其他线程共享内存。</li>
+</ul>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876732493.html" 
+	        title="Previous Post: 再见 好奇心日报">&laquo; 再见 好奇心日报</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876732563.html" 
+	        title="Next Post: JSPatch的一些使用注意点">JSPatch的一些使用注意点 &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

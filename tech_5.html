@@ -1,0 +1,497 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  技术 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div class="blog-index">
+
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876731177.html">对于iPad大字体适配的几个可用的参考方法</a></h1>
+			<p class="meta"><time datetime="2014-09-02T23:01:13+08:00" 
+			pubdate data-updated="true">2014/9/2</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<p>根据用户的反馈，普通iPad版控件和字体过小，留白太大，不利于查看，也不利于操作。现在iPad模式下，微信增加了大字体模式，开启模式后，微信的字体和各个View的控件均放大接近2倍，现在对于大字体模式已经适配的大多数界面，效果图如下：<br/>
+<img src="http://y.photo.qq.com/img?s=dju3z1QIB&amp;l=y.jpg" alt="pic"/><br/>
+因为iPad大字体模式的需求，新开发的页面不仅要适配iPad，还需要能够适配iPad大字体样式，为减少适配困难，我们在之前对于大字体适配过程中对原来一些通用的UI控件进行了又一次的封装，可以很快的将一些常见的控件由iPad普通版适配成大字体样式，下面是这几个控件的介绍和一些注意，希望对适配新的界面有所帮助：</p>
+
+
+
+		</div>
+
+		 
+		 <footer>
+      	<a rel="full-article" href="15378876731177.html#more">read more &rarr;</a>
+    	</footer>
+    	
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876731384.html">iOS tips 140815</a></h1>
+			<p class="meta"><time datetime="2014-08-15T23:01:13+08:00" 
+			pubdate data-updated="true">2014/8/15</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<h3 id="toc_0">iOS5下恶心的tableview背景颜色处理：</h3>
+
+<pre><code class="language-text">if([DeviceInfo isiPadUniversal]&amp;&amp;![DeviceInfo isiOS6plus]){
+    [[m_tableViewInfo getTableView] setBackgroundView:nil];
+    [[m_tableViewInfo getTableView] setBackgroundView:[[[UIView alloc] init] autorelease]];
+    [[m_tableViewInfo getTableView] setBackgroundColor:UIColor.clearColor];
+}
+</code></pre>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876731419.html">iOS diary140812</a></h1>
+			<p class="meta"><time datetime="2014-08-12T23:01:13+08:00" 
+			pubdate data-updated="true">2014/8/12</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<h2 id="toc_0">利用dispatch_once创建单例</h2>
+
+<p>使用Objective-C实现单例模式的最佳方式向来有很多争论，开发者（包括Apple在内）似乎每几年就会改变他们的想法。当Apple引入了Grand Central Dispatch (GCD)（Mac OS 10.6和iOS4.0），他们也引入了一个很适合用于实现单例模式的函数。该函数就是  </p>
+
+<pre><code class="language-text">dispatch_once：void dispatch_once( dispatch_once_t *predicate, dispatch_block_t block);
+</code></pre>
+
+<p>该函数接收一个dispatch_once用于检查该代码块是否已经被调度的谓词（是一个长整型，实际上作为BOOL使用）。它还接收一个希望在应用的生命周期内仅被调度一次的代码块，对于本例就用于shared实例的实例化。<br/><br/>
+dispatch_once不仅意味着代码仅会被运行一次，而且还是线程安全的，这就意味着你不需要使用诸如@synchronized之类的来防止使用多个线程或者队列时不同步的问题。<br/><br/>
+不多说了，直接上代码：因为app是universal的，需要判断是否是iPad，这个判断多次调用没有意义：  </p>
+
+<pre><code class="language-text">+ (BOOL) isiPad {
+    static BOOL s_isiPad = NO;
+
+    static dispatch_once_t onceToken;
+    dispatch_once(&amp;onceToken, ^{
+        NSString *nsModel = [UIDevice currentDevice].model;
+        s_isiPad = [nsModel hasPrefix:@&quot;iPad&quot;];
+    });
+
+    return s_isiPad;
+}
+</code></pre>
+
+<p>相应的，单例可以这么实现：  </p>
+
+<pre><code class="language-text">+ (AccountManager *)sharedManager { 
+    static AccountManager *sharedAccountManagerInstance = nil; 
+
+    static dispatch_once_t predicate; 
+    dispatch_once(&amp;predicate, ^{       
+          sharedAccountManagerInstance = [[self alloc] init]; 
+    });
+
+    return sharedAccountManagerInstance; 
+}
+</code></pre>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876731454.html">iOS diary140807</a></h1>
+			<p class="meta"><time datetime="2014-08-07T23:01:13+08:00" 
+			pubdate data-updated="true">2014/8/7</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<h2 id="toc_0">自定义uitableviewcell的宽度，以及一些诡异的问题处理</h2>
+
+<p>项目需要，希望uitableview处于页面中中间部分，但滚动指示条依然在整个window的边缘，解决办法无非两种：  </p>
+
+<ol>
+<li>把cell做小<br/></li>
+<li>把指示条放远</li>
+</ol>
+
+<p>先说第二种方法：发现可以设置uitableview的scrollIndicatorInsets，从而任意改变指示条的位置，但是，这个位置只能在uitableview范围内！<br/><br/>
+那就只剩下第一种方法了，比较简单的就是自定义cell，把里面的内容都做一些内边距，这样看起来效果就像居中了～但问题在于，如果如此，cell的点击、删除、编辑等等uitableviewcell默认的一些系统方法展示出来的UI效果，都会是整个宽度的。<br/><br/>
+cell做小另一种方法就是修改scrollview的contentinset，因为uitableview继承自uiscrollview，这种方式的问题在于：依然不能改变cell的宽度，cell的宽度会默认设置为uitableview的宽度而不是scrollview的。<br/>
+最后，采用了网上常用的覆写uitableviewcell的setFrame方法来完成这个工作，实际效果非常好：  </p>
+
+<pre><code class="language-text">- (void)setFrame:(CGRect)frame {
+    frame.origin.x += ROOT_PORTRAIT_CONTENT_MARGIN_LEFT;
+    frame.size.width -= 2 * ROOT_PORTRAIT_CONTENT_MARGIN_LEFT; 
+    [super setFrame:frame];
+  }
+</code></pre>
+
+<p>但是在iOS7下，使用该方法会出现一些诡异的问题：</p>
+
+<pre><code class="language-text">    Probably at least one of the constraints in the following list is one you don&#39;t want. Try this: (1) look at each constraint and try to figure out which you don&#39;t expect; (2) find the code that added the unwanted constraint or constraints and fix it. (Note: If you&#39;re seeing NSAutoresizingMaskLayoutConstraints that you don&#39;t understand, refer to the documentation for the UIView property translatesAutoresizingMaskIntoConstraints) 
+(
+    &quot;&lt;NSAutoresizingMaskLayoutConstraint:0xc094560 h=--&amp; v=--&amp; H:[UITableViewWrapperView:0xc68c390(768)]&gt;&quot;,
+    &quot;&lt;NSAutoresizingMaskLayoutConstraint:0xbfd4250 h=-&amp;- v=--&amp; TimeLineLCellImg:0xbfa97e0.width == UITableViewWrapperView:0xc68c390.width - 972&gt;&quot;
+)
+
+    Will attempt to recover by breaking constraint 
+&lt;NSAutoresizingMaskLayoutConstraint:0xbfd4250 h=-&amp;- v=--&amp; TimeLineLCellImg:0xbfa97e0.width == UITableViewWrapperView:0xc68c390.width - 972&gt;
+</code></pre>
+
+<p>通过研究iOS7的修改点，发现现在uitableviewcell的superview是UITableViewWrapperView，而不是uitableview。查看log日志，发现是由于我们在修改frame的时候和设置的AutoresizingMask冲突，虽然最终显示的正确，但是吐出warning日志还是需要处理。<br/><br/>
+找到冲突原因，修改就比较容易了，让uitableviewcell的frame为我们自己设置的，而不是采用AutoresizingMask的方式自动生成，因此在setframe中添加代码：   </p>
+
+<pre><code class="language-text">[self setAutoresizingMask:(UIViewAutoresizingNone)];
+</code></pre>
+
+<p>注意：不能通过设置[self setTranslatesAutoresizingMaskIntoConstraints:NO]而直接禁止Autoresizing，因为这样必须设置layoutconstraint采用autolayout的方式。通过log看出是将cell的宽度和它的superview的宽度做了autoresizing，只需打断这个设置即可。</p>
+
+<h2 id="toc_1">iOS根据class name生成class实例：</h2>
+
+<pre><code class="language-text">NSString *className = @&quot;AbcViewController&quot;;
+
+if (NSClassFromString(className)) {
+
+    Class aClass = NSClassFromString(className);
+    id instance = [[aClass alloc] init];
+
+    if ([instance isKindOfClass:[UIViewController class]]) {
+
+        [(UIViewController *)instance setTitle:@&quot;New Title&quot;];
+        [self.navigationController pushViewController:(UIViewController *)instance animated:YES];
+    }
+}
+</code></pre>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876731488.html">iOS diary140807</a></h1>
+			<p class="meta"><time datetime="2014-08-07T23:01:13+08:00" 
+			pubdate data-updated="true">2014/8/7</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	
+
+		</div>
+
+		 
+		 <footer>
+      	<a rel="full-article" href="15378876731488.html#more">read more &rarr;</a>
+    	</footer>
+    	
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876731807.html">JAVA和Ruby的异同</a></h1>
+			<p class="meta"><time datetime="2014-07-31T23:01:13+08:00" 
+			pubdate data-updated="true">2014/7/31</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<pre><code class="language-text">由于JavaWeb在开发过程中太重，配置和开发周期比较长，不适合一个比较小的移动互联网项目，决定学习ROR，首先是ruby语言，作为一个只懂java和objective-c的客户端开发，通过比较java和ruby的异同点有利于很好的进行过度。
+</code></pre>
+
+<h2 id="toc_0">相同点</h2>
+
+<ul>
+<li>都有内存管理和垃圾回收的机制</li>
+<li>所有对象都是强类型对象</li>
+<li>都包含public private 和 protected的方法</li>
+<li>都能内嵌说明文档，只不过ruby的说明文档叫rdoc。但在代码中的阅读方式和javadoc基本一致</li>
+</ul>
+
+<h2 id="toc_1">不同点</h2>
+
+<ul>
+<li>ruby是解释型语言，不需要编译。java是需要编译才能执行的</li>
+<li>ruby有很多种第三方的图形化编程工具，比如WxRuby,FXRuby等等</li>
+<li>ruby中一段代码（包括class）的结束标志是end，而java使用大括号包起来</li>
+<li>ruby中用require来替换import使用</li>
+<li>ruby中所有成员变量都是私有的，在外部访问必须经过方法</li>
+<li>在使用ruby的进行方法调用时，其方法的成对括号是不需要写的，当然，写上也没有问题</li>
+<li>ruby中什么都是对象，包括java中的基本数据类型</li>
+<li>ruby中没有静态类型：无static</li>
+<li>ruby中所有的变量名字只是一个标签（label），没有特定的类型关联他们：弱类型？</li>
+<li>变量初始化不需要定义类型：i.e. ruby : a = [1,2,3]  java: int[] a = {1,2,3}</li>
+<li>单元测试不需要单独写，只需要调用方法就可以。同时，单元测试甚至可以在你的程序代码运行前，就能发现异常</li>
+<li>实例化：ruby: foo = Foo.new(&quot;hi&quot;)      java: foo = new Foo(&quot;hi&quot;)</li>
+<li>ruby中的构造函数被固定为initialize，而java中的构造函数为class name</li>
+<li>ruby中使用“mixins”代替java中的interface</li>
+<li>使用YAML替代XML（xml的一个超集）</li>
+<li>使用nil代替null</li>
+<li>== 和 equals()  与 java中的对应方法意思正好相反，比较是否是同一个对象用equals，比较两个对象的值是否相等用==</li>
+</ul>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876731528.html">Android 开发锁屏屏蔽Home键、原生锁屏界面</a></h1>
+			<p class="meta"><time datetime="2014-03-10T23:01:13+08:00" 
+			pubdate data-updated="true">2014/3/10</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<p>最近开发锁屏应用，需要屏蔽返回、音量、Home键，返回和音量很好弄，关键是Home键如何搞。花了很多心思，终于搞定了，项目代码涉密，不方便全传上来，下面主要介绍这个思路。</p>
+
+<h2 id="toc_0">一、原理</h2>
+
+<p>Android2.3版本以前通过AttachWindows就可以很简单实现屏蔽，下面着重说4.0以后的。<br/>
+访谈及结果分析</p>
+
+<h3 id="toc_1">1、向系统注册锁屏界面Activity为启动器</h3>
+
+<p>这块是需要将该应用设定为桌面程序：<br/>
+
+
+		</div>
+
+		 
+		 <footer>
+      	<a rel="full-article" href="15378876731528.html#more">read more &rarr;</a>
+    	</footer>
+    	
+
+	</article>
+  
+	<div class="pagination">
+	
+<a href="archives.html">Blog Archives</a>
+	 <a class="next" href="tech_4.html">Newer &rarr;</a>  
+	    
+	</div>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,474 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  对于iPad大字体适配的几个可用的参考方法 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">对于iPad大字体适配的几个可用的参考方法</h1>
+				<p class="meta"><time datetime="2014-09-02T23:01:13+08:00" pubdate data-updated="true">2014/9/2</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<p>根据用户的反馈，普通iPad版控件和字体过小，留白太大，不利于查看，也不利于操作。现在iPad模式下，微信增加了大字体模式，开启模式后，微信的字体和各个View的控件均放大接近2倍，现在对于大字体模式已经适配的大多数界面，效果图如下：<br/>
+<img src="http://y.photo.qq.com/img?s=dju3z1QIB&amp;l=y.jpg" alt="pic"/><br/>
+因为iPad大字体模式的需求，新开发的页面不仅要适配iPad，还需要能够适配iPad大字体样式，为减少适配困难，我们在之前对于大字体适配过程中对原来一些通用的UI控件进行了又一次的封装，可以很快的将一些常见的控件由iPad普通版适配成大字体样式，下面是这几个控件的介绍和一些注意，希望对适配新的界面有所帮助：</p>
+
+<span id="more"></span><!-- more -->
+
+<h2 id="toc_0">一、UIFontExtend</h2>
+
+<p>该类大字体样式适配的基础类，此处包含 “字体大小转换” “间距转换” “CGSize转换” &quot;大字体模式判断&quot;。<br/><br/>
+使用前需：</p>
+
+<pre><code class="language-text">#import &quot;UIFontExtend.h&quot;
+</code></pre>
+
+<h3 id="toc_1">1、字体转换</h3>
+
+<p>通用性：通用任何场景<br/><br/>
+默认在使用字体时采用系统UIFont中的静态方法生成普通字体和粗体：  </p>
+
+<blockquote>
+<p>原来我们这样生成字体：<br/><br/>
+[UIFont systemFontOfSize:17];<br/><br/>
+[UIFont boldSystemFontOfSize:17];<br/><br/>
+现在我们这样：<br/><br/>
+[UIFont dynamicSystemFontOfSize:17];<br/><br/>
+[UIFont dynamicBoldSystemFontOfSize:17];</p>
+</blockquote>
+
+<p>适配前后对比：  </p>
+
+<p><img src="http://y.photo.qq.com/img?s=YANFnpCBL&amp;l=y.jpg" alt="pic"/></p>
+
+<p>注：如果UI中采用一些特殊字体，非上述系统默认字体，请参考下面间距转换：</p>
+
+<h3 id="toc_2">2、间距转换</h3>
+
+<p>即在大字体模式下将原来的距离等比放大。</p>
+
+<p>通用性：基本通用，需要自行校验，如：一些view宽度放大后可能会溢出界面。 </p>
+
+<p>使用方法：</p>
+
+<p>宏 <code>MMDynamicLen(len)</code>。 </p>
+
+<blockquote>
+<p>原来是这样的：<br/><br/>
+UIImageView *viewIcon = [[UIImageView alloc] initWithImage:uiIcon];<br/><br/>
+viewIcon.x = 15;<br/><br/>
+现在这样即可：<br/><br/>
+UIImageView *viewIcon = [[UIImageView alloc] initWithImage:uiIcon];<br/><br/>
+viewIcon.x = <code>MMDynamicLen(15)</code>; </p>
+</blockquote>
+
+<p>宏 <code>MMDynamicSize(size)</code>。</p>
+
+<blockquote>
+<p>原来是这样的：<br/><br/>
+UIImageView *viewIcon = [[UIImageView alloc] initWithImage:uiIcon];<br/><br/>
+viewIcon.size = CGSizeMake(30,30);<br/><br/>
+现在这样即可：<br/><br/>
+UIImageView *viewIcon = [[UIImageView alloc] initWithImage:uiIcon];<br/><br/>
+viewIcon.size = CGSizeMake(30,30);<br/><br/>
+viewIcon.size = <code>MMDynamicSize(viewIcon.size)</code>;</p>
+</blockquote>
+
+<p>针对1中所说自定义字体，也可采用该方法实现。  </p>
+
+<blockquote>
+<p>例：使用size为16的Monaco字体<br/><br/>
+原来为：UIFont* font = [UIFont fontWithName:@&quot;Monaco&quot; size:16];<br/><br/>
+现改为：UIFont* font = [UIFont fontWithName:@&quot;Monaco&quot; size:<code>MMDynamicLen(16)</code>];</p>
+</blockquote>
+
+<h3 id="toc_3">3、大字体模式判断</h3>
+
+<p>判断当前是否设置为大字体模式.<br/>
+通用性：通用任何场景</p>
+
+<p>使用方法：</p>
+
+<pre><code class="language-text">+ (BOOL)useDynamicSize;
+</code></pre>
+
+<p>YES为大字体，NO为非大字体</p>
+
+<h2 id="toc_4">二、MMTableViewCellInfo</h2>
+
+<p>对MMTableView中的cell进行大字体模式适配，对于通用样式只需要简单传参即可</p>
+
+<h3 id="toc_5">1、通用样式：采用MMTableViewCellInfo的默认makesel方法生成</h3>
+
+<p>通用性：暂时没发现问题<br/><br/>
+原有init通用MMTableViewCellInfo组件静态方法有7类：</p>
+
+<pre><code class="language-text">+(MMTableViewCellInfo*) switchCellFor*********
++(MMTableViewCellInfo*) editorCellFor*********
++(MMTableViewCellInfo*) normalCellFor*********
++(MMTableViewCellInfo*) badgeCellFor*********
++(MMTableViewCellInfo*) urlCellFor*********
++(MMTableViewCellInfo*) urlInnerBlueCellFor*********
++(MMTableViewCellInfo*) centerCellFor*********
+</code></pre>
+
+<p>针对具体展示的view的不同，这7类方法又有16种不同的封装。<br/><br/>
+为适配iPad大字体模式，对采用这16种方法生成MMTableViewCellInfo，可以使用两种方式进行适配：  </p>
+
+<p>（1）对init后的cellInfo再进行一次 [MMTableViewCellInfo fitIpadClassic:cellinfo];</p>
+
+<pre><code class="language-text">例：    
+MMTableViewCellInfo* favoriteInfo = [MMTableViewCellInfo 
+                                        badgeCellForSel:nil  
+                                        target:nil 
+                                        title:LOCALSTR(@&quot;Favorites_Title&quot;) 
+                                        badge:badgeText rightValue:nil
+                                        imageName:@&quot;MoreMyFavorites.png&quot;];  
+[MMTableViewCellInfo fitIpadClassic:favoriteInfo]; //只加一行！ 
+[section addCell:favoriteInfo];
+</code></pre>
+
+<p>（2）直接对原方法增加参数isFitIpadClassic:YES    </p>
+
+<pre><code class="language-text">例：
+原来：
+[section addCell:[MMTableViewCellInfo 
+                    badgeCellForSel:@selector(showFavoriteView)  
+                    target:self 
+                    title:LOCALSTR(@&quot;Favorites_Title&quot;) 
+                    badge:badgeText 
+                    rightValue:nil 
+                    imageName:@&quot;MoreMyFavorites.png&quot;]];
+适配：
+[section addCell:[MMTableViewCellInfo 
+                    badgeCellForSel:@selector(showFavoriteView)  
+                    target:self 
+                    title:LOCALSTR(@&quot;Favorites_Title&quot;) 
+                    badge:badgeText 
+                    rightValue:nil 
+                    imageName:@&quot;MoreMyFavorites.png&quot;
+                    isFitIpadClassic:YES]];  //只加一句！此处传NO，不做适配
+</code></pre>
+
+<p>哪怕cell复杂一些也没关系，红点也没关系，适配一键搞定。看图：<br/>
+<img src="http://y.photo.qq.com/img?s=EB2MK2ZE4&amp;l=y.jpg" alt="pic"/></p>
+
+<h3 id="toc_6">2、自定义的makesel实现</h3>
+
+<p>自定义makesel需要自己根据“一”中所提及的UIFontExtend中的方法自行适配，但在init MMTableViewCellInfo时注意参数height添加MMDynamicLen()</p>
+
+<h2 id="toc_7">三、MMbadgeView(限有内容的红点)</h2>
+
+<p>MMbadgeView新增了两个init方法</p>
+
+<blockquote>
+<p>原方法：<br/><br/>
+[[MMBadgeView alloc]initWithFrame:CGRectZero];<br/><br/>
+适配方法：<br/><br/>
+[[MMBadgeView alloc]initIpadClassicWithFrame:CGRectZero];<br/><br/>
+特殊适配方法：<br/><br/>
+[[MMBadgeView alloc]initIpadClassicWithFrame:CGRectZero andRange:1.2];<br/><br/>
+即自定义放大倍数，此处红点文字和大小都为正常大小的1.2倍</p>
+</blockquote>
+
+<h2 id="toc_8">四、FixTitleColorButton</h2>
+
+<p>许多界面使用了FixTitleColorButton做为button，该控件默认不允许修改高度，但在大字体模式下可以。使用时需要在init控件后手动设定高度：</p>
+
+<blockquote>
+<p>例：<br/><br/>
+UIButton* demoButton = [[StandardButtonProvider genBigRedButton] retain];<br/><br/>
+demoButton.size = CGSizeMake(MMDynamicLen(100), <code>MMDynamicLen(demoButton.height)</code>);</p>
+</blockquote>
+
+<p>注意：不要将FixTitleColorButton的autoresizingmask设为UIViewAutoresizingFlexibleHeight，因为在大字体模式下高度可变，会造成按钮高度为0而不可以点击的bug</p>
+
+<h2 id="toc_9">写在最后</h2>
+
+<p>新加的页面在是否需要对iPad模式大字体做适配需要看产品的需求，但<code>已经适配的页面在修改的过程中是一定要注意</code>的。  </p>
+
+<h3 id="toc_10">现在已经适配的页面包含：</h3>
+
+<ul>
+<li>登录和注册相关的所有页面<br/></li>
+<li>主界面4个tab对应的页面<br/></li>
+<li>朋友圈所有相关界面<br/></li>
+<li>聊天界面  BaseMsgContentViewController.h<br/></li>
+<li>用户详情页 WeixinContactInfoAssist.h<br/></li>
+<li>设置相关：<br/>
+NewSettingViewController.h<br/>
+SettingGeneralViewController.h<br/>
+SettingMyAccountInfo.h<br/>
+SettingMyProfileViewController.h<br/>
+SettingPrivateConfigViewController.h<br/>
+SettingAboutMMViewController.h</li>
+</ul>
+
+<h3 id="toc_11">未适配的页面主要有：</h3>
+
+<p>搜索、游戏、表情、收藏、钱包、卡包</p>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876730395.html" 
+	        title="Previous Post: 新界面调试工具FLEX简单介绍">&laquo; 新界面调试工具FLEX简单介绍</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876731384.html" 
+	        title="Next Post: iOS tips 140815">iOS tips 140815 &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

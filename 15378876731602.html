@@ -1,0 +1,433 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  SDWebImage源码研究与学习 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">SDWebImage源码研究与学习</h1>
+				<p class="meta"><time datetime="2016-01-05T23:01:13+08:00" pubdate data-updated="true">2016/1/5</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<blockquote>
+<p>之前被问到有没有看过AFNetworking的源码，有没有看过SDWebImage的源码，我都非常尴尬的表示没有，非常受挫，所以决定着手看一下，证明自己其实看这个一点也不吃力，只是之前太忙没做而已。</p>
+</blockquote>
+
+<h1 id="toc_0">一、先看各个类干什么的（一共有14个类）</h1>
+
+<h2 id="toc_1">首先看基础类</h2>
+
+<h3 id="toc_2">1、NSData+ImageContentType</h3>
+
+<p>只有1个方法，用来通过nsdata前几个字段来判断是gif、webp、png、jpg</p>
+
+<h3 id="toc_3">2、SDWebImageCompact</h3>
+
+<span id="more"></span><!-- more -->
+
+<p>一些关于队列的宏定义，以及一个处理图片scale的方法</p>
+
+<p>学会一种编译技巧，可以在提示错误：        </p>
+
+<pre><code class="language-text">#if !__has_feature(objc_arc)
+#error SDWebImage is ARC only. Either turn on ARC for the project or use -fobjc-arc flag
+#endif
+</code></pre>
+
+<h3 id="toc_4">3、UIImage+Gif</h3>
+
+<p>SDWebImage能处理gif主要就靠这个类了，本质上是获取图片的data数据，查看抽取其中各帧图片和市场，组合成image animation来播放处理。</p>
+
+<p>其中还包含对本地包内的gif的播放的方法，貌似没有处理3x的问题</p>
+
+<p>还包括一个对所有图片进行裁剪和压缩的方法</p>
+
+<h3 id="toc_5">4、UIImage+MultiFormat（处理oriental和scale）</h3>
+
+<p>此类只有一个方法，该方法在传入NSData是gif的情况下调用上面的gif类处理，否则会根据其中exif信息处理图片oriental和scale。（ps：真心见识了大量的图片方向）</p>
+
+<h3 id="toc_6">5、UIImage+ForceDecode（转码）</h3>
+
+<p>只有1个方法，类如其名，就是对image数据进行重新强解码，减少CPU在显示图片时的消耗，如果是一个gif渲染的(images不为空)，则直接返回，否则会重新渲染image返回数据。</p>
+
+<h5 id="toc_7">20160302 补充：</h5>
+
+<p>针对app自带的图片，xcode在编译的时候会对png图片进行<a href="http://outofmemory.cn/wr/?u=http%3A%2F%2Fartori.us%2Foptimized-png-in-xcode%2F">优化</a>（据说是通过<a href="http://pmt.sourceforge.net/pngcrush/">pngcrush</a>这个开源的工具来优化），这样在显示的时候就会有一些比较好的体验。<br/><br/>
+对于从internet上面下载的图片，多数情况下，是需要做解压缩后，才能渲染到屏幕上的。  </p>
+
+<p>所以SDWebImage出现了这个类，在异步线程将原始的图片渲染成一张的新的可以字节显示的图片，来获取一个解压缩过的图片，并对解压缩过后的图片进行缓存。<br/><br/>
+这么做的优点是在setImage的时候系统省去了解压缩为位图（耗cpu较高）这一步，缺点就是图片占用的空间变大。比如1张50*50像素的图片，在retina的屏幕下所占用的空间为100*100*4 ~ 40KB</p>
+
+<h3 id="toc_8">6、SDImageCache（iOS的本地缓存相关算法学习下这里就够了）</h3>
+
+<p>从此类开始，进入深水区。<br/>
+此类主要进行Image的缓存管理，分为磁盘缓存和内存缓存，可以通过设置存储空间，设置只读缓存取等方法，设置缓存大小、数量以及清除缓存都在此类中进行管理。<br/>
+该类内部持有一个系统的NSCache进行的内存缓存。该NSCache在收到memory的情况下会直接调用自己的removeAllObjects方法进行缓存释放。<br/>
+该类还持有一个自定义的串行(serital)io的队列，用来进行io操作，所有与文件相关的操作，甚至new一个fileManager对象都会放在这里。<br/>
+类中还持有一个识别PNG数据的方法。<br/>
+默认情况下，会将缓存保存在应用沙盒的cache/com.hackemist.SDWebImageCache.default中</p>
+
+<p>在新增cache时，磁盘存储名字会将key做md5，内存存储会计算image的宽高和scale的平方相乘计算其NSCache中的cost。如果需要存入磁盘，则根据传入参数看是否需要进行重新计算转码（变为png或者jpg）。所有磁盘操作都在上述定义的串行(serital)io队列中异步执行。<br/>
+所有以image作为返回值的读操作都在当前线程处理，没有上述的队列。首先查看该key在内存中的状态，没有则查看在磁盘中的状态，以及只读磁盘中的状态。若有则会缓存在内存中，并返回。没有则返回空。在磁盘中读取的image，会根据当前scale和图片oriental进行处理（调用上面的MutilFormat），以及根据情况看是否需要重编码（上面Decode）。<br/>
+相应的，如果没有以Image作为返回值的读操作和查询本地是否存在的操作，只要内存不存在，磁盘操作都在io队列异步执行，并将block在主线程回调。从磁盘读取的文件都会直接缓存在内存。返回值NSOperation仅为一个新建的Operation，用来处理cancel事件。</p>
+
+<p>所有暴漏的内存缓存的相关参数其实都是NSCache的。（包括totalCost，count以及removeMemory等）</p>
+
+<p>和读操作对应，清理单个缓存是先清理内存，再在io队列中异步删除磁盘，并在主线程回调block。</p>
+
+<p>获取磁盘缓存个数和大小，都是在上述io队列在当前线程同步执行，读取计算总个数和大小。<br/>
+获取磁盘大小还有异步操作，也是在io队列中async，并主线程block</p>
+
+<p>该类中还包括clear操作，就是在iO队列中异步删除目录然后新建，之后再在主线程回调。</p>
+
+<p>类中包含对磁盘缓存的clean操作，进行整理缓存，该方法会在应用进入后台以及关闭情况下执行。清理操作都在io队列中异步执行，先通过方法获取该目录所有磁盘文件的日期、是否是目录以及大小，将所有过期的文件删除。然后在剩余缓存总大小大于约定的磁盘缓存大小情况下，删除磁盘中最早缓存的那些，直到大小小于约定的最大值。所有操作完成后会在主线程block。（这里系统针对文件管理的一些api设计值得学习，通过传入resourceKeys的方式进行定制化数据读取。不过SDWebimage中磁盘过期缓存的清理方式略粗暴，最好能够进行简单的算法调整）</p>
+
+<p>注，进入后台进行执行的代码值得学习：</p>
+
+<pre><code class="language-text">__block UIBackgroundTaskIdentifier bgTask = [application beginBackgroundTaskWithExpirationHandler:^{
+    // Clean up any unfinished task business by marking where you
+    // stopped or ending the task outright.
+    [application endBackgroundTask:bgTask];
+    bgTask = UIBackgroundTaskInvalid;
+}];
+// Start the long-running task and return immediately.
+[self cleanDiskWithCompletionBlock:^{
+    [application endBackgroundTask:bgTask];
+    bgTask = UIBackgroundTaskInvalid;
+}];
+</code></pre>
+
+<h3 id="toc_9">7、SDWebImageDownloaderOperation</h3>
+
+<p>这个是真正的具体下载方法，一般我喜欢自定义命名为slave，勤劳勇敢吃苦耐劳的小奴隶。<br/>
+该类为NSOperation的子类，真正需要持有该类的只有下面的SDWebImageDownloader。<br/>
+该类在可以设置具体下载的progress的block回调，设置具体下载成功和失败的block回调以及cancel的回调。<br/>
+在初始化以及以后，可以进行一些传参的设置（SDWebImageDownloaderOptions，一般命名为options），通过该参数，可以设置该下载的线程优先级、是否渐进式显示（SDWebImageDownloaderProgressiveDownload）、是否使用cookies、时候使用https、是否使用缓存以及是否后台下载等。<br/>
+小技巧：该下载方法在启动时候保存的当前thread，所以在cancel时候也会切换到对应thread去做操作</p>
+
+<h3 id="toc_10">8、SDWebImageDownloader</h3>
+
+<h3 id="toc_11">9、SDWebImageManager</h3>
+
+<p>中枢管理者，会维持一个单例进行大多数图片下载显示的操作。类中持有一个SDImageCache（上述单例），负责缓存的处理和管理；持有一个SDWebImageDownloader（上述单例），负责网络的下载。<br/>
+一个小技巧很有意思，不使用delegate，使用一个SDWebImageCacheKeyFilterBlock的block向外抛出对将要缓存的url的key的处理。<br/>
+各种针对缓存的获取，新增都是针对SDImageCache的简单封装，上层并不需要直接管理SDImageCache。<br/>
+该manager是下载类，需要进行成功block回调，以进行图片的显示处理，这里有一个不错的assert，因为这种需要回调的一般SDWebImageOptions的级别较高，不需要回调的其实是预加载，不推荐在本类中使用：<code>NSAssert(completedBlock != nil, @&quot;If you mean to prefetch the image, use -[SDWebImagePrefetcher prefetchURLs] instead&quot;);</code><br/>
+类中持有一个SDWebImageCombinedOperation，进行正在下载队列NSOperation的二级封装和cancel、cancelBlock的处理。是manager中具体fetcher图片image的最小实例。<br/>
+manager在下载过程中会有一个Set类型的failedURLs以及一个Array类型的runningOperations，用来持有已知的不能下载的图片以及正在下载的operation，所有针对这两个collection的增删改查操作都需要用@synchronized进行加锁，避免多线程同步问题。因已经是最小实体了，没必要使用serital queue进行封装处理，反而@synchronized更为简单方便。<br/>
+针对具体的下载逻辑，首先查找磁盘和内存，CombinedOperation中的cacheOperation指向磁盘查找的operation进行cancel封装，通过该operation，可以随时cancel掉还未进行的磁盘查找任务。</p>
+
+<h3 id="toc_12">10、SDWebImagePrefetcher（其实就是预加载管理类，各种预加载功能学习这里非常有必要）</h3>
+
+<p><code>教科书式的网络预加载类，所有想做所谓离线功能的，或者wifi预加载功能的模块都有必要参考它</code>，可以传入若干url进行预加载，可以选择通过block或者delegate的方式获取fetcher的进度以及完成情况。<br/>
+里面会持有一个独立类型的SDWebImageManager（不是单例），将其manager的SDWebImageOptions设置为SDWebImageLowPriority，使其进行后台下载，默认并行下载个数为3个。prefetcher运行在主线程，在主线程队列进行整个预加载的调度。通过递归的方式进行下载完成后启动下载的管理（基本和自己采用的思路一致）。由于使用GCD进行线程同步管理，不需要考虑锁的问题，整体易读优雅。<br/>
+每次下载成功都会先后进行delegate和block的progress的回调。除了block使用了copy关键字，其它进本都是strong和assgin、以及nonatomic。</p>
+
+<h3 id="toc_13">11、UIView+WebCacheOperation</h3>
+
+<p>通过objc_associate方法给view绑定一个dictionary，用来存储相关的operation，管理缓存的cancel操作。因为各自操作都是各自的串行队列，针对未执行的到的可以进行cancel。</p>
+
+<h3 id="toc_14">12、UIImageView+WebCache</h3>
+
+<p>上层。最常用的，直接进行缓存使用</p>
+
+<h3 id="toc_15">13、UIImageView+HighlightedWebCache</h3>
+
+<p>上层。处理hl操作</p>
+
+<h3 id="toc_16">14、UIButton+WebCache</h3>
+
+<p>上层。button相关的图片显示操作</p>
+
+<h4 id="toc_17">再补充</h4>
+
+<p>以下部分引自他人博客。<a href="http://www.jianshu.com/p/3b2c95e1404f">原文链接</a></p>
+
+<p><code>网络图片显示大体步骤</code>:  </p>
+
+<ol>
+<li>下载图片<br/></li>
+<li>图片处理（裁剪，边框等)<br/></li>
+<li>写入磁盘<br/></li>
+<li>从磁盘读取数据到内核缓冲区<br/></li>
+<li>从内核缓冲区复制到用户空间(内存级别拷贝)<br/></li>
+<li>解压缩为位图（耗cpu较高）<br/></li>
+<li>如果位图数据不是字节对齐的，CoreAnimation会copy一份位图数据并进行字节对齐</li>
+<li>CoreAnimation渲染解压缩过的位图<br/>
+&gt; 以上4，5，6，7，8步是在UIImageView的setImage时进行的，所以默认在主线程进行(iOS UI操作必须在主线程执行)。</li>
+</ol>
+
+<p><code>针对上面的步骤可以有的一些优化思路</code></p>
+
+<ul>
+<li>异步下载图片<br/></li>
+<li>image解压缩放到子线程</li>
+<li>使用缓存 (包括内存级别和磁盘级别)</li>
+<li>存储解压缩后的图片，避免下次从磁盘加载的时候再次解压缩</li>
+<li>减少内存级别的拷贝 （针对第5点和第7点）</li>
+</ul>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876731075.html" 
+	        title="Previous Post: 《Effective Objective-C 2.0》读书笔记1---消息发送">&laquo; 《Effective Objective-C 2.0》读书笔记1---消息发送</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876730676.html" 
+	        title="Next Post: 好奇心日报iPad版的分屏适配实现">好奇心日报iPad版的分屏适配实现 &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

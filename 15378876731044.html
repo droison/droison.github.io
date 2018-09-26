@@ -1,0 +1,323 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  《Effective Objective-C 2.0》读书笔记3---tips - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">《Effective Objective-C 2.0》读书笔记3---tips</h1>
+				<p class="meta"><time datetime="2016-03-03T23:01:13+08:00" pubdate data-updated="true">2016/3/3</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<blockquote>
+<p>读书笔记第三篇，主要就是学习总结书中的一些小知识点，这些知识点对于学习理解iOS系统有一定的帮助，不过若以后转向swift可能没有太多用处。<br/>
+此处文章先hold住，慢慢补充</p>
+</blockquote>
+
+<span id="more"></span><!-- more -->
+
+<h5 id="toc_0">多用块枚举，少用for循环。</h5>
+
+<h5 id="toc_1">可以使用__bridge方式在Foundation框架中得Objective-C对象和CoreFoundation中得C数据结构进行转换。</h5>
+
+<h5 id="toc_2">使用缓存用NSCache不用NSDictionary，因为其会自己维护一个缓存淘汰算法，淘汰最久未使用的对象。而且NSCache是线程安全的。这里有个NSPurgeableData类型比较有意思，是NSMutableData的子类，和NSCache联合使用可以在NSPurgeableData内存释放时候自动清除缓存。</h5>
+
+<h5 id="toc_3">load方法：对于运行期系统的每个类（class）及分类（category），都必调用且仅调用一次。</h5>
+
+<p>基本调用顺序就是，执行当前类的load方法，必定先调用super的load方法，如果代码依赖其他程序库，那么程序库中得相关类的load方法也会先执行。类load方法执行完成后，会执行相应的分类的load的方法。<br/><br/>
+但是如果在一个程序库中得若干个class，却没法确定load顺序，所以load方法不建议使用其他class。<br/><br/>
+load方法在调用的时候，app会阻塞，所以一定要轻！<br/><br/>
+应用程序会阻塞并把所有类的load方法都执行完，才能继续。</p>
+
+<p>load方法直接使用函数内存地址的方式<code>(*load_method)(cls, SEL_load)</code>调用的，而不是使用发送消息 objc_msgSend 的方式。<br/><br/>
+因此：load方法不遵循继承规则：如果一个class本身没有实现load方法，那么无论其各级super是否实现load，都不会调用；<br/><br/>
+同时：当一个类和它的分类都实现了 +load 方法时，两个方法都会被调用。<br/><br/>
+所以：像method swizzling这种操作会放在load里面进行。</p>
+
+<p>load方法调用时，程序甚至没有autoreleasepool</p>
+
+<h5 id="toc_4">initialize方法：首次使用该class前调用，且只有1次。</h5>
+
+<p>和load方法相比，他是“lazy”调用的，也就是类或它的子类收到第一条消息之前被调用的，这里所指的消息包括实例方法和类方法的调用。。<br/><br/>
+可以安全使用任何class，因为它们都已经load过了。<br/><br/>
+initialize方法执行一定在thread-safe environment，也就是说会阻塞所有线程。<br/>
+initialize会走和objc_msgSend一样的消息发送原则，也就是会有覆盖。<br/>
+实际编译器调用时，父类的会优先于子类调用。</p>
+
+<p>相关load和initialize比较了解参考了以下博文：<br/><br/>
+<a href="http://blog.leichunfeng.com/blog/2015/05/02/objective-c-plus-load-vs-plus-initialize/">Objective-C +load vs +initialize</a><br/><br/>
+<a href="http://wufawei.com/2013/06/load-initialize/">Objective-C类初始化:load与initialize</a><br/><br/>
+<a href="http://liumh.com/2015/07/29/ios-load-and-initialize/">iOS初探+load和+initialize</a></p>
+
+<h3 id="toc_5">NSTimer的一些注意点</h3>
+
+<ul>
+<li>NSTimer一定要加入到runloop才有意义，如果没有addrunloop，那就加入到当前线程的runloop中，而子线程默认runloop没有run起来。</li>
+<li>NSTimer的执行会持有target对象（因为一定是要target在一定时间调用其selector），这种持有会保持到失效为止，所以一定要注意针对repeating timer的循环引用问题。</li>
+<li>针对可能的循环引用问题，可以为NSTimer增加category，对实现增加block的实现方式。在调用时候只要注意一些block的内存使用问题就好了。</li>
+</ul>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876731909.html" 
+	        title="Previous Post: AFN源码分析-开篇">&laquo; AFN源码分析-开篇</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876731075.html" 
+	        title="Next Post: 《Effective Objective-C 2.0》读书笔记1---消息发送">《Effective Objective-C 2.0》读书笔记1---消息发送 &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,821 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  微信上最近很火很炫的广告是怎么实现的 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">微信上最近很火很炫的广告是怎么实现的</h1>
+				<p class="meta"><time datetime="2016-08-07T23:01:13+08:00" pubdate data-updated="true">2016/8/7</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<hr/>
+
+<h2 id="toc_0">首先致敬微信团队，再一次引领了移动互联网产品的发展方向，给手机端广告再开了一扇门！</h2>
+
+<blockquote>
+<p>感谢曾经在微信工作的经历，让我更理解互联网</p>
+
+<p>如果文章有任何不妥的地方，请直接邮件<a href="mailto:chaisong.cn@gmail.com">chaisong.cn@gmail.com</a></p>
+
+<p>如果你喜欢我的文章，可以直接访问我的<a href="http://www.chaisong.xyz">博客</a>，欢迎批评指正。</p>
+</blockquote>
+
+<span id="more"></span><!-- more -->
+
+<h2 id="toc_1">一、广告介绍</h2>
+
+<p>不清楚的朋友先看微信团队对这个广告的介绍：<a href="https://mp.weixin.qq.com/s?__biz=MzA3ODgwNTAzNw==&amp;mid=2658979626&amp;idx=1&amp;sn=211e97503616c87638ce636349951446">朋友圈原生推广页广告随奥运上线</a></p>
+
+<!-- more -->
+
+<p>里约奥运第一天，微信广告团队再放大招，新设计了一种广告类型，据说旨在用户能够更愿意去分享。亲测，打开那一刹那，确实很惊艳。下面是展示图片：<br/>
+<img src="media/15378876730639/blog_nike.gif" alt="blog_nike"/></p>
+
+<p>作为一个热爱研究的移动开发者，第一印象是，这东西做成广告要怎么实现？</p>
+
+<p>如上图，上面有一个很炫的入场动画，整个页面会展示若干上图片，里面会插入视频，视频会在出现时自动播放，划出后暂停，到最后会有一个可以跳转到具体产品的链接按钮。</p>
+
+<p>之后看了微信放出来的另一个广告demo，和它的区别主要在元素位置、大小、以及最后按钮位置的不同，还有滑动交互的区别，如下图所示：</p>
+
+<p><img src="media/15378876730639/blog_yili.gif" alt="blog_yili"/></p>
+
+<p>这个广告有一大区别，就是每个元素都占用一页，滑动弹性切换，而第三页感觉就是一个全景长图，支持根据重力传感器移动看图（酷炫！）。</p>
+
+<h2 id="toc_2">二、简单分析，以及hook准备</h2>
+
+<p>很明显，这个是一个原生开发的页面，而并不是HTML（如果H5能达到这个效果，Native开发就没饭碗了）；但作为一个为广告主使用的页面，那就要能够根据需求灵活展示各种元素，必然需要较好的订制化特性。我脑子里一下想到了<code>React Native</code>，<code>weex</code>，微信是不是也是和这些一样的，通过javascript代码来渲染翻译原生页面展示的呢？下面hook以下微信iOS版，看看到底是怎么做的，这里临时将我可怜的5s越狱了。。。</p>
+
+<p>微信走的socket，直接是tcp协议，如果不知道其加密方式，基本不可能通过拦截请求的方式查看其实现。我这里是通过查看其ui布局，根据objective-c的runtime特性，查看其当前布局中对象的成员变量，反过来猜测其实现方式，不说了，先上图：</p>
+
+<p><img src="media/15378876730639/blog_9.pic.jpg" alt="blog_9.pi"/></p>
+
+<p>上面是其中一个广告的View Hierarchy结构，很明显，这个页面和后面的ViewController在一个堆栈，也就是说，该页面全屏不是通过window并提高层级来实现的，而是用了iOS7后的隐藏status bar的方法，那可能该页面并不支持iOS6。</p>
+
+<h2 id="toc_3">三、WCCanvasPageViewController</h2>
+
+<p>上图可以发现，用于处理广告页面的ViewController类名是<code>WCCanvasPageViewController</code>，Canvas可能就是这个项目的代号吧，猜测包含Canvas的所有名字都是与这类广告相关的。<br/>
+堆栈底部显示着大大的<code>MMTableView</code>，也就是说，页面整体结构是一个UITableView。</p>
+
+<p>然后研究了下UI层次接口，通过看View Hierarchy也可以发现的，首页动画是通过一个UIImageView和UITableView的第一个Cell共同实现的，尺寸、大小、资源、位置都完全一样，使得欺骗眼睛，以假乱真，如下图所示：</p>
+
+<p><img src="media/15378876730639/blog_1470480509.jpg" alt="blog_1470480509"/></p>
+
+<p>看到这里，还不可以确定这里实现的方案是不是<code>React Native</code>或者<code>weex</code>的方案；不过知道iOS app环境下可以执行的解释语言已知比较好的就只有javascript，其它的语言例如lua在支持都需要一些代码库的支持，在有js的情况下，其它语言基本已经被放弃了。</p>
+
+<p>如果假设采用的是js来实现，那只需要在相关的<code>WCCanvasPageViewController</code>中找到大量以js或者jsexecutor或者jscontext等命名的方法或者常量即可，当然，最好是能直接找到ui代码，那就铁证如山了。</p>
+
+<p>下面开始浏览<code>WCCanvasPageViewController</code>类：</p>
+
+<ul>
+<li>1、m_FirstViewToAnimate 用于头部动画显示 ---&gt; 这个view其实就是头部图片，估计还兼顾一些动画相关的处理</li>
+<li>2、未能发现任何与js或者javascript相关的命名</li>
+<li>3、从名字就完全能看的出来关键信息肯定都在一个名字叫做<code>m_advertiseInfo</code>的对象当中，事实上，关于广告的所有model层数据都在其中。这其中的字段太多了，不是很熟悉微信广告的业务，也就无法猜测这里面都是什么意思。</li>
+<li>4、由于当前页面叫<code>WCCanvasPageViewController</code>，前文说了，<code>canvas</code>应该就是这个项目的代号，所以<code>m_advertiseInfo</code>里面一个名字叫做<code>adCanvasInfo</code>的必然是这个页面渲染的关键。</li>
+</ul>
+
+<h2 id="toc_4">四、重中之重---“adCanvasInfo”</h2>
+
+<p>好，下面查看它的信息：</p>
+
+<p><img src="media/15378876730639/blog_wcadcanvasinfo.jpg" alt="blog_wcadcanvasinfo"/></p>
+
+<ul>
+<li>shareTitle:&quot;就是这个广告的标题&quot;</li>
+<li>shareDesc:&quot;广告的一些介绍&quot;</li>
+<li>shareWebUrl:&quot;广告试试上的分享链接，亲测在不支持的版本会直接跳转该url的h5进行广告展示&quot;</li>
+<li>sizeType:1 ---- 不明白什么意思，应该与样式有关</li>
+<li>baseWidth:750 ---- 不太懂用在那里了</li>
+<li>adCanvasPageList --&gt; 一个数组，这个好像就是用于分页显示的数组，也就是page分页吧，处理滑动的惯性的，如果页面如果没有分页，那数组里面只有一个对象，事实上，一切都来自于下面的xml。</li>
+<li>fromAdXml --- 一段xml，最最关键的信息来了，整个页面的meta data都在这里面！</li>
+</ul>
+
+<p>由于知道微信消息的数据交换格式就是xml，很自然的，就能确信这个就是数据存放的地方。</p>
+
+<p>仅仅知道采用xml还不能确定渲染方案，需要浏览xml，如果其中不包含样式相关信息，还需要理解其内部的含义，下面就贴出来这两个广告的xml信息：</p>
+
+<h4 id="toc_5">1、伊利牛奶广告元信息</h4>
+
+<pre><code class="language-markup">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+
+&lt;adxml&gt; 
+  &lt;originSnsId&gt;-6114390104925202608&lt;/originSnsId&gt;  
+  &lt;originUxInfo&gt;1600004088|wx0oghes5zhpmn4y||0|1470527748&lt;/originUxInfo&gt;
+  &lt;nickname&gt;伊利牛奶&lt;/nickname&gt;
+  &lt;headClickType&gt;0&lt;/headClickType&gt;
+  &lt;adActionLinkHidden&gt;1&lt;/adActionLinkHidden&gt;
+  &lt;adActionLinkName&gt;查看详情&lt;/adActionLinkName&gt;
+  &lt;adActionLink&gt;http://as.weixin.qq.com/cgi-bin/redirect?tid=1601557&lt;/adActionLink&gt;
+  &lt;adActionType&gt;0&lt;/adActionType&gt;
+  &lt;webviewRightBarShow&gt;1&lt;/webviewRightBarShow&gt;
+  &lt;attachShareLinkIsHidden&gt;1918989427&lt;/attachShareLinkIsHidden&gt;
+  &lt;expandOutsideTitle&gt;
+    &lt;zh&gt;广告&lt;/zh&gt;
+    &lt;tw&gt;廣告&lt;/tw&gt;
+    &lt;en&gt;Sponsored&lt;/en&gt;
+  &lt;/expandOutsideTitle&gt;
+  &lt;expandInsideTitle&gt;
+    &lt;zh&gt;赞助商提供的广告信息&lt;/zh&gt;
+    &lt;tw&gt;贊助商提供的廣告信息&lt;/tw&gt;
+    &lt;en&gt;Sponsored story&lt;/en&gt;
+  &lt;/expandInsideTitle&gt;
+  &lt;adArgs&gt;
+    &lt;arg&gt;
+      &lt;key&gt;classify_zh_CN&lt;/key&gt;
+      &lt;value&gt;电器&lt;/value&gt;
+    &lt;/arg&gt;
+    &lt;arg&gt;
+      &lt;key&gt;classify_zh_TW&lt;/key&gt;
+      &lt;value&gt;電器&lt;/value&gt;
+    &lt;/arg&gt;
+    &lt;arg&gt;
+      &lt;key&gt;classify_en&lt;/key&gt;
+      &lt;value&gt;appliance&lt;/value&gt;
+    &lt;/arg&gt;
+    &lt;arg&gt;
+      &lt;key&gt;nickname_zh_CN&lt;/key&gt;
+      &lt;value/&gt;
+    &lt;/arg&gt;
+    &lt;arg&gt;
+      &lt;key&gt;nickname_zh_TW&lt;/key&gt;
+      &lt;value/&gt;
+    &lt;/arg&gt;
+    &lt;arg&gt;
+      &lt;key&gt;nickname_en&lt;/key&gt;
+      &lt;value/&gt;
+    &lt;/arg&gt;
+  &lt;/adArgs&gt;
+  &lt;adCanvasInfo&gt;
+    &lt;pageID&gt;1700001666&lt;/pageID&gt;
+    &lt;id&gt;1371&lt;/id&gt;
+    &lt;canvasName&gt;安慕希&lt;/canvasName&gt;
+    &lt;sizeType&gt;1&lt;/sizeType&gt;
+    &lt;basicWidth&gt;750&lt;/basicWidth&gt;
+    &lt;basicRootFontSize&gt;1&lt;/basicRootFontSize&gt;
+    &lt;shareTitle&gt;他会让世界好看，你看好吗？&lt;/shareTitle&gt;
+    &lt;shareDesc&gt;靠颜值可以霸屏的我涛，要去称霸全宇宙了。&lt;/shareDesc&gt;
+    &lt;shareThumbUrl&gt;http://mmsns.qpic.cn/mmsns/olticmAYicoM8WH03wUK2LgURpbYn92GxLWWCd9cegRJ46W3BlEIrz5A/0&lt;/shareThumbUrl&gt;
+    &lt;shareWebUrl&gt;http://mp.weixin.qq.com/tp/ad_detail_info?page_key=95264e7fa44c6cd90e55334350d4e560e0acde652c42b567fe3759cbd644983dc171ff853248263e068cb034dd9c0be9&lt;/shareWebUrl&gt;
+    &lt;PageList&gt;
+      &lt;Page&gt;
+        &lt;backgroundCover/&gt;
+        &lt;backgroundColor&gt;#ffffff&lt;/backgroundColor&gt;
+        &lt;componentItemList&gt;
+          &lt;componentItem&gt;
+            &lt;pureImageUrl&gt;http://mmsns.qpic.cn/mmsns/olticmAYicoM882rFgvNH3mKo5ZDn6p7LFxdZnUt8WSEQqibXtkwXplHQ/0&lt;/pureImageUrl&gt;
+            &lt;imageHeight&gt;938&lt;/imageHeight&gt;
+            &lt;imageWidth&gt;750&lt;/imageWidth&gt;
+            &lt;paddingTop&gt;0&lt;/paddingTop&gt;
+            &lt;paddingBottom&gt;0&lt;/paddingBottom&gt;
+            &lt;paddingRight&gt;0&lt;/paddingRight&gt;
+            &lt;paddingLeft&gt;0&lt;/paddingLeft&gt;
+            &lt;type&gt;41&lt;/type&gt;
+            &lt;name&gt;图1&lt;/name&gt;
+            &lt;id&gt;1371_3015_41&lt;/id&gt;
+          &lt;/componentItem&gt;
+          &lt;componentItem&gt;
+            &lt;pureImageUrl&gt;http://mmsns.qpic.cn/mmsns/olticmAYicoM882rFgvNH3mKo5ZDn6p7LFLL5prEEujnDa0v0ANaBiaWw/0&lt;/pureImageUrl&gt;
+            &lt;imageHeight&gt;396&lt;/imageHeight&gt;
+            &lt;imageWidth&gt;750&lt;/imageWidth&gt;
+            &lt;paddingTop&gt;0&lt;/paddingTop&gt;
+            &lt;paddingBottom&gt;0&lt;/paddingBottom&gt;
+            &lt;paddingRight&gt;0&lt;/paddingRight&gt;
+            &lt;paddingLeft&gt;0&lt;/paddingLeft&gt;
+            &lt;type&gt;41&lt;/type&gt;
+            &lt;name&gt;图2&lt;/name&gt;
+            &lt;id&gt;1371_3016_41&lt;/id&gt;
+          &lt;/componentItem&gt;
+        &lt;/componentItemList&gt;
+      &lt;/Page&gt;
+      &lt;Page&gt;
+        &lt;backgroundCover/&gt;
+        &lt;backgroundColor&gt;#000000&lt;/backgroundColor&gt;
+        &lt;componentItemList&gt;
+          &lt;componentItem&gt;
+            &lt;streamVideoUrl&gt;http://wxsnsdy.tc.qq.com/105/20210/snsdyvideodownload?filekey=30270201010420301e0201690402534804100fe55d4d35540737a214d99e1721636002036d43de0400&amp;amp;bizid=1023&amp;amp;hy=SH&amp;amp;fileparam=302c020101042530230204136ffd93020457a4522c02024ef202031e8d7f02030f42400204045a320a0201000400&lt;/streamVideoUrl&gt;
+            &lt;streamDisplayType&gt;0&lt;/streamDisplayType&gt;
+            &lt;streamVideoThumb&gt;http://vweixinthumb.tc.qq.com/150/20250/snsvideodownload?filekey=30280201010421301f020200960402534804106ed93afac5f3924bd8f6f6666917470c0203016a870400&amp;amp;bizid=1023&amp;amp;hy=SH&amp;amp;fileparam=302c020101042530230204136ffd93020457a4522c02024f1a02031e8d7f02030f42400204045a320a0201000400&lt;/streamVideoThumb&gt;
+            &lt;streamDisplayWidth&gt;640&lt;/streamDisplayWidth&gt;
+            &lt;streamDisplayHeight&gt;1138&lt;/streamDisplayHeight&gt;
+            &lt;paddingTop&gt;0&lt;/paddingTop&gt;
+            &lt;paddingBottom&gt;0&lt;/paddingBottom&gt;
+            &lt;paddingRight&gt;0&lt;/paddingRight&gt;
+            &lt;paddingLeft&gt;0&lt;/paddingLeft&gt;
+            &lt;type&gt;62&lt;/type&gt;
+            &lt;name&gt;视频1&lt;/name&gt;
+            &lt;id&gt;1371_3017_62&lt;/id&gt;
+          &lt;/componentItem&gt;
+        &lt;/componentItemList&gt;
+      &lt;/Page&gt;
+      &lt;Page&gt;
+        &lt;backgroundCover/&gt;
+        &lt;backgroundColor&gt;#000000&lt;/backgroundColor&gt;
+        &lt;componentItemList&gt;
+          &lt;componentItem&gt;
+            &lt;panoramaImageUrl&gt;http://mmsns.qpic.cn/mmsns/olticmAYicoM8WH03wUK2LgURpbYn92GxLZ1s7PbTjWlwjmxnyqk5QXA/0&lt;/panoramaImageUrl&gt;
+            &lt;type&gt;44&lt;/type&gt;
+            &lt;name&gt;全景1&lt;/name&gt;
+            &lt;id&gt;1371_3018_44&lt;/id&gt;
+          &lt;/componentItem&gt;
+        &lt;/componentItemList&gt;
+      &lt;/Page&gt;
+      &lt;Page&gt;
+        &lt;backgroundCover/&gt;
+        &lt;backgroundColor&gt;#ffffff&lt;/backgroundColor&gt;
+        &lt;componentItemList&gt;
+          &lt;componentItem&gt;
+            &lt;pureImageUrl&gt;http://mmsns.qpic.cn/mmsns/olticmAYicoM882rFgvNH3mKo5ZDn6p7LFdQz4tNnibpxfbJ0XbzDsRlQ/0&lt;/pureImageUrl&gt;
+            &lt;imageHeight&gt;736&lt;/imageHeight&gt;
+            &lt;imageWidth&gt;750&lt;/imageWidth&gt;
+            &lt;paddingTop&gt;0&lt;/paddingTop&gt;
+            &lt;paddingBottom&gt;0&lt;/paddingBottom&gt;
+            &lt;paddingRight&gt;0&lt;/paddingRight&gt;
+            &lt;paddingLeft&gt;0&lt;/paddingLeft&gt;
+            &lt;type&gt;41&lt;/type&gt;
+            &lt;name&gt;图3&lt;/name&gt;
+            &lt;id&gt;1371_3019_41&lt;/id&gt;
+          &lt;/componentItem&gt;
+          &lt;componentItem&gt;
+            &lt;pureImageUrl&gt;http://mmsns.qpic.cn/mmsns/olticmAYicoM8aSeQibcyTFYR5BQx2zibXaoZWyQy8uUlbQAIm116KkSRw/0&lt;/pureImageUrl&gt;
+            &lt;imageHeight&gt;301&lt;/imageHeight&gt;
+            &lt;imageWidth&gt;750&lt;/imageWidth&gt;
+            &lt;paddingTop&gt;0&lt;/paddingTop&gt;
+            &lt;paddingBottom&gt;0&lt;/paddingBottom&gt;
+            &lt;paddingRight&gt;0&lt;/paddingRight&gt;
+            &lt;paddingLeft&gt;0&lt;/paddingLeft&gt;
+            &lt;type&gt;41&lt;/type&gt;
+            &lt;name&gt;图4&lt;/name&gt;
+            &lt;id&gt;1371_3020_41&lt;/id&gt;
+          &lt;/componentItem&gt;
+          &lt;componentItem&gt;
+            &lt;btnTitle&gt;立即加入&lt;/btnTitle&gt;
+            &lt;fontSize&gt;30&lt;/fontSize&gt;
+            &lt;fontColor&gt;#ffffff&lt;/fontColor&gt;
+            &lt;btnJumpUrl&gt;http://yili.cici6.com/201608/main.html&lt;/btnJumpUrl&gt;
+            &lt;btnType&gt;0&lt;/btnType&gt;
+            &lt;borderSize&gt;0&lt;/borderSize&gt;
+            &lt;btnHeight&gt;78&lt;/btnHeight&gt;
+            &lt;btnBgColorTheme&gt;#004DA1&lt;/btnBgColorTheme&gt;
+            &lt;btnBorderColorTheme&gt;#004DA1&lt;/btnBorderColorTheme&gt;
+            &lt;btnFontType&gt;1&lt;/btnFontType&gt;
+            &lt;paddingTop&gt;0&lt;/paddingTop&gt;
+            &lt;paddingBottom&gt;0&lt;/paddingBottom&gt;
+            &lt;paddingRight&gt;205&lt;/paddingRight&gt;
+            &lt;paddingLeft&gt;205&lt;/paddingLeft&gt;
+            &lt;type&gt;21&lt;/type&gt;
+            &lt;name&gt;按钮1&lt;/name&gt;
+            &lt;id&gt;1371_3021_21&lt;/id&gt;
+          &lt;/componentItem&gt;
+        &lt;/componentItemList&gt;
+      &lt;/Page&gt;
+    &lt;/PageList&gt;
+  &lt;/adCanvasInfo&gt;
+&lt;/adxml&gt;
+</code></pre>
+
+<h4 id="toc_6">2、Nike广告元信息</h4>
+
+<pre><code class="language-markup">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+
+&lt;adxml&gt;
+  &lt;nickname&gt;NIKE&lt;/nickname&gt;
+  &lt;headClickType&gt;0&lt;/headClickType&gt;
+  &lt;adActionLinkHidden&gt;1&lt;/adActionLinkHidden&gt;
+  &lt;adActionLinkName&gt;查看详情&lt;/adActionLinkName&gt;
+  &lt;adActionLink&gt;http://as.weixin.qq.com/cgi-bin/redirect?tid=1601569&lt;/adActionLink&gt;
+  &lt;adActionType&gt;0&lt;/adActionType&gt;
+  &lt;webviewRightBarShow&gt;1&lt;/webviewRightBarShow&gt;
+  &lt;attachShareLinkIsHidden&gt;1110914615&lt;/attachShareLinkIsHidden&gt;
+  &lt;expandOutsideTitle&gt;
+    &lt;zh&gt;广告&lt;/zh&gt;
+    &lt;tw&gt;廣告&lt;/tw&gt;
+    &lt;en&gt;Sponsored&lt;/en&gt;
+  &lt;/expandOutsideTitle&gt;
+  &lt;expandInsideTitle&gt;
+    &lt;zh&gt;赞助商提供的广告信息&lt;/zh&gt;
+    &lt;tw&gt;贊助商提供的廣告信息&lt;/tw&gt;
+    &lt;en&gt;Sponsored story&lt;/en&gt;
+  &lt;/expandInsideTitle&gt;
+  &lt;adArgs&gt;
+    &lt;arg&gt;
+      &lt;key&gt;classify_zh_CN&lt;/key&gt;
+      &lt;value/&gt;
+    &lt;/arg&gt;
+    &lt;arg&gt;
+      &lt;key&gt;classify_zh_TW&lt;/key&gt;
+      &lt;value/&gt;
+    &lt;/arg&gt;
+    &lt;arg&gt;
+      &lt;key&gt;classify_en&lt;/key&gt;
+      &lt;value/&gt;
+    &lt;/arg&gt;
+    &lt;arg&gt;
+      &lt;key&gt;nickname_zh_CN&lt;/key&gt;
+      &lt;value/&gt;
+    &lt;/arg&gt;
+    &lt;arg&gt;
+      &lt;key&gt;nickname_zh_TW&lt;/key&gt;
+      &lt;value/&gt;
+    &lt;/arg&gt;
+    &lt;arg&gt;
+      &lt;key&gt;nickname_en&lt;/key&gt;
+      &lt;value/&gt;
+    &lt;/arg&gt;
+  &lt;/adArgs&gt;
+  &lt;adCanvasInfo&gt;
+    &lt;pageID&gt;1700002364&lt;/pageID&gt;
+    &lt;id&gt;2566&lt;/id&gt;
+    &lt;canvasName&gt;nike其他城市&lt;/canvasName&gt;
+    &lt;sizeType&gt;1&lt;/sizeType&gt;
+    &lt;basicWidth&gt;750&lt;/basicWidth&gt;
+    &lt;basicRootFontSize&gt;1&lt;/basicRootFontSize&gt;
+    &lt;shareTitle&gt;嘿，今天该你上场了！&lt;/shareTitle&gt;
+    &lt;shareDesc&gt;没错，就是你！立即一探究竟&lt;/shareDesc&gt;
+    &lt;shareThumbUrl&gt;http://mmsns.qpic.cn/mmsns/gFuZJlqxR6dJFiccZHiagg9l2ibIPClbic4wrylT8DKZaj06bg9sbRzSbw/0&lt;/shareThumbUrl&gt;
+    &lt;shareWebUrl&gt;http://mp.weixin.qq.com/tp/ad_detail_info?page_key=5b6cddf2c33149ccf8692fb1a3dde13a63e56cd068fd9d5e65c22f692fb134f3fbc37fb96e77abbf502ec59ca87ddfc4&lt;/shareWebUrl&gt;
+    &lt;PageList&gt;
+      &lt;Page&gt;
+        &lt;backgroundCover/&gt;
+        &lt;backgroundColor&gt;#ffffff&lt;/backgroundColor&gt;
+        &lt;componentItemList&gt;
+          &lt;componentItem&gt;
+            &lt;pureImageUrl&gt;http://mmsns.qpic.cn/mmsns/gFuZJlqxR6dJFiccZHiagg9l2ibIPClbic4wpEw5ySjbksLJiaAqcdeWicXw/0&lt;/pureImageUrl&gt;
+            &lt;imageHeight&gt;750&lt;/imageHeight&gt;
+            &lt;imageWidth&gt;750&lt;/imageWidth&gt;
+            &lt;paddingTop&gt;0&lt;/paddingTop&gt;
+            &lt;paddingBottom&gt;0&lt;/paddingBottom&gt;
+            &lt;paddingRight&gt;0&lt;/paddingRight&gt;
+            &lt;paddingLeft&gt;0&lt;/paddingLeft&gt;
+            &lt;type&gt;41&lt;/type&gt;
+            &lt;name&gt;头图&lt;/name&gt;
+            &lt;id&gt;2566_2832_41&lt;/id&gt;
+          &lt;/componentItem&gt;
+          &lt;componentItem&gt;
+            &lt;pureImageUrl&gt;http://mmsns.qpic.cn/mmsns/gFuZJlqxR6dJFiccZHiagg9l2ibIPClbic4wX2aMkzC0zeoWEEVJRfZWdQ/0&lt;/pureImageUrl&gt;
+            &lt;imageHeight&gt;448&lt;/imageHeight&gt;
+            &lt;imageWidth&gt;750&lt;/imageWidth&gt;
+            &lt;paddingTop&gt;0&lt;/paddingTop&gt;
+            &lt;paddingBottom&gt;0&lt;/paddingBottom&gt;
+            &lt;paddingRight&gt;0&lt;/paddingRight&gt;
+            &lt;paddingLeft&gt;0&lt;/paddingLeft&gt;
+            &lt;type&gt;41&lt;/type&gt;
+            &lt;name&gt;文本1-1&lt;/name&gt;
+            &lt;id&gt;2566_2833_41&lt;/id&gt;
+          &lt;/componentItem&gt;
+          &lt;componentItem&gt;
+            &lt;streamVideoUrl&gt;http://wxsnsdy.tc.qq.com/105/20210/snsdyvideodownload?filekey=30280201010421301f02016904025348041022c56408ca857868ae7e28d5ca2457f50204011d47340400&amp;amp;bizid=1023&amp;amp;hy=SH&amp;amp;fileparam=302c020101042530230204136ffd93020457a4387102024ef202031e8d7f02030f42400204045a320a0201000400&lt;/streamVideoUrl&gt;
+            &lt;streamDisplayType&gt;1&lt;/streamDisplayType&gt;
+            &lt;streamVideoThumb&gt;http://vweixinthumb.tc.qq.com/150/20250/snsvideodownload?filekey=30270201010420301e02020096040253480410ee035de565a944eabf9145f8098ecc7a020231130400&amp;amp;bizid=1023&amp;amp;hy=SH&amp;amp;fileparam=302c020101042530230204136ffd93020457a4387102024f1a02031e8d7f02030f42400204045a320a0201000400&lt;/streamVideoThumb&gt;
+            &lt;streamDisplayWidth&gt;750&lt;/streamDisplayWidth&gt;
+            &lt;streamDisplayHeight&gt;421.875&lt;/streamDisplayHeight&gt;
+            &lt;paddingTop&gt;0&lt;/paddingTop&gt;
+            &lt;paddingBottom&gt;0&lt;/paddingBottom&gt;
+            &lt;paddingRight&gt;0&lt;/paddingRight&gt;
+            &lt;paddingLeft&gt;0&lt;/paddingLeft&gt;
+            &lt;type&gt;62&lt;/type&gt;
+            &lt;name&gt;流媒体视频&lt;/name&gt;
+            &lt;id&gt;2566_2834_62&lt;/id&gt;
+          &lt;/componentItem&gt;
+          &lt;componentItem&gt;
+            &lt;pureImageUrl&gt;http://mmsns.qpic.cn/mmsns/gFuZJlqxR6eX7uHPR8P04tkiakghyIj02xL4nxRaThSt4vDdttU8XZA/0&lt;/pureImageUrl&gt;
+            &lt;imageHeight&gt;354&lt;/imageHeight&gt;
+            &lt;imageWidth&gt;750&lt;/imageWidth&gt;
+            &lt;paddingTop&gt;0&lt;/paddingTop&gt;
+            &lt;paddingBottom&gt;0&lt;/paddingBottom&gt;
+            &lt;paddingRight&gt;0&lt;/paddingRight&gt;
+            &lt;paddingLeft&gt;0&lt;/paddingLeft&gt;
+            &lt;type&gt;41&lt;/type&gt;
+            &lt;name&gt;文案2&lt;/name&gt;
+            &lt;id&gt;2566_2835_41&lt;/id&gt;
+          &lt;/componentItem&gt;
+          &lt;componentItem&gt;
+            &lt;pureImageUrl&gt;http://mmsns.qpic.cn/mmsns/gFuZJlqxR6dUFC5PWYcDbzoSgX8qB4fkXXZibicqiaw9t7KMVsWZe0zMg/0&lt;/pureImageUrl&gt;
+            &lt;imageHeight&gt;1334&lt;/imageHeight&gt;
+            &lt;imageWidth&gt;750&lt;/imageWidth&gt;
+            &lt;paddingTop&gt;0&lt;/paddingTop&gt;
+            &lt;paddingBottom&gt;0&lt;/paddingBottom&gt;
+            &lt;paddingRight&gt;0&lt;/paddingRight&gt;
+            &lt;paddingLeft&gt;0&lt;/paddingLeft&gt;
+            &lt;type&gt;41&lt;/type&gt;
+            &lt;name&gt;长图1&lt;/name&gt;
+            &lt;id&gt;2566_2836_41&lt;/id&gt;
+          &lt;/componentItem&gt;
+          &lt;componentItem&gt;
+            &lt;pureImageUrl&gt;http://mmsns.qpic.cn/mmsns/gFuZJlqxR6dUFC5PWYcDbzoSgX8qB4fkIV7oAFquic7wHjBt24qHTUw/0&lt;/pureImageUrl&gt;
+            &lt;imageHeight&gt;1334&lt;/imageHeight&gt;
+            &lt;imageWidth&gt;750&lt;/imageWidth&gt;
+            &lt;paddingTop&gt;0&lt;/paddingTop&gt;
+            &lt;paddingBottom&gt;0&lt;/paddingBottom&gt;
+            &lt;paddingRight&gt;0&lt;/paddingRight&gt;
+            &lt;paddingLeft&gt;0&lt;/paddingLeft&gt;
+            &lt;type&gt;41&lt;/type&gt;
+            &lt;name&gt;长图2&lt;/name&gt;
+            &lt;id&gt;2566_2837_41&lt;/id&gt;
+          &lt;/componentItem&gt;
+          &lt;componentItem&gt;
+            &lt;pureImageUrl&gt;http://mmsns.qpic.cn/mmsns/gFuZJlqxR6dUFC5PWYcDbzoSgX8qB4fkx3Abdic8QWHClsasGBdYbRA/0&lt;/pureImageUrl&gt;
+            &lt;imageHeight&gt;1334&lt;/imageHeight&gt;
+            &lt;imageWidth&gt;750&lt;/imageWidth&gt;
+            &lt;paddingTop&gt;0&lt;/paddingTop&gt;
+            &lt;paddingBottom&gt;0&lt;/paddingBottom&gt;
+            &lt;paddingRight&gt;0&lt;/paddingRight&gt;
+            &lt;paddingLeft&gt;0&lt;/paddingLeft&gt;
+            &lt;type&gt;41&lt;/type&gt;
+            &lt;name&gt;长图3&lt;/name&gt;
+            &lt;id&gt;2566_2838_41&lt;/id&gt;
+          &lt;/componentItem&gt;
+          &lt;componentItem&gt;
+            &lt;pureImageUrl&gt;http://mmsns.qpic.cn/mmsns/gFuZJlqxR6dUFC5PWYcDbzoSgX8qB4fkuouM2ZUaRVPKYN4eDCvAEw/0&lt;/pureImageUrl&gt;
+            &lt;imageHeight&gt;1334&lt;/imageHeight&gt;
+            &lt;imageWidth&gt;750&lt;/imageWidth&gt;
+            &lt;paddingTop&gt;0&lt;/paddingTop&gt;
+            &lt;paddingBottom&gt;0&lt;/paddingBottom&gt;
+            &lt;paddingRight&gt;0&lt;/paddingRight&gt;
+            &lt;paddingLeft&gt;0&lt;/paddingLeft&gt;
+            &lt;type&gt;41&lt;/type&gt;
+            &lt;name&gt;长图4&lt;/name&gt;
+            &lt;id&gt;2566_2839_41&lt;/id&gt;
+          &lt;/componentItem&gt;
+          &lt;componentItem&gt;
+            &lt;pureImageUrl&gt;http://mmsns.qpic.cn/mmsns/gFuZJlqxR6dUFC5PWYcDbzoSgX8qB4fkGZG8yw8dW0kDhfVEfSMP1g/0&lt;/pureImageUrl&gt;
+            &lt;imageHeight&gt;1334&lt;/imageHeight&gt;
+            &lt;imageWidth&gt;750&lt;/imageWidth&gt;
+            &lt;paddingTop&gt;0&lt;/paddingTop&gt;
+            &lt;paddingBottom&gt;0&lt;/paddingBottom&gt;
+            &lt;paddingRight&gt;0&lt;/paddingRight&gt;
+            &lt;paddingLeft&gt;0&lt;/paddingLeft&gt;
+            &lt;type&gt;41&lt;/type&gt;
+            &lt;name&gt;长图5&lt;/name&gt;
+            &lt;id&gt;2566_2840_41&lt;/id&gt;
+          &lt;/componentItem&gt;
+          &lt;componentItem&gt;
+            &lt;pureImageUrl&gt;http://mmsns.qpic.cn/mmsns/gFuZJlqxR6dUFC5PWYcDbzoSgX8qB4fk8g4sjFQnuelkgysLQpVXAw/0&lt;/pureImageUrl&gt;
+            &lt;imageHeight&gt;1334&lt;/imageHeight&gt;
+            &lt;imageWidth&gt;750&lt;/imageWidth&gt;
+            &lt;paddingTop&gt;0&lt;/paddingTop&gt;
+            &lt;paddingBottom&gt;0&lt;/paddingBottom&gt;
+            &lt;paddingRight&gt;0&lt;/paddingRight&gt;
+            &lt;paddingLeft&gt;0&lt;/paddingLeft&gt;
+            &lt;type&gt;41&lt;/type&gt;
+            &lt;name&gt;长图6&lt;/name&gt;
+            &lt;id&gt;2566_2841_41&lt;/id&gt;
+          &lt;/componentItem&gt;
+          &lt;componentItem&gt;
+            &lt;pureImageUrl&gt;http://mmsns.qpic.cn/mmsns/gFuZJlqxR6dUFC5PWYcDbzoSgX8qB4fkXdbibibUsMwqOt13Wcyqns3w/0&lt;/pureImageUrl&gt;
+            &lt;imageHeight&gt;1505&lt;/imageHeight&gt;
+            &lt;imageWidth&gt;750&lt;/imageWidth&gt;
+            &lt;paddingTop&gt;0&lt;/paddingTop&gt;
+            &lt;paddingBottom&gt;0&lt;/paddingBottom&gt;
+            &lt;paddingRight&gt;0&lt;/paddingRight&gt;
+            &lt;paddingLeft&gt;0&lt;/paddingLeft&gt;
+            &lt;type&gt;41&lt;/type&gt;
+            &lt;name&gt;长图7&lt;/name&gt;
+            &lt;id&gt;2566_2842_41&lt;/id&gt;
+          &lt;/componentItem&gt;
+          &lt;componentItem&gt;
+            &lt;pureImageUrl&gt;http://mmsns.qpic.cn/mmsns/gFuZJlqxR6dGp4D8cCyJo38N3Oj4R89Dibv6ICjLoMb5qyAosI4ian1A/0&lt;/pureImageUrl&gt;
+            &lt;imageHeight&gt;728&lt;/imageHeight&gt;
+            &lt;imageWidth&gt;750&lt;/imageWidth&gt;
+            &lt;paddingTop&gt;0&lt;/paddingTop&gt;
+            &lt;paddingBottom&gt;40&lt;/paddingBottom&gt;
+            &lt;paddingRight&gt;0&lt;/paddingRight&gt;
+            &lt;paddingLeft&gt;0&lt;/paddingLeft&gt;
+            &lt;type&gt;41&lt;/type&gt;
+            &lt;name&gt;图片3&lt;/name&gt;
+            &lt;id&gt;2566_2843_41&lt;/id&gt;
+          &lt;/componentItem&gt;
+          &lt;componentItem&gt;
+            &lt;btnTitle&gt;立即上场&lt;/btnTitle&gt;
+            &lt;fontSize&gt;30&lt;/fontSize&gt;
+            &lt;fontColor&gt;#000000&lt;/fontColor&gt;
+            &lt;btnJumpUrl&gt;http://m.nike.com/cn/zh_cn/c/justdoit/national?cp=cn_brom_080616_u_GEN_AL_OLP_nwc_LM_02_SP_GC&lt;/btnJumpUrl&gt;
+            &lt;btnType&gt;0&lt;/btnType&gt;
+            &lt;borderSize&gt;2&lt;/borderSize&gt;
+            &lt;btnHeight&gt;80&lt;/btnHeight&gt;
+            &lt;btnBgColorTheme&gt;#ffffff&lt;/btnBgColorTheme&gt;
+            &lt;btnBorderColorTheme&gt;#000000&lt;/btnBorderColorTheme&gt;
+            &lt;btnFontType&gt;1&lt;/btnFontType&gt;
+            &lt;paddingTop&gt;0&lt;/paddingTop&gt;
+            &lt;paddingBottom&gt;20&lt;/paddingBottom&gt;
+            &lt;paddingRight&gt;150&lt;/paddingRight&gt;
+            &lt;paddingLeft&gt;150&lt;/paddingLeft&gt;
+            &lt;type&gt;21&lt;/type&gt;
+            &lt;name&gt;按钮&lt;/name&gt;
+            &lt;id&gt;2566_2844_21&lt;/id&gt;
+          &lt;/componentItem&gt;
+          &lt;componentItem&gt;
+            &lt;pureImageUrl&gt;http://mmsns.qpic.cn/mmsns/gFuZJlqxR6dGp4D8cCyJo38N3Oj4R89Dd799WvreUsibkibiaEh19p1lQ/0&lt;/pureImageUrl&gt;
+            &lt;imageHeight&gt;392&lt;/imageHeight&gt;
+            &lt;imageWidth&gt;750&lt;/imageWidth&gt;
+            &lt;paddingTop&gt;40&lt;/paddingTop&gt;
+            &lt;paddingBottom&gt;50&lt;/paddingBottom&gt;
+            &lt;paddingRight&gt;0&lt;/paddingRight&gt;
+            &lt;paddingLeft&gt;0&lt;/paddingLeft&gt;
+            &lt;type&gt;41&lt;/type&gt;
+            &lt;name&gt;图片4&lt;/name&gt;
+            &lt;id&gt;2566_2845_41&lt;/id&gt;
+          &lt;/componentItem&gt;
+        &lt;/componentItemList&gt;
+      &lt;/Page&gt;
+    &lt;/PageList&gt;
+  &lt;/adCanvasInfo&gt;
+  &lt;originSnsId&gt;12334591275321071424&lt;/originSnsId&gt;  
+  &lt;originUxInfo&gt;1600004109|wx0vl72zluinqfpw||0|1470415303&lt;/originUxInfo&gt; 
+&lt;/adxml&gt;
+</code></pre>
+
+<h2 id="toc_7">五、结论</h2>
+
+<p>看了xml，再对比下UI效果，基本就确定了，整个xml里面就是一段tableview的元信息，可以认为，该广告只支持tableview的展示，也就是说：</p>
+
+<pre><code class="language-text">客户端订好若干模板，tableview的每一个cell是一个模板，广告主去组合这个即可
+</code></pre>
+
+<p>不得不说，这里很有想象力！</p>
+
+<p>其中，最后用于广告主效果跳转的button竟然也是一个cell，通过xml字段来看，这个位置会限制广告主的发挥，因为该cell背景只能用纯色！</p>
+
+<p>最后，我们看看这一波广告支持多少种模板的组合方式：</p>
+
+<p><img src="media/15378876730639/blog_wcadcanvascomponent.jpg" alt="blog_wcadcanvascomponent"/></p>
+
+<p>上图所有以WCCanvasComponent开头的，都是能支持的模板，字面上大多数能看明白意思：有意思的是视频竟然包含流媒体和小视频两种，有一个WebViewInfo可能预示着这里必要的时候某些模块可以load一段网页进行展示。。。</p>
+
+<h2 id="toc_8">六、简单的优缺点分析，以及Android</h2>
+
+<p>好吧，整个分析都完事了，可以确信微信广告团队采用的技术方案了。</p>
+
+<p>这种技术方案的好处在于完全可控，客户端在定制化过程中能最大化的提高流畅度和性能，传输协议也能兼容微信现有的消息方式，通过模块组合也能过实现广告主非常好的定制化。</p>
+
+<p>缺陷在于毕竟所有功能样式都依赖于客户端版本支持，虽然会有很多好玩的样式，但毕竟有限，最终广告主的创意发挥也会受限，不过手机端的广告受限于屏幕宽度，能展示的创意本身也不是很多，微信广告团队的这种方案几乎可以cover主所有主流创意了。</p>
+
+<p>无论如何，这种广告方式都是一个非常了不起的发明，可以确信，app端广告将正式进入原生时代！</p>
+
+<h4 id="toc_9">被遗忘的Android</h4>
+
+<p>上面说了这种实现方式一大优势就是兼容性好，直接支持现有的微信消息协议，所以Android端在获取广告元信息必然也是消息传输过来的xml信息，无非渲染方式不一样而已。可以猜测，应该也仅仅是listview中组了一些原生组建吧。不过由于android中屏幕千奇百怪，各种ROM的碎片化订制，Android在实现分页弹性滑动和全景图片展示会遇上更多的坑。（亲测确实很多地方不尽如人意）</p>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876731564.html" 
+	        title="Previous Post: 【转】Awesome Adb">&laquo; 【转】Awesome Adb</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876731671.html" 
+	        title="Next Post: 【iOS&Android】RN学习3——集成进现有原生项目">【iOS&Android】RN学习3——集成进现有原生项目 &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

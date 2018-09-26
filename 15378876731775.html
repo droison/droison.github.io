@@ -1,0 +1,491 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  QDaily app流量和文章打开速度优化--js和css的加载逻辑 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">QDaily app流量和文章打开速度优化--js和css的加载逻辑</h1>
+				<p class="meta"><time datetime="2016-09-12T23:01:13+08:00" pubdate data-updated="true">2016/9/12</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<hr/>
+
+<blockquote>
+<p>本文属于“好奇心日报app的流量和文章打开速度优化”系列文章第二篇，主要介绍为实现文章尽快的打开速度而进行的js和css的预载和缓存以及重用的逻辑。</p>
+
+<p>整篇代码均为Objective-C，Android可以参考书写。</p>
+</blockquote>
+
+<h2 id="toc_0">前言</h2>
+
+<p>好奇心日报所有文章都是自产，js和css文件在所有文章中都使用的一套进行逻辑和样式处理。在每次前端同事修改了js或者css代码后，会给该文件直接生成一个64位的hashcode附在其后，以区分不同版本，用于浏览器端更新使用，例如：</p>
+
+<pre><code class="language-text">    http://app3.qdaily.com/assets/app3/common-bc6aa258d92609720eb97f34f86f978367bd3d849c9c0bbc82feeed9e79b6623.js
+</code></pre>
+
+<p>其中主要包括common.js、show.js、common.css和show.css四个文件。</p>
+
+<span id="more"></span><!-- more -->
+
+<h2 id="toc_1">预载逻辑(此处采用的为UIWebView)</h2>
+
+<p>首先需要说神奇的NSURLCache，这是一个系统级管理比较完善的disk和memory兼有的缓存管理。app中的所有url请求，只要其cachePolicy设置了UseProtocolCachePolicy、ReturnCacheDataElseLoad、ReturnCacheDataDontLoad，或者没有设置，都会走NSURLCache的下面两个template方法：</p>
+
+<pre><code class="language-text">- (NSCachedURLResponse *)cachedResponseForRequest:(NSURLRequest *)request;
+- (void)storeCachedResponse:(NSCachedURLResponse *)cachedResponse forRequest:(NSURLRequest *)request;
+</code></pre>
+
+<p>以上两个方法分别处理cache的读取和存储。app中可以自定义NSURLCache的派生类，初始化该对象，然后通过[NSURLCache setSharedURLCache:cache]方法实现设置。这里其实就是一个典型的代理模式了。</p>
+
+<ul>
+<li>1、请求</li>
+</ul>
+
+<p>在处理UIWebView对js和css的request时，会先走cachedResponseForRequest方法，此处我们需要判断该request的UA是否包含“AppleWebKit”来确认是否请求来自于一个WebView。</p>
+
+<p>此处我们自行判断，如果本地维护的缓存存在，则直接返回该cache data，若不存在，返回nil，UIWebView会自己去走网络加载。</p>
+
+<ul>
+<li>2、存储</li>
+</ul>
+
+<p>UIWebView自己请求的数据在完成后，会回调storeCachedResponse:forRequest方法，该方法会回调网络回来的NSData，我们可以将其存储在自己维护的缓存目录，以供下次读取。</p>
+
+<p>注意，此处存储的request也要判断其UA是否包含“AppleWebKit”。</p>
+
+<ul>
+<li>3、预载</li>
+</ul>
+
+<p>为了更好的打开体验，我们在每次进入app首页情况下，如果该用户在wifi条件，会自动请求下载最新的js和css文件，然后存储到对应的Cache目录，用于优化文章打开速度和流量。</p>
+
+<p>上面的整体流程如下：<br/>
+<img src="media/15378876731775/blog_WebViewJS-CSSCache1.jpg" alt="blog_WebViewJS-CSSCache1"/></p>
+
+<p>有一个重要的注意点，[NSURLCache setSharedURLCache:cache]方法调用一定要<code>在所有的网络发送之前</code>，否则会造成以后的回调方法不能正确的调用的情况，使得缓存失效。</p>
+
+<h2 id="toc_2">hashcode验证机制</h2>
+
+<h4 id="toc_3">以上方案遇到的问题</h4>
+
+<p>上面的预载机制在好奇心日报实施了1年，在提高app打开速度和优化流量方面发挥了很多作用。为了进一步提高文章打开速度和节约流量，上个月我们在文章上线了图片的延迟加载机制。就是html中的img标签的src字段先指向一个空白图，只有在当前内容在出现的屏幕中才会动态替换src为真实图片。延迟加载后，文章打开飞快，如果用户打开后不喜欢，退出也不会加载更多图片。但这样却带来了一个问题：</p>
+
+<pre><code class="language-text">img标签的src替换机制全在js代码中，如果由于某种原因（网络质量查，劫持，js坏掉了），导致js代码出现问题，则所有正文图片就全部无法浏览。
+</code></pre>
+
+<p>延迟加载机制和我们的WebP图片质量压缩方案一起上线，初期出现了不错的效果，但后续出现三三两两的反馈，说无法看到所有正文图片。很长一段时间我们都怀疑是由于WebP导致的无法查看，毕竟iPhone的UIWebView默认是不支持WebP的，我们在这里做了一些黑科技式的处理，存在bug也是可能的。因所有测试手机、同事手机都没有出现这个问题，bug定位非常艰难。我们通过下发用户patch代码，拉去用户日志，联系用户主动截屏，终于艰难定位了原因，竟然是延迟加载导致的！部分网络情况对我们的js文件请求进行了DNS劫持，导致js文件损坏！</p>
+
+<p>图片延迟加载是非常重要的优化特性，肯定不能回滚该机制。客户端在这里就一定要做js文件的正确性验证。这里正好有服务端返回的hashcode在url中，可以直接进行验证使用。</p>
+
+<p>为修复这里的可能出现的网络问题，修改这里的逻辑：</p>
+
+<ul>
+<li>1、app新版打包需要打包进去最新的js和css文件。</li>
+<li>2、每次进行预载或者UIWebView自己的网络请求完成后，先验证下载文件的hashCode是否正确，如果不正确，要返回本地最近的缓存版本，如果没有缓存过则直接返回bundle内的文件。这里我们认为一个错误的新版js和css文件还不如用一个老版的文件。</li>
+<li>3、只有下载后hashCode正确的文件才能放进缓存目录</li>
+</ul>
+
+<p>首先定义两个工具型方法：</p>
+
+<ul>
+<li><p>方法1：</p>
+<pre><code class="language-text">/**
+ *  方法用于判断request是否需要处理<br/>
+ *<br/>
+ *  @param request<br/>
+ *  域名为                  qdaily.com<br/>
+ *  UA包含                 AppleWebKit<br/>
+ *  extension为           js或者css<br/>
+ *  url规则为               http://url/name-hashcode.ext<br/>
+ *  上面url中hashcode为64位<br/>
+ *  @return YES表示符合验证规则<br/>
+ */<br/>
++(BOOL) shouldVerifyHashCode:(NSURLRequest*) request;
+</code></pre></li>
+<li><p>方法2：</p>
+<pre><code class="language-text">/**
+ *  方法用户获取缓存数据<br/>
+ *<br/>
+ *  @param url      网络请求的url<br/>
+ *  @param hashCode 文件正确的hashCode<br/>
+ *  @param verify   文件是否需要验证hashCode<br/>
+ *  通过url获取name，按顺序查sandbox和app mainbundle，没有返回nil。<br/>
+ *  如果verify为NO，直接返回上面的文件。<br/>
+ *  verify为YES，验证上面的文件的hashcode是否相等，相等返回上面文件，不等返回nil。<br/>
+ *  @return 缓存data OR nil<br/>
+ */<br/>
++(NSData*) cacheFromUrl:(NSString*) url hashCode:(NSString*)hashCode verify:(BOOL)verify;
+</code></pre></li>
+</ul>
+
+<p>因为需求逻辑改变，使用NSURLCache已经无法满足我们的需求，我们使用了iOS中的另一个黑科技类NSURLProtocol。这个是所有的网络请求都会走的一个类，一般用于网络拦截、绑定只用。我们过去在这里为iPad用户的所有网络请求绑定过用户信息，而且WebP的UIWebView支持也是在这里做的处理。基本逻辑图如下：</p>
+
+<p><img src="media/15378876731775/blog_1473656205.jpg" alt="blog_1473656205"/></p>
+
+<p>相应的，我们在进行网络WiFi条件下预加载js和css文件时候，在下载完成也需要进行hashCode的判断，如果正确才可以进行缓存。</p>
+
+<h4 id="toc_4">iOS部分实现的关键代码</h4>
+
+<ul>
+<li>1、获取文件的SHA256</li>
+</ul>
+
+<pre><code class="language-objectivec">//所有的下载完成都走这里
++ (NSString*)SHA256HashCodeWithURL:(NSURL*)URL {
+    NSData* dataIn = [NSData dataWithContentsOfURL:URL];
+    return [QFileDownloader SHA256HashCode:dataIn];
+}
+
+//所有的本地读取都走这里
++ (NSString*)SHA256HashCodeWithFilePath:(NSString*)filePath {
+    NSData* dataIn = [NSData dataWithContentsOfFile:filePath];
+    return [QFileDownloader SHA256HashCode:dataIn];
+}
+
++ (NSString*)SHA256HashCode:(NSData*)dataIn {
+    if (dataIn == nil) {
+        return nil;
+    }
+    
+    uint8_t digest[CC_SHA256_DIGEST_LENGTH]={0};
+    CC_SHA256(dataIn.bytes, dataIn.length, digest);
+    NSData *out=[NSData dataWithBytes:digest length:CC_SHA256_DIGEST_LENGTH];
+    NSString *hash=[out description];
+    hash = [hash stringByReplacingOccurrencesOfString:@&quot; &quot; withString:@&quot;&quot;];
+    hash = [hash stringByReplacingOccurrencesOfString:@&quot;&lt;&quot; withString:@&quot;&quot;];
+    hash = [hash stringByReplacingOccurrencesOfString:@&quot;&gt;&quot; withString:@&quot;&quot;];
+    
+    LogD(@&quot;SHA256HashCode : %@&quot;, hash);
+    return hash;
+}
+</code></pre>
+
+<ul>
+<li>2、自定义NSURLProtocol中的关键代码</li>
+</ul>
+
+<pre><code class="language-objectivec">+ (BOOL)canInitWithRequest:(NSURLRequest *)request {
+    if ([QDCacheManager shouldVerifyHashCode:request]) {
+        return YES;
+    }
+    
+    ··· //其它需要使用canInitWithRequest的逻辑
+    
+    return NO;
+}
+
++(NSURLRequest *)canonicalRequestForRequest:(NSURLRequest *)request{
+    if ([QDCacheManager shouldVerifyHashCode:request]) {
+        return request;
+    }
+    
+    ···//其它需要使用canonicalRequestForRequest的逻辑
+    
+    return request;
+}
+
+- (void)startLoading {
+    if ([QDCacheManager shouldVerifyHashCode:self.request]) {
+        [[QDCacheManager defaultManager]downloadSourceWithURL:self.request.URL completionBlock:^(NSData *data, NSError *error) {
+            if (data == nil || error != nil) {
+                [self.client URLProtocol:self didFailWithError:error];
+            } else {
+                [self.client URLProtocol:self didLoadData:data];
+                [self.client URLProtocolDidFinishLoading:self];
+            }
+        }];
+        return;
+    }
+    ···//其它需要使用startLoading的逻辑
+}
+</code></pre>
+
+<h2 id="toc_5">Android中WebView对应的关键方法</h2>
+
+<pre><code class="language-text">@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+@Override
+public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+   String url = request.getUrl().toString();
+   WebResourceResponse response = loadFromCache(url);
+   if (response == null) {
+       return super.shouldInterceptRequest(view, request);
+   } else {
+       return response;
+   }
+}
+
+public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+    WebResourceResponse response = loadFromCache(url);
+    if (response == null) {
+        return super.shouldInterceptRequest(view, url);
+    } else {
+        return response;
+    }
+}
+</code></pre>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876730780.html" 
+	        title="Previous Post: 吐槽《盛世的蝼蚁》">&laquo; 吐槽《盛世的蝼蚁》</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876731564.html" 
+	        title="Next Post: 【转】Awesome Adb">【转】Awesome Adb &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,354 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  iOS diary140807 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">iOS diary140807</h1>
+				<p class="meta"><time datetime="2014-08-07T23:01:13+08:00" pubdate data-updated="true">2014/8/7</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<span id="more"></span><!-- more -->
+
+<h3 id="toc_0">iOS7处理UiTableview转屏时定位的问题</h3>
+
+<h4 id="toc_1">首先，要先确认下uitableview在转屏过程中先后回调了哪些接口：</h4>
+
+<pre><code class="language-text">1、系统首先调用了uiviewcontroller的
+    - (void)willRotateToInterfaceOrientation:duration:
+2、之后调用了uitableview的
+    - (CGFloat)tableView:heightForRowAtIndexPath:
+    用以确认每个cell的高度
+3、在调用uitableview的tableView:heightForRowAtIndexPath:过程中，uitableview又一一调用了对应cell的setFrame方法，以修改对应的高度。
+    同时，由于frame的变化，使得每个cell分别调用了其中的layoutSubviews方法。
+4、uitableview继承自uiscrollview，在转屏后会保证contentoffset位置不变，所以，在第3步，uitableview同时计算了转屏后会显示的cell，如果cell在转屏前的页面不存在，系统会调用uitableview的
+    - (UITableViewCell *)tableView:cellForRowAtIndexPath:
+5、调起转屏动画，系统会调用uiviewcontroller的
+      -(void)willAnimateRotationToInterfaceOrientation:duration:
+    和-(void)didRotateFromInterfaceOrientation:
+</code></pre>
+
+<h4 id="toc_2">两种不太好的解决方式</h4>
+
+<p>项目需要，uitablevlew在横竖屏下的cell的宽度和高度均有变化，为了保证在转屏后，用户看到的cell依旧可见，先后采用了以下方法：  </p>
+
+<ol>
+<li>转屏前（第1步）记住contentoffset，转屏后（第5步）再通过转屏前后cell高度的不同计算新的offset，然后设置uitableview的contentoffset</li>
+<li>转屏前（第1步）记住第一个cell的indexpath，转屏后（第5步）滑倒对应位置<br/></li>
+</ol>
+
+<p>以上两种方法均可以实现转屏定位的效果，但都有问题：  </p>
+
+<ol>
+<li>如果在-(void)willAnimateRotationToInterfaceOrientation:duration:中设定位置，则转屏为“空转”，即转动过程中页面是白色的，动画完成后才会加载对应的cell。这是因为系统在第4步已经计算过即将显示的cell，并为其init过了，此时不会调用<br/></li>
+<li>如果在-(void)didRotateFromInterfaceOrientation:中设定位置，则转动过程中的页面UI既不是转动前页面的样式，也不是转动后的样式，而是第3步和第4步中系统计算出来的cell。而且，转完后会出现明显的页面闪动<br/></li>
+</ol>
+
+<h4 id="toc_3">最终解决办法</h4>
+
+<p>在分析过uiviewcontroller和uitableview在转动过程中经历的几个过程后，明白是需要采用伪装的方式让系统通过它的计算方式（第3、4步）获得到和转屏前相同的cell，这样转屏的动画和结果的定位就都准确了。<br/><br/>
+也就是在- (CGFloat)tableView:heightForRowAtIndexPath:这个方法上做文章，想办法让系统计算的横竖屏相同的contentoffset对应相同的indexpath，欺骗完成后，最后再绘制出真实的即可。<br/><br/>
+但是：iOS7开始系统竟然已经实现的相应的方法！  </p>
+
+<pre><code class="language-text">- (CGFloat)tableView:estimatedHeightForRowAtIndexPath:
+</code></pre>
+
+<p>这个估计值就是一种欺骗的手段，让页面先伪装一种估计值，cell显示（第4步cellFor）后再从heightFor取精确值，也就是在第1步和第2步之间添加了这个第1.5步！具体步骤如下：  </p>
+
+<pre><code class="language-text">1.在第1步中添加如下代码，获取预估的高度
+ NSIndexPath* indexPath = [self.m_tableview indexPathForRowAtPoint:self.m_tableview.contentOffset];
+if (indexPath.row &gt; 0) {
+    _estimatedHeight = self.m_tableview.contentOffset.y/indexPath.row;
+}
+2.在第1.5步添加
+if (_estimatedHeight==0) {
+    return defaultHeight;  //即转屏前row==0
+}else{
+    return _estimatedHeight;
+}
+</code></pre>
+
+<h3 id="toc_4">iOS7如何隐藏状态栏</h3>
+
+<p>在viewWillAppear中添加：  </p>
+
+<pre><code class="language-text">self.navigationController.navigationBar.translucent = NO;
+if ([self respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)]) {
+    [self prefersStatusBarHidden];
+    [self performSelector:@selector(setNeedsStatusBarAppearanceUpdate)];
+}
+</code></pre>
+
+<p>覆写prefersStatusBarHidden方法  </p>
+
+<pre><code class="language-text">- (BOOL)prefersStatusBarHidden
+{
+    return NO;//隐藏为YES，显示为NO
+}
+</code></pre>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876731454.html" 
+	        title="Previous Post: iOS diary140807">&laquo; iOS diary140807</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876731807.html" 
+	        title="Next Post: JAVA和Ruby的异同">JAVA和Ruby的异同 &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

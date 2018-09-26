@@ -1,0 +1,327 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  AFN源码分析-开篇 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">AFN源码分析-开篇</h1>
+				<p class="meta"><time datetime="2016-03-10T23:01:13+08:00" pubdate data-updated="true">2016/3/10</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<h3 id="toc_0">开篇准备&amp;目录分析</h3>
+
+<p>学AFNetWorking2.0很有必要先看业界的这个<a href="http://nshipster.cn/afnetworking-2/">入门架构分析</a>，本部分基本就是对该文章的二次描述。</p>
+
+<h4 id="toc_1">旧版核心 --- NSURLConnection + NSOperation</h4>
+
+<p>AFN在2.0时代有两类网络加载方案，一套是传承下来的NSURLConnection+NSOperation方案。</p>
+
+<p>其中NSURLConnection是负责网络请求，异步地加载一个NSURLRequest对象，调用 delegate进行相关的回调处理；NSOperation是抽象类，模拟单个计算单元，有状态、优先级、依赖等功能，可以取消。AFNetworking将两者结合在一起，可以从头到尾监视请求的状态，并储存请求、响应、响应数据等中间状态。</p>
+
+<p>在整个设计中所有的网络请求通过一个AFNetWorking线程通过NSURLConnection发送，NSURLConnection会新启一个线程用CFSocket去做网络请求，成功后的数据会回调在AFNetWorking线程，再抛回到UI线程的。</p>
+
+<h4 id="toc_2">新版新增 --- NSURLSession</h4>
+
+<p>NSURLSession是iOS7时代开始一个用于网络请求、上传、下载的抽象组件。</p>
+
+<p>AFNetWorking中定义了一个AFURLSessionManager，以用于创建、管理基于 NSURLSessionConfiguration 对象的 NSURLSession 对象的类，也可以管理 session 的数据、下载/上传任务，实现 session 和其相关联的任务的 delegate 方法。</p>
+
+<h4 id="toc_3">目录分析：</h4>
+
+<ol>
+<li><code>UIKit文件夹</code>：对一些系统组件的扩展，最终的应用级的东西</li>
+<li><code>Security</code>：名如其意。文件夹只有一个类，主要用于关于HTTPS认证相关的工具类</li>
+<li><code>Reachability</code>：文件夹只有一个类，用于网络环境检查以及相关切换、广播等</li>
+<li><code>Serialization</code>：两个类，分别用于请求数据、HTTP请求header以及一些请求操作的封装、序列化操作，以及对response数据的反序列化。通过这两个类，将网络请求的in和out部分完全抽象出来，有利于进一步的定制化和扩展。</li>
+<li><code>NSURLConnection</code>：根据NSURLConnection组成的网络请求封装方案</li>
+<li><code>NSURLSession</code>：根据NSURLSession组成的网络请求封装方案</li>
+</ol>
+
+<h3 id="toc_4">预计研究顺序</h3>
+
+<p>秉承着个人一贯的研究框架的源码顺序：先若干基础工具类---&gt;再从调用类（一般叫manager）开始进行结构分支梳理---&gt;manager下面具体管理的各个分支类---&gt;具体应用层次的封装。根据上述过程，将源码研究分成几个步骤，由于NSURLConnection + NSOperation方案的研究价值更大一些，所以会先从这里入手：</p>
+
+<ol>
+<li>Security+Reachability文件夹，主要用于了解功能和熟悉API。</li>
+<li>AFHTTPRequestOperationManager，从manager入手，先了解比较泛的调用框架</li>
+<li>Serialization文件夹，基本和上面的manager结合了解大体结构和使用</li>
+<li>AFHTTPRequestOperation &amp; AFURLConnectionOperation，方案1的核心部分，这里结合了NSURLConnection和NSOperation，基本都是具体实现和最终使用中一些不太常用的小技巧，多线程学习一块比较推荐的部分</li>
+<li>NSURLSession文件夹，该了解方案2了，这里就比较孤立了，因为准备工作都在方案1研究中完成了</li>
+<li>UIKit文件夹，了解下都有什么现成的封装，都用了哪些比较优秀个特性。</li>
+</ol>
+
+<h3 id="toc_5">参考</h3>
+
+<ul>
+<li><a href="http://nshipster.cn/afnetworking-2/">AFNetworking 2.0</a></li>
+<li><a href="http://blog.cnbang.net/tech/2320/">AFNetworking2.0源码解析&lt;一&gt;</a></li>
+<li><a href="http://blog.cnbang.net/tech/2371/">AFNetworking2.0源码解析&lt;二&gt;</a></li>
+<li><a href="http://blog.cnbang.net/tech/2416/">AFNetworking2.0源码解析&lt;三&gt;</a></li>
+<li><a href="http://blog.cnbang.net/tech/2456/">AFNetworking2.0源码解析&lt;四&gt;</a></li>
+</ul>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876731943.html" 
+	        title="Previous Post: AFN源码分析-AFURLRequestSerialization">&laquo; AFN源码分析-AFURLRequestSerialization</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876731044.html" 
+	        title="Next Post: 《Effective Objective-C 2.0》读书笔记3---tips">《Effective Objective-C 2.0》读书笔记3---tips &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

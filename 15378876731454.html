@@ -1,0 +1,333 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  iOS diary140807 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">iOS diary140807</h1>
+				<p class="meta"><time datetime="2014-08-07T23:01:13+08:00" pubdate data-updated="true">2014/8/7</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<h2 id="toc_0">自定义uitableviewcell的宽度，以及一些诡异的问题处理</h2>
+
+<p>项目需要，希望uitableview处于页面中中间部分，但滚动指示条依然在整个window的边缘，解决办法无非两种：  </p>
+
+<ol>
+<li>把cell做小<br/></li>
+<li>把指示条放远</li>
+</ol>
+
+<p>先说第二种方法：发现可以设置uitableview的scrollIndicatorInsets，从而任意改变指示条的位置，但是，这个位置只能在uitableview范围内！<br/><br/>
+那就只剩下第一种方法了，比较简单的就是自定义cell，把里面的内容都做一些内边距，这样看起来效果就像居中了～但问题在于，如果如此，cell的点击、删除、编辑等等uitableviewcell默认的一些系统方法展示出来的UI效果，都会是整个宽度的。<br/><br/>
+cell做小另一种方法就是修改scrollview的contentinset，因为uitableview继承自uiscrollview，这种方式的问题在于：依然不能改变cell的宽度，cell的宽度会默认设置为uitableview的宽度而不是scrollview的。<br/>
+最后，采用了网上常用的覆写uitableviewcell的setFrame方法来完成这个工作，实际效果非常好：  </p>
+
+<pre><code class="language-text">- (void)setFrame:(CGRect)frame {
+    frame.origin.x += ROOT_PORTRAIT_CONTENT_MARGIN_LEFT;
+    frame.size.width -= 2 * ROOT_PORTRAIT_CONTENT_MARGIN_LEFT; 
+    [super setFrame:frame];
+  }
+</code></pre>
+
+<p>但是在iOS7下，使用该方法会出现一些诡异的问题：</p>
+
+<pre><code class="language-text">    Probably at least one of the constraints in the following list is one you don&#39;t want. Try this: (1) look at each constraint and try to figure out which you don&#39;t expect; (2) find the code that added the unwanted constraint or constraints and fix it. (Note: If you&#39;re seeing NSAutoresizingMaskLayoutConstraints that you don&#39;t understand, refer to the documentation for the UIView property translatesAutoresizingMaskIntoConstraints) 
+(
+    &quot;&lt;NSAutoresizingMaskLayoutConstraint:0xc094560 h=--&amp; v=--&amp; H:[UITableViewWrapperView:0xc68c390(768)]&gt;&quot;,
+    &quot;&lt;NSAutoresizingMaskLayoutConstraint:0xbfd4250 h=-&amp;- v=--&amp; TimeLineLCellImg:0xbfa97e0.width == UITableViewWrapperView:0xc68c390.width - 972&gt;&quot;
+)
+
+    Will attempt to recover by breaking constraint 
+&lt;NSAutoresizingMaskLayoutConstraint:0xbfd4250 h=-&amp;- v=--&amp; TimeLineLCellImg:0xbfa97e0.width == UITableViewWrapperView:0xc68c390.width - 972&gt;
+</code></pre>
+
+<p>通过研究iOS7的修改点，发现现在uitableviewcell的superview是UITableViewWrapperView，而不是uitableview。查看log日志，发现是由于我们在修改frame的时候和设置的AutoresizingMask冲突，虽然最终显示的正确，但是吐出warning日志还是需要处理。<br/><br/>
+找到冲突原因，修改就比较容易了，让uitableviewcell的frame为我们自己设置的，而不是采用AutoresizingMask的方式自动生成，因此在setframe中添加代码：   </p>
+
+<pre><code class="language-text">[self setAutoresizingMask:(UIViewAutoresizingNone)];
+</code></pre>
+
+<p>注意：不能通过设置[self setTranslatesAutoresizingMaskIntoConstraints:NO]而直接禁止Autoresizing，因为这样必须设置layoutconstraint采用autolayout的方式。通过log看出是将cell的宽度和它的superview的宽度做了autoresizing，只需打断这个设置即可。</p>
+
+<h2 id="toc_1">iOS根据class name生成class实例：</h2>
+
+<pre><code class="language-text">NSString *className = @&quot;AbcViewController&quot;;
+
+if (NSClassFromString(className)) {
+
+    Class aClass = NSClassFromString(className);
+    id instance = [[aClass alloc] init];
+
+    if ([instance isKindOfClass:[UIViewController class]]) {
+
+        [(UIViewController *)instance setTitle:@&quot;New Title&quot;];
+        [self.navigationController pushViewController:(UIViewController *)instance animated:YES];
+    }
+}
+</code></pre>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876731419.html" 
+	        title="Previous Post: iOS diary140812">&laquo; iOS diary140812</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876731488.html" 
+	        title="Next Post: iOS diary140807">iOS diary140807 &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

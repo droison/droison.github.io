@@ -1,0 +1,348 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  自己动手在xcode6下编写dylib动态库文件 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">自己动手在xcode6下编写dylib动态库文件</h1>
+				<p class="meta"><time datetime="2015-03-02T23:01:13+08:00" pubdate data-updated="true">2015/3/2</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<p>WWDC2014上发布的Xcode6在iOS上开放了动态库，可以直接通过xcode6*版本进行构建自己的framework动态库，具体可以参见<a href="https://developer.apple.com/library/prerelease/ios/documentation/DeveloperTools/Conceptual/WhatsNewXcode/Articles/xcode_6_0.html">New Features in Xcode 6</a>至于具体能不能通过Appstore的审核，尚不清楚。</p>
+
+<p>本文着重描述如何生成打包dylib动态库文件，对于生成dynamic framework请参见blog <a href="http://foggry.com/blog/2014/06/12/wwdc2014zhi-iosshi-yong-dong-tai-ku/">WWDC2014之iOS使用动态库</a>。</p>
+
+<span id="more"></span><!-- more -->
+
+<hr/>
+
+<p>XCode默认的动态库打包格式是.framework，我需要打包.dylib格式用于在越狱机器上向其它app动态注入动态库，以完成一些比较好玩的事情，默认的方式显然不能满足要求。</p>
+
+<p>感谢万能的google，让我查到了这个好东西<a href="http://iosopendev.com/">iOSOpenDev</a>，这个工具用于越狱插件的开发，正好满足要求。</p>
+
+<h2 id="toc_0">1、安装iOSOpenDev</h2>
+
+<p><a href="http://iosopendev.com/download/">下载最新的1.6.2</a>，点击安装。安装过程中可能会出现失败，可以通过点击&quot;cmd+l&quot;查看安装日志。</p>
+
+<p>在安装器日志中选择所有日志：<br/>
+<img src="media/15378876730322/iOSOpenDev%E5%AE%89%E8%A3%85%E6%88%AA%E5%9B%BE.png" alt="iOSOpenDev安装截图"/></p>
+
+<p>日志中能看到安装过程中都做了什么，出现的错误程序员一般都能自行解决好。</p>
+
+<p>如果安装成功后，可以在xcode上看到下图的内容</p>
+
+<p><img src="media/15378876730322/iOSOpenDevXcode.png" alt="iOSOpenDevXcode"/></p>
+
+<h2 id="toc_1">2、新建dynamic framework工程</h2>
+
+<p>注意：此处选择的是xcode默认提供的dynamic framework，不是iOSOpenDev的。bulid set中“Mach-O Type” 请选择 Dynamic Library。</p>
+
+<p><img src="media/15378876730322/iOSXcodeDyFrameWork.png" alt="iOSXcodeDyFrameWork"/></p>
+
+<p>一顿下一步后，会生成一个和工程名同名的h文件，该文件会在该动态库注入到工程的时候init。如果想做更多的事情，需要自行添加m文件，并覆写Init方法，如下图：</p>
+
+<p><img src="media/15378876730322/iOSDyLibInit.png" alt="iOSDyLibInit"/></p>
+
+<p>完成后&quot;cmd+b&quot;，找到工程生成的framework文件（注意：动态库在模拟器和真机下不同，具体可以参见<a href="http://foggry.com/blog/2014/06/12/wwdc2014zhi-iosshi-yong-dong-tai-ku/">文章</a>，因此需要保证framework在build时device和iOS工程device一致）。将改framework导入到任意iOS工程下，启动工程，查看log，如下图：</p>
+
+<p><img src="media/15378876730322/iOSDyLibLog.png" alt="iOSDyLibLog"/></p>
+
+<p>在iOS工程运行时可能会出现下面的错误：</p>
+
+<pre><code class="language-text">dyld: Library not loaded: @rpath/*****
+Referenced from: /Users/******
+Reason: image not found
+</code></pre>
+
+<p>这是由于framework没能打包时copy进工程导致，解决办法是在工程的对应target的Build Phases设置中，将该framework导入到Copy files选项中，并将Destionation选择未framework。</p>
+
+<p><img src="media/15378876730322/iOSDyLibBugFix.png" alt="iOSDyLibBugFix"/></p>
+
+<h2 id="toc_2">3、将.dynamic文件打包为.dylib文件</h2>
+
+<p>此时必须已经正确安装iOSOpenDev，否则会出现lib不能找到的error。此处感谢万能的stackoverflow，很简单，就不做翻译了，</p>
+
+<ul>
+<li>1. Open the file project.pbxproj (found inside the Xcode project file bundle) in a Text Editor. Search for string &quot;producttype&quot;, change it’s value to com.apple.product-type.library.dynamic;(此处原来值未com.apple.product-type.framework)</li>
+<li>2. &quot;Installation Directory&quot; set to @executable_path/ because I plan to put the dylib in the same directory as the app’s executable.</li>
+<li>3. &quot;Mach-O Type&quot; set to Dynamic Library</li>
+<li>4. &quot;Executable Extension&quot; set to dylib</li>
+<li>5. &quot;Executable Prefix&quot; set to empty</li>
+</ul>
+
+<p>完成以上5步，&quot;cmd+b&quot;编译成的文件就变成.dylib文件了。</p>
+
+<p><code>注：以上两种方式都只支持到iOS7，不向下支持</code></p>
+
+<h2 id="toc_3">参考文章</h2>
+
+<ul>
+<li><a href="http://foggry.com/blog/2014/06/12/wwdc2014zhi-iosshi-yong-dong-tai-ku/">http://foggry.com/blog/2014/06/12/wwdc2014zhi-iosshi-yong-dong-tai-ku/</a></li>
+<li><a href="http://stackoverflow.com/questions/4733847/can-you-build-dynamic-libraries-for-ios-and-load-them-at-runtime">http://stackoverflow.com/questions/4733847/can-you-build-dynamic-libraries-for-ios-and-load-them-at-runtime</a></li>
+</ul>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15378876731110.html" 
+	        title="Previous Post: otto源码解析及探索修改">&laquo; otto源码解析及探索修改</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15378876730851.html" 
+	        title="Next Post: 使用iOS UI分析工具reveal和FLEX查看任意app">使用iOS UI分析工具reveal和FLEX查看任意app &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(57)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15378876730248.html">面试常见：iOS Category</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>
