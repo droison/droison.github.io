@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <title>
     
-  使用iOS APP的Build Configuration区分开发和生产环境 - 野火🔥
+  Retro Meeting -> 团队的自我疗伤 - 野火🔥
   
 
   </title>
@@ -83,85 +83,11 @@ $(document).ready(function(event) {
 <div>
 	<article class="hentry" role="article">
 	<header>
-			  	<h1 class="entry-title">使用iOS APP的Build Configuration区分开发和生产环境</h1>
-				<p class="meta"><time datetime="2016-06-29T23:01:13+08:00" pubdate data-updated="true">2016/6/29</time></p>
+			  	<h1 class="entry-title">Retro Meeting -> 团队的自我疗伤</h1>
+				<p class="meta"><time datetime="2018-10-28T23:27:30+08:00" pubdate data-updated="true">2018/10/28</time></p>
 			 </header>
 		  	<div class="entry-content">
-			  	<blockquote>
-<p>前两天看文章<a href="http://swift.gg/2016/04/22/using-xcode-targets/">使用 Xcode 的 Target 区分开发和生产环境</a>，感觉这个虽然是一种区分开发和生产环境比较强大的方法，但也有比较轻量级的，下面就分享下QDaily采用的配置Build Configuration方案。</p>
-</blockquote>
-
-<p>区分测试环境和生产环境的上面的链接已经说了：区分统计数据、区分crash log、区分server地址、区分本地数据库...</p>
-
-<p>每个工程默认会有两个Build Configure，即debug和release，我们就在这里做文章，增加一个releaseBeta版本，用来打包内部测试环境版本。</p>
-
-<p>QDaily在这里主要区分了app name，app icon，app bundleId（测试推送），并增加了一个全局的预处理宏BETA，代码中通过BETA标志进行和DEBUG相似的处理</p>
-
-<!--more-->
-
-<h2 id="toc_0">创建并配置新的Build Configuration</h2>
-
-<h3 id="toc_1">1、新建</h3>
-
-<p>我们主要是测试版需要区分，DEBUG版本并不需要，所以duplicate了release的默认配置。新建完记得改名，下面我已经新建过了，就没有改名那一步了。</p>
-
-<p><img src="media/15378876730886/1467187036.jpg" alt="1467187036"/></p>
-
-<h3 id="toc_2">2、区分app name、bundle Id</h3>
-
-<p>所有步骤看图，非常方便，非常简单。<br/>
-<img src="media/15378876730886/1467187354.jpg" alt="1467187354"/></p>
-
-<h3 id="toc_3">3、设置一个预处理宏和编译器标志BETA</h3>
-
-<p>具体看下图步骤，增加一个BETA：<br/>
-<img src="media/15378876730886/1467187656.jpg" alt="1467187656"/></p>
-
-<p>我们app中现在还没有使用swift，所以也就没有做swift的设置，如果需要可以去参考顶部的引用链接进行设置。</p>
-
-<p>这样代码里就能直接进行调用了。eg：<br/>
-<img src="media/15378876730886/1467187790.jpg" alt="1467187790"/></p>
-
-<h3 id="toc_4">4、修改releaseBeta的app icon</h3>
-
-<p>这里要分两步，先在images.xcassets中新建一个针对beta版本的app icon：<br/>
-<img src="media/15378876730886/1467188193.jpg" alt="1467188193"/></p>
-
-<p>我们这里已经建立过了，下一步就不示范了。这里我们把新icon命名为AppIconBeta。</p>
-
-<p>第二步和上面相似，在对应位置上填上我们对新icon的命名就好了：<br/>
-<img src="media/15378876730886/1467188417.jpg" alt="1467188417"/></p>
-
-<h3 id="toc_5">5、其它区分</h3>
-
-<p>所有build settings中的选项都可以用Build Configuration来进行区分设置，这里就不一一进行示范了。QDaily只有上面这些做了处理，其它都是通过BETA宏在代码里的操作。</p>
-
-<h2 id="toc_6">使用 Build Configuration</h2>
-
-<p>大多时候，我们都只是在编写release包时候需要对线上和开发环境进行区分，我们只需要修改archive中的scheme就好了：</p>
-
-<p>先选择app target的Edit Scheme。<br/>
-<img src="media/15378876730886/1467188720.jpg" alt="1467188720"/></p>
-
-<p>然后在Archive中选择我们新建的那个就好了。<br/>
-<img src="media/15378876730886/1467188810.jpg" alt="1467188810"/></p>
-
-<h2 id="toc_7">关于管理多个 Build Configuration 的一些注意事项</h2>
-
-<p>和新建target相比，亲测没有任何注意事项...你只要注意不要把releaseBeta传到appstore就行了。</p>
-
-<h2 id="toc_8">文章最后的推荐</h2>
-
-<p>安利一个我写的Mac下轻松上传到七牛传图的app，本文加了这么多图片，表示毫无压力，非常简单。</p>
-
-<p>截屏后点击“上传剪切板图片到七牛”这个按钮（也可以拖拽图片文件上传）。<br/>
-<img src="media/15378876730886/1467189012.jpg" alt="1467189012"/></p>
-
-<p>完成后这个外链url会默认在你的剪切板。当然也可以完成后点击“Copy MarkDown URL”，这样会直接copy一个下面这样的字符串在剪切板，你可以在你的md文件中直接使用：</p>
-
-<p><img src="media/15378876730886/1467189147.jpg" alt="1467189147"/></p>
-
-<p>真是markdown博客书写者的福音啊。那么这么NB的app哪里有呢？稍后整理完成我会放出链接来~</p>
+			  	<p>有感。</p>
 
 			</div>
 
@@ -173,7 +99,7 @@ $(document).ready(function(event) {
 			<strong>Categories:</strong>&nbsp; 
 			<span class="categories">
 			
-			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			    <a class='category' href='Anything.html'>胡写</a>&nbsp;
 			 
 			</span>
 		    </p>
@@ -205,12 +131,9 @@ $(document).ready(function(event) {
 
 	    <p class="meta">
 	    
-	        <a class="basic-alignment left" href="15378876730603.html" 
-	        title="Previous Post: 今日好文20160627-30">&laquo; 今日好文20160627-30</a>
 	    
-	    
-	        <a class="basic-alignment right" href="15378876730432.html" 
-	        title="Next Post: 移动端开发好文20160626">移动端开发好文20160626 &raquo;</a>
+	        <a class="basic-alignment right" href="15379393489219.html" 
+	        title="Next Post: 【从历年weak看iOS面试】">【从历年weak看iOS面试】 &raquo;</a>
 	    
 	    </p>
 	  </footer>

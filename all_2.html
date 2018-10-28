@@ -84,6 +84,66 @@ $(document).ready(function(event) {
 
 	<article>
 		 <header>
+		  	<h1 class="entry-title"><a href="15378876732633.html">RN学习4——QDaily Android app中通信和热修复实践</a></h1>
+			<p class="meta"><time datetime="2016-11-23T23:01:13+08:00" 
+			pubdate data-updated="true">2016/11/23</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<blockquote>
+<p>React Native现在已经到了0.37版本了，在集成RN初期使用的0.30版本还不支持将resources打入bundle实施热更新，0.37版本已经解决了这些问题，如果再不写篇文章，炒炒这份冷饭，那就过气了。</p>
+
+<p>QDaily现在在Android和iOS的版本中都集成了React Native，用其做广告效果页的展示。</p>
+
+<p>本文介绍基于Android平台，在RN进行混合app研发过程中，native部分做过的一些工作和踩过一些坑。</p>
+
+<p>本该双平台一起介绍的，但Android的坑多，先说Android，iOS的对应工作会在<a href="http://www.chaisong.xyz/2016/11/23/2016-11-25/">下个文章</a>描述。</p>
+
+<p>该文章为系列文章，之前的文章为<a href="http://www.chaisong.xyz/2016/06/20/RN%E5%AD%A6%E4%B9%A01%E2%80%94%E2%80%94%E5%89%8D%E5%A5%8F%EF%BC%8Capp%E6%8F%92%E4%BB%B6%E5%8C%96%E5%92%8C%E7%83%AD%E6%9B%B4%E6%96%B0%E7%9A%84%E6%8E%A2%E7%B4%A2/">RN学习1——前奏，app插件化和热更新的探索</a>，<a href="http://www.chaisong.xyz/2016/06/22/RN%E5%AD%A6%E4%B9%A02%E2%80%94%E2%80%94%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84%E4%B8%80%E4%BA%9B%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C/">RN学习2——客户端开发者的一些准备工作</a>，<a href="http://www.chaisong.xyz/2016/08/02/RN%E5%AD%A6%E4%B9%A03%E2%80%94%E2%80%94%E9%9B%86%E6%88%90%E8%BF%9B%E5%B7%B2%E6%9C%89%E5%8E%9F%E7%94%9F%E9%A1%B9%E7%9B%AE/">RN学习3——集成进现有原生项目</a>。</p>
+</blockquote>
+
+<h2 id="toc_0">一、Android中RN的View初始化及传参</h2>
+
+<h3 id="toc_1">马上看代码</h3>
+
+<pre><code class="language-java">//React相关组件初始化
+ReactRootView mReactRootView = new ReactRootView(this);
+mReactInstanceManager = ReactInstanceManager.builder()
+      .setApplication(getApplication())
+      .setJSBundleFile(getBundleFilePath())
+      .setJSMainModuleName(&quot;index.android&quot;)
+      .addPackage(new MainReactPackage())
+      .setUseDeveloperSupport(BuildConfig.DEBUG)
+      .setInitialLifecycleState(LifecycleState.BEFORE_RESUME)
+      .setUseOldBridge(true)
+      .build();
+
+//准备参数
+Bundle bundle = new Bundle();
+bundle.putString(&quot;url&quot;, &quot;http://www.qdaily.com&quot;);
+bundle.putFloat(&quot;totalSeconds&quot;, 12);
+bundle.putInt(&quot;style&quot;, 1);
+bundle.putString(&quot;extras&quot;, &quot;{\&quot;key\&quot; : \&quot;value\&quot;}&quot;);
+bundle.putStringArray(&quot;imagePaths&quot;, new String[]{&quot;url1&quot;, &quot;url1&quot;});
+
+//组件启动
+mReactRootView.startReactApplication(mReactInstanceManager, &quot;adImageLaunch&quot;, bundle);
+</code></pre>
+
+
+
+		</div>
+
+		 
+		 <footer>
+      	<a rel="full-article" href="15378876732633.html#more">read more &rarr;</a>
+    	</footer>
+    	
+
+	</article>
+ 
+	<article>
+		 <header>
 		  	<h1 class="entry-title"><a href="15378876732668.html">Android M、N适配踩坑</a></h1>
 			<p class="meta"><time datetime="2016-11-20T23:01:13+08:00" 
 			pubdate data-updated="true">2016/11/20</time></p>
@@ -368,41 +428,6 @@ Android6.0引入了动态权限控制，7.0使用了<code>私有目录被限制�
     	
 
 	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876731000.html">【Android&iOS】QDaily基于WebP的流量优化实践</a></h1>
-			<p class="meta"><time datetime="2016-08-01T23:01:13+08:00" 
-			pubdate data-updated="true">2016/8/1</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<hr/>
-
-<blockquote>
-<p>本文属于“好奇心日报app的流量和文章打开速度优化”系列文章第一篇，主要介绍基于图片压缩的流量优化。<br/>
-流量优化对于一个app来讲意义非常重大，能节约用户的流量，节约用户的存储空间，而且能有提高网络请求的回包速度，提高app的速度。因此流量优化历来都是app的优化重点，而且是一个持续优化的点。</p>
-
-<p>QDaily是一个多图片的新闻类应用，采编喜欢上传gif图来提高内容的表现力，这也使得流量消耗非常大。粗略估计，用户在浏览完第一页所有新闻（共48篇），会消耗流量达100m，其中98m为图片，这里值得优化的空间非常大。</p>
-
-<p>针对这种情况，我们先后使用的优化包含：wifi条件下预载所有文章、图片和js、css数据；重用所有已经下载的js、css和图片的缓存；后台图片的压缩以及客户端图片的WebP化。</p>
-
-<p>其中，后台压缩和WebP化依赖第三方多媒体处理服务器，已知比较好的国内服务有腾讯优图和七牛。这里我们采用的七牛的服务，以下很多具体的调用都是基于七牛的。</p>
-
-<p>我们的后台通过七牛的图片压缩（包含质量和分辨率），我们将首页流量由100m减少到了80m，依然有极大的提升空间。因此客户端采用基于WebP的流量压缩方案，将流量由80m压缩到了20m，减少了75%！相对于最初的处理，流量减少了80%！（android大多数机型支持WebP animated，压缩能达到80%，但iOS的压缩率取决于首页中gif图的个数和大小，测试大概优化在60%-80%之间）</p>
-
-<p>下面就介绍下这个效果极好的WebP的流量解决方案。<br/>
-
-
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876731000.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
   
 	<div class="pagination">
 	 <a class="prev" href="all_3.html">&larr; Older</a> 
@@ -425,7 +450,7 @@ Android6.0引入了动态权限控制，7.0使用了<code>私有目录被限制�
 	      </li>
 	  
 	      <li class="post">
-	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        <a href="Anything.html"><strong>胡写&nbsp;(13)</strong></a>
 	        
 	        
 	        
@@ -443,6 +468,12 @@ Android6.0引入了动态权限控制，7.0使用了<code>私有目录被限制�
 	<section>
 	  <h1>Recent Posts</h1>
 	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15407404509104.html">Retro Meeting -> 团队的自我疗伤</a>
+		      </li>
+	     
 	  
 	      
 		      <li class="post">
@@ -465,12 +496,6 @@ Android6.0引入了动态权限控制，7.0使用了<code>私有目录被限制�
 	      
 		      <li class="post">
 		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
 		      </li>
 	     
 	  

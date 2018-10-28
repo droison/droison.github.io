@@ -84,6 +84,60 @@ $(document).ready(function(event) {
 
 	<article>
 		 <header>
+		  	<h1 class="entry-title"><a href="15378876732563.html">JSPatch的一些使用注意点</a></h1>
+			<p class="meta"><time datetime="2016-11-30T23:01:13+08:00" 
+			pubdate data-updated="true">2016/11/30</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<p>JSPatch代码量不大，满满的都是神机妙算，到处都是黑科技。</p>
+
+<h2 id="toc_0">主要的坑 -- UIWebView相关</h2>
+
+<p>如果在JSPatch的代码使用前，app没有初始化过UIWebView，那会造成UIWebView中JS不能解析的问题，打开网页根本不能看。解决方案：</p>
+
+<!--more-->
+
+<pre><code class="language-text">JSPatch使用前先alloc一个UIWebView，然后让ARC自动dealloc它就好了：
+
+UIWebView *webView = [[UIWebView alloc]init];   //Useless. Just to load the UIWebview framework.
+webView.frame = CGRectZero;
+
+[JPEngine startEngine];
+
+[self startCache:^(NSString * script) {
+    [JPEngine evaluateScript:script];
+}]; 
+</code></pre>
+
+<p>哪怕初始化过UIWebView，也不能在使用JSPatch代码的时候进行UIWebView的初始化（既不能相同runloop初始化UIWebView），否则会造成WebView不稳定，极容易crash：</p>
+
+<pre><code class="language-text">JavaScriptCore  WTF::equal(WTF::StringImpl const*, unsigned char const*) + 116
+JavaScriptCore  std::__1::pair&lt;std::__1::pair&lt;WTF::StringImpl**, bool&gt;, unsigned int&gt; WTF::HashTable&lt;WTF::StringImpl*, WTF::StringImpl*, WTF::IdentityExtractor, WTF::StringHash, WTF::HashTraits&lt;WTF::StringImpl*&gt;, WTF::HashTraits&lt;WTF::StringImpl*&gt; &gt;::fullLookupForWriting&lt;WTF::HashSetTranslatorAdapter&lt;WTF::CStringTranslator&gt;, unsigned char const*&gt;(unsigned char const* const&amp;) + 268
+JavaScriptCore  WTF::HashTableAddResult&lt;WTF::HashTableIterator&lt;WTF::StringImpl*, WTF::StringImpl*, WTF::IdentityExtractor, WTF::StringHash, WTF::HashTraits&lt;WTF::StringImpl*&gt;, WTF::HashTraits&lt;WTF::StringImpl*&gt; &gt; &gt; WTF::HashTable&lt;WTF::StringImpl*, WTF::StringImpl*, WTF::IdentityExtractor, WTF::StringHash, WTF::HashTraits&lt;WTF::StringImpl*&gt;, WTF::HashTraits&lt;WTF::StringImpl*&gt; &gt;::addPassingHashCode&lt;WTF::HashSetTranslatorAdapter&lt;WTF::CStringTranslator&gt;, unsigned char const* const&amp;, unsigned char const* const&amp;&gt;(unsigned char const* const&amp;&amp;&amp;, unsigned char const* const&amp;&amp;&amp;) + 200
+JavaScriptCore  WTF::AtomicStringImpl::add(unsigned char const*) + 160
+WebCore WebCore::Settings::initializeDefaultFontFamilies() + 720
+WebCore WebCore::Settings::Settings(WebCore::Page*) + 484
+WebCore WebCore::Settings::create(WebCore::Page*) + 36
+WebCore WebCore::Page::Page(WebCore::PageConfiguration&amp;&amp;) + 184
+WebKitLegacy    -[WebView(WebPrivate) _commonInitializationWithFrameName:groupName:] + 1712
+WebKitLegacy    -[WebView(WebPrivate) _initWithFrame:frameName:groupName:] + 132
+UIKit   -[UIWebDocumentView initWithWebView:frame:] + 332
+UIKit   -[UIWebBrowserView initWithWebView:frame:] + 48
+UIKit   -[UIWebBrowserView initWithFrame:] + 44
+UIKit   -[UIWebView _webViewCommonInitWithWebView:scalesPageToFit:] + 244
+UIKit   -[UIWebView initWithFrame:] + 76
+</code></pre>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
 		  	<h1 class="entry-title"><a href="15378876732737.html">闲聊计划</a></h1>
 			<p class="meta"><time datetime="2016-11-13T23:01:13+08:00" 
 			pubdate data-updated="true">2016/11/13</time></p>
@@ -170,7 +224,7 @@ $(document).ready(function(event) {
 	      </li>
 	  
 	      <li class="post">
-	        <a href="Anything.html"><strong>胡写&nbsp;(12)</strong></a>
+	        <a href="Anything.html"><strong>胡写&nbsp;(13)</strong></a>
 	        
 	        
 	        
@@ -188,6 +242,12 @@ $(document).ready(function(event) {
 	<section>
 	  <h1>Recent Posts</h1>
 	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15407404509104.html">Retro Meeting -> 团队的自我疗伤</a>
+		      </li>
+	     
 	  
 	      
 		      <li class="post">
@@ -210,12 +270,6 @@ $(document).ready(function(event) {
 	      
 		      <li class="post">
 		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15378876732116.html">【IGListKit】学习与分析2</a>
 		      </li>
 	     
 	  
