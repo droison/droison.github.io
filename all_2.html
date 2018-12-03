@@ -84,6 +84,261 @@ $(document).ready(function(event) {
 
 	<article>
 		 <header>
+		  	<h1 class="entry-title"><a href="15378876732597.html">RN学习5——QDaily iOS app中通信和热修复实践</a></h1>
+			<p class="meta"><time datetime="2016-11-27T23:01:13+08:00" 
+			pubdate data-updated="true">2016/11/27</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<blockquote>
+<p>因为我们还用React Native 0.30版本，以后肯定会换最新版本，所以着急炒炒这份冷饭，总结总结使用经验。</p>
+
+<p><a href="http://www.chaisong.xyz/2016/11/23/2016-11-23/">上一篇</a>介绍了Android的一些React Native应用中Native部分的开发，这篇主要在这个基础上继续介绍下iOS部分。iOS坑会少一点。</p>
+
+<p>该文章为系列文章，之前的文章为<a href="http://www.chaisong.xyz/2016/06/20/RN%E5%AD%A6%E4%B9%A01%E2%80%94%E2%80%94%E5%89%8D%E5%A5%8F%EF%BC%8Capp%E6%8F%92%E4%BB%B6%E5%8C%96%E5%92%8C%E7%83%AD%E6%9B%B4%E6%96%B0%E7%9A%84%E6%8E%A2%E7%B4%A2/">RN学习1——前奏，app插件化和热更新的探索</a>，<a href="http://www.chaisong.xyz/2016/06/22/RN%E5%AD%A6%E4%B9%A02%E2%80%94%E2%80%94%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84%E4%B8%80%E4%BA%9B%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C/">RN学习2——客户端开发者的一些准备工作</a>，<a href="http://www.chaisong.xyz/2016/08/02/RN%E5%AD%A6%E4%B9%A03%E2%80%94%E2%80%94%E9%9B%86%E6%88%90%E8%BF%9B%E5%B7%B2%E6%9C%89%E5%8E%9F%E7%94%9F%E9%A1%B9%E7%9B%AE/">RN学习3——集成进现有原生项目</a>，<a href="http://www.chaisong.xyz/2016/11/23/2016-11-23/">RN学习4——QDaily Android app中通信和热修复实践</a>。</p>
+</blockquote>
+
+<h2 id="toc_0">一、先说针对hot fix的支持</h2>
+
+<h3 id="toc_1">启动时请求JSBundle更新</h3>
+
+<p>直接看流程图，此类用来管理JSBundle的位置以及热更新的版本。</p>
+
+<p><img src="http://obp30zydr.bkt.clouddn.com/RNBundleSync.jpg" alt=""/><br/>
+<!--more--></p>
+
+<h3 id="toc_2">资源文件的指向</h3>
+
+<p>上一篇说过，为支持资源的热更新，我们将所有resource都使用<code>http://qdaily.cage/</code>开头作为标记，在编译Android的JSBundle过程中，将其修改为file://data/*的本地文件路径。</p>
+
+<p>iOS在此处的处理更为简单：在看React Native源码中可以发现，处理ImageView（即RCTImageView）的请求资源的方法在RCTConvert中，负责将传入的source json文件进行识别，如果uri以http开头，最终会调到<code>+ (NSURL *)NSURL:(id)json</code>方法中，最后调用系统方法<code>NSURL *URL = [NSURL URLWithString:path]</code>完成地址的绑定。知道原理就好了，我们只需要改变系统的<code>+(NSURL*) URLWithString:(NSString*)url</code>方法即可：</p>
+
+<pre><code class="language-objectivec">// NSURL+QDAdditions.m
+
++ (void) load {
+    static dispatch_once_t onceToken;
+    dispatch_once(&amp;onceToken, ^{
+        [self swizzleSEL:@selector(URLWithString:) withSEL:@selector(swizzled_URLWithString:)];
+    });
+}
+
++ (void)swizzleSEL:(SEL)originalSEL withSEL:(SEL)swizzledSEL {
+    Class class = object_getClass((id)self); //不是类方法这里写 Class class = [self class];  就好了
+    Method originalMethod = class_getInstanceMethod(class, originalSEL);
+    Method swizzledMethod = class_getInstanceMethod(class, swizzledSEL);
+    
+    BOOL didAddMethod =
+    class_addMethod(class,
+                    originalSEL,
+                    method_getImplementation(swizzledMethod),
+                    method_getTypeEncoding(swizzledMethod));
+    
+    if (didAddMethod) {
+        class_replaceMethod(class,
+                            swizzledSEL,
+                            method_getImplementation(originalMethod),
+                            method_getTypeEncoding(originalMethod));
+    } else {
+        method_exchangeImplementations(originalMethod, swizzledMethod);
+    }
+}
+
++ (NSURL* )swizzled_URLWithString:(NSString*)strUrl {
+    if ([strUrl hasPrefix:RNBundleResourcePrefix]) {
+        strUrl = [GET_SERVICE(QDRNBundleManager) fileURLStringFromRNResourceRequest:strUrl];
+    }
+   return [self swizzled_URLWithString:strUrl];
+}
+</code></pre>
+
+<p>原理很简单，替换NSURL的类方法，针对固定Prefix的url进行处理，下面是处理方法，针对模拟器情况下，为调试方便，会指向本地server的地址，非模拟器情况会按顺序读取沙盒和mainBundle。</p>
+
+<pre><code class="language-objectivec">//非模拟器读缓存
+- (NSString *)fileURLStringFromRNResourceRequest:(NSString *)request {
+#if (TARGET_IPHONE_SIMULATOR)
+    return [request stringByReplacingOccurrencesOfString:RNBundleResourcePrefix withString:@&quot;http://localhost:8081/resources/&quot;];
+#else
+    NSString* strPath = [request stringByReplacingOccurrencesOfString:RNBundleResourcePrefix withString:@&quot;&quot;];
+    
+    //查找沙盒
+    if (_isDirReady) {
+        NSString* file = [_sandBoxBundleResourceDirectory stringByAppendingPathComponent:strPath];
+        if ([_fileManager fileExistsAtPath:file]) {
+            return [NSString stringWithFormat:@&quot;file://%@&quot;, file];
+        }
+    }
+    //查找bundle
+    NSString* file = [[NSBundle mainBundle].resourcePath stringByAppendingPathComponent:strPath];
+    if ([_fileManager fileExistsAtPath:file]) {
+        return [NSString stringWithFormat:@&quot;file://%@&quot;, file];
+    }
+    
+    return request;
+#endif
+}
+
+</code></pre>
+
+<h2 id="toc_3">二、调起一个React Native组件</h2>
+
+<p>这里appdelegate中增加RCTBridge的成员变量bridge，因其初始化时会进行bundle的load操作以及大量的反射来生成module映射表，耗性能还耗内存，而我们又是混合app，很大概率不会使用，所以采用懒加载方式。为调试方便，在模拟器下指向本机server。</p>
+
+<pre><code class="language-objectivec">- (RCTBridge*)bridge {
+    if (_bridge == nil) {
+        _bridge= [[RCTBridge alloc]initWithDelegate:self launchOptions:nil];
+    }
+    return _bridge;
+}
+
+#pragma - mark RCTBridgeDelegate
+- (NSURL*) sourceURLForBridge:(RCTBridge *)bridge {
+#if (TARGET_IPHONE_SIMULATOR)
+    return [NSURL URLWithString:@&quot;http://localhost:8081/index.ios.bundle?platform=ios&amp;dev=true&quot;];
+#else
+    return [NSURL fileURLWithPath:GET_SERVICE(QDRNBundleManager).localReactNativeBundle];
+#endif
+}
+</code></pre>
+
+<p>在使用过程中，iOS没有那么多坑，很简单，初始化rootView并赋给ViewController的self.view就好了，传参可以传字典，所有基本数据类型都可以~</p>
+
+<pre><code class="language-objectivec">- (void) showImageSplash:(QDSplashResource*) source :(QDSplashEntity *)splash{
+    RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:[AppDelegate sharedAppDelegate].bridge
+                                                     moduleName:@&quot;adImageLaunch&quot;
+                                              initialProperties:@{
+                                                                  @&quot;imagePaths&quot; : source.imagePathArray,
+                                                                  @&quot;redirectUrl&quot; : splash.url,
+                                                                  @&quot;feedbackUrl&quot; : splash.feedbackUrl,
+                                                                  @&quot;adTagUrl&quot; : splash.adTagUrl,
+                                                                  @&quot;totalSeconds&quot; : splash.totalSeconds,
+                                                                  @&quot;extras&quot; : source.themeDictionary? source.themeDictionary: @{}
+                                                                  }];
+    [self showAdWithRN:rootView];
+}
+
+- (void) showAdWithRN:(RCTRootView* )rootView {
+    if (rootView == nil) {
+        return;
+    }
+    
+    QDLaunchAdViewController* adControl = [[QDLaunchAdViewController alloc] init];
+    
+    rootView.frame = [UIScreen mainScreen].bounds;
+    UIView *adVideoHub = [[[NSBundle mainBundle] loadNibNamed:@&quot;LaunchVideoHub&quot; owner:nil options:nil] firstObject];
+    adVideoHub.frame = [UIScreen mainScreen].bounds;
+    
+    rootView.loadingView = adVideoHub;
+    adControl.view = rootView;
+    _currentAdController = adControl;
+    adControl.delegate = self;
+    
+    self.adWindow.rootViewController = [[QDNavigationController alloc] initWithRootViewController: adControl];
+}
+</code></pre>
+
+<p>非常小的一个技巧，可以把任意一个xib文件座位RCTRootView的loadingView，作为其没有加载时候的默认图。</p>
+
+<h2 id="toc_4">三、JS端向Native端的通信方式</h2>
+
+<p>先贴一段code，和之前Android部分贴的功能一致：</p>
+
+<pre><code class="language-objectivec">@interface LaunchBridgeModule : NSObject&lt;RCTBridgeModule&gt;
+
+@end
+
+
+@implementation LaunchBridgeModule
+
+RCT_EXPORT_MODULE();
+
+RCT_EXPORT_METHOD(dismissSplash:(RCTResponseSenderBlock)callback)
+{
+    [[QDLaunchADTool shareLaunchTool] clickForRemoveLaunthADView];
+    callback(@[[NSNull null]]);
+}
+
+RCT_EXPORT_METHOD(open:(NSString*) strUrl:(RCTResponseSenderBlock)callback)
+{
+    if (EmptyString(strUrl)) {
+        return;
+    }
+    QDLaunchAdViewController* launchController = [QDLaunchADTool shareLaunchTool].currentAdController;
+    if (launchController) {
+        strUrl = [strUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        [QDViewControllerRouter routeWithURL:[NSURL URLWithString:strUrl] byNavigationController:launchController.navigationController ArticleDetailJumpDelegate:nil];
+        launchController.view.window.windowLevel = UIWindowLevelNormal;
+        launchController.showRedirectURL = YES;
+    }
+    callback(@[[NSNull null]]);
+}
+
+- (dispatch_queue_t)methodQueue
+{
+    return dispatch_get_main_queue();
+}
+@end
+</code></pre>
+
+<p>所有JS能调用的Native都能力都在<code>RCTBridgeModule</code>这个protocol里面做了定义。每个原生模块都以单实例模式限制了嵌入。</p>
+
+<p><code>RCTBridgeModule</code>这个协议只有一个require方法：</p>
+
+<pre><code class="language-text">+ (NSString *)moduleName;
+// 对应Android中：
+public String getName();
+</code></pre>
+
+<p>相对于Android将Module加进react native的映射表要先后生成Packager文件，然后addPackage两步，iOS拥有<code>宏</code>和<code>load</code>方法：在implement中增加<code>RCT_EXPORT_MODULE();</code>一行宏就能解决之前的所有问题，极限解耦。该宏会覆写require方法，默认返回nil，并覆写load方法，该方法会在app启动时候class进入内存就会调用。具体load方法有哪些黑科技请自行google，这里不做介绍。</p>
+
+<p>通过load方法的覆写，会把当前class在ReactBridge中进行注册，如果moduleName为空就直接使用当前class的name（注意，不管是否为空，都要保证最终module name和Android中定义的一致）。</p>
+
+<p>第二个神奇的黑科技是<code>RCT_EXPORT_METHOD()</code>这个宏（Android中一般实现AOP编程--所谓黑科技基本用注解，iOS基本是宏）。这个宏会为其包住的方法再生成一个新的方法：</p>
+
+<pre><code class="language-text">+ (NSArray&lt;NSString *&gt; *)RCT_CONCAT(__rct_export__, \
+    RCT_CONCAT(js_name, RCT_CONCAT(__LINE__, __COUNTER__))) { \
+    return @[@#js_name, @#method]; \
+}
+</code></pre>
+
+<p>看实现可以知道所有用这个宏新生成的方法都以<code>__rct_export__</code>开头，返回值的都包含其方法名，在bridge初始化的时候，通过OC的runtime特性将其添加进入映射表，从而实现了&quot;export&quot;。</p>
+
+<pre><code class="language-objectivec"> while (cls &amp;&amp; cls != [NSObject class] &amp;&amp; cls != [NSProxy class]) {
+      Method *methods = class_copyMethodList(object_getClass(cls), &amp;methodCount);
+
+      for (unsigned int i = 0; i &lt; methodCount; i++) {
+        Method method = methods[i];
+        SEL selector = method_getName(method);
+        if ([NSStringFromSelector(selector) hasPrefix:@&quot;__rct_export__&quot;]) {
+          IMP imp = method_getImplementation(method);
+          NSArray&lt;NSString *&gt; *entries =
+            ((NSArray&lt;NSString *&gt; *(*)(id, SEL))imp)(_moduleClass, selector);
+          id&lt;RCTBridgeMethod&gt; moduleMethod =
+            [[RCTModuleMethod alloc] initWithMethodSignature:entries[1]
+                                                JSMethodName:entries[0]
+                                                 moduleClass:_moduleClass];
+
+          [moduleMethods addObject:moduleMethod];
+        }
+      }
+
+      free(methods);
+      cls = class_getSuperclass(cls);
+    }
+</code></pre>
+
+<p>这些非常好的宏技巧我也在我自己的<a href="https://github.com/droison/iOSBus">iOSBus</a>中进行了广泛的使用，实现了非常好的解耦，还在进行开发调试中，欢迎follow、star。</p>
+
+<p><code>RCTBridgeModule</code>中还定义了一些optional方法，我这里只用了一个methodQueue，规定调用在主线程队列，这个也是默认队列，可以不写，其它请自行发现。</p>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
 		  	<h1 class="entry-title"><a href="15378876732633.html">RN学习4——QDaily Android app中通信和热修复实践</a></h1>
 			<p class="meta"><time datetime="2016-11-23T23:01:13+08:00" 
 			pubdate data-updated="true">2016/11/23</time></p>
@@ -400,34 +655,6 @@ Android6.0引入了动态权限控制，7.0使用了<code>私有目录被限制�
     	
 
 	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876731671.html">【iOS&Android】RN学习3——集成进现有原生项目</a></h1>
-			<p class="meta"><time datetime="2016-08-02T23:01:13+08:00" 
-			pubdate data-updated="true">2016/8/2</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<blockquote>
-<p>在做了短暂的技术调研和分析之后，我决心将RN和现有的QDaily项目进行集成，并替换掉其中的广告效果展示页面。</p>
-
-<p>本文开发环境为Mac，在React Native 版本为0.30。同时RN仅仅作为插件形势集成到原有Native工程中，因此主要还是一个Native工程而非RN工程</p>
-
-<p>而且，本文的前提是你已经在本地配好了iOS开发环境或Android开发环境，也就是说，你起码已经是一个Android开发者或者iOS开发者。</p>
-</blockquote>
-
-
-
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876731671.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
   
 	<div class="pagination">
 	 <a class="prev" href="all_3.html">&larr; Older</a> 
@@ -450,7 +677,7 @@ Android6.0引入了动态权限控制，7.0使用了<code>私有目录被限制�
 	      </li>
 	  
 	      <li class="post">
-	        <a href="Anything.html"><strong>胡写&nbsp;(13)</strong></a>
+	        <a href="Anything.html"><strong>胡写&nbsp;(14)</strong></a>
 	        
 	        
 	        
@@ -468,6 +695,12 @@ Android6.0引入了动态权限控制，7.0使用了<code>私有目录被限制�
 	<section>
 	  <h1>Recent Posts</h1>
 	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15438122075796.html">头条测试内链</a>
+		      </li>
+	     
 	  
 	      
 		      <li class="post">
@@ -490,12 +723,6 @@ Android6.0引入了动态权限控制，7.0使用了<code>私有目录被限制�
 	      
 		      <li class="post">
 		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15378876732077.html">复杂多人项目Owner思考</a>
 		      </li>
 	     
 	  
@@ -534,7 +761,7 @@ Android6.0引入了动态权限控制，7.0使用了<code>私有目录被限制�
 	
 </aside> </div></div>
   <footer role="contentinfo"><p>
-  Copyright © 2018 
+  Copyright &copy; 2014 -  -
   <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

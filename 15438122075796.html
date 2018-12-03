@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <title>
     
-  《Effective Objective-C 2.0》读书笔记3---tips - 野火🔥
+  头条测试内链 - 野火🔥
   
 
   </title>
@@ -83,57 +83,11 @@ $(document).ready(function(event) {
 <div>
 	<article class="hentry" role="article">
 	<header>
-			  	<h1 class="entry-title">《Effective Objective-C 2.0》读书笔记3---tips</h1>
-				<p class="meta"><time datetime="2016-03-03T23:01:13+08:00" pubdate data-updated="true">2016/3/3</time></p>
+			  	<h1 class="entry-title">头条测试内链</h1>
+				<p class="meta"><time datetime="2018-12-03T12:43:27+08:00" pubdate data-updated="true">2018/12/3</time></p>
 			 </header>
 		  	<div class="entry-content">
-			  	<blockquote>
-<p>读书笔记第三篇，主要就是学习总结书中的一些小知识点，这些知识点对于学习理解iOS系统有一定的帮助，不过若以后转向swift可能没有太多用处。<br/>
-此处文章先hold住，慢慢补充</p>
-</blockquote>
-
-<span id="more"></span><!-- more -->
-
-<h5 id="toc_0">多用块枚举，少用for循环。</h5>
-
-<h5 id="toc_1">可以使用__bridge方式在Foundation框架中得Objective-C对象和CoreFoundation中得C数据结构进行转换。</h5>
-
-<h5 id="toc_2">使用缓存用NSCache不用NSDictionary，因为其会自己维护一个缓存淘汰算法，淘汰最久未使用的对象。而且NSCache是线程安全的。这里有个NSPurgeableData类型比较有意思，是NSMutableData的子类，和NSCache联合使用可以在NSPurgeableData内存释放时候自动清除缓存。</h5>
-
-<h5 id="toc_3">load方法：对于运行期系统的每个类（class）及分类（category），都必调用且仅调用一次。</h5>
-
-<p>基本调用顺序就是，执行当前类的load方法，必定先调用super的load方法，如果代码依赖其他程序库，那么程序库中得相关类的load方法也会先执行。类load方法执行完成后，会执行相应的分类的load的方法。<br/><br/>
-但是如果在一个程序库中得若干个class，却没法确定load顺序，所以load方法不建议使用其他class。<br/><br/>
-load方法在调用的时候，app会阻塞，所以一定要轻！<br/><br/>
-应用程序会阻塞并把所有类的load方法都执行完，才能继续。</p>
-
-<p>load方法直接使用函数内存地址的方式<code>(*load_method)(cls, SEL_load)</code>调用的，而不是使用发送消息 objc_msgSend 的方式。<br/><br/>
-因此：load方法不遵循继承规则：如果一个class本身没有实现load方法，那么无论其各级super是否实现load，都不会调用；<br/><br/>
-同时：当一个类和它的分类都实现了 +load 方法时，两个方法都会被调用。<br/><br/>
-所以：像method swizzling这种操作会放在load里面进行。</p>
-
-<p>load方法调用时，程序甚至没有autoreleasepool</p>
-
-<h5 id="toc_4">initialize方法：首次使用该class前调用，且只有1次。</h5>
-
-<p>和load方法相比，他是“lazy”调用的，也就是类或它的子类收到第一条消息之前被调用的，这里所指的消息包括实例方法和类方法的调用。。<br/><br/>
-可以安全使用任何class，因为它们都已经load过了。<br/><br/>
-initialize方法执行一定在thread-safe environment，也就是说会阻塞所有线程。<br/>
-initialize会走和objc_msgSend一样的消息发送原则，也就是会有覆盖。<br/>
-实际编译器调用时，父类的会优先于子类调用。</p>
-
-<p>相关load和initialize比较了解参考了以下博文：<br/><br/>
-<a href="http://blog.leichunfeng.com/blog/2015/05/02/objective-c-plus-load-vs-plus-initialize/">Objective-C +load vs +initialize</a><br/><br/>
-<a href="http://wufawei.com/2013/06/load-initialize/">Objective-C类初始化:load与initialize</a><br/><br/>
-<a href="http://liumh.com/2015/07/29/ios-load-and-initialize/">iOS初探+load和+initialize</a></p>
-
-<h3 id="toc_5">NSTimer的一些注意点</h3>
-
-<ul>
-<li>NSTimer一定要加入到runloop才有意义，如果没有addrunloop，那就加入到当前线程的runloop中，而子线程默认runloop没有run起来。</li>
-<li>NSTimer的执行会持有target对象（因为一定是要target在一定时间调用其selector），这种持有会保持到失效为止，所以一定要注意针对repeating timer的循环引用问题。</li>
-<li>针对可能的循环引用问题，可以为NSTimer增加category，对实现增加block的实现方式。在调用时候只要注意一些block的内存使用问题就好了。</li>
-</ul>
+			  	<p><a href="sslocal://repost_page">转发发布器</a></p>
 
 			</div>
 
@@ -145,7 +99,7 @@ initialize会走和objc_msgSend一样的消息发送原则，也就是会有覆�
 			<strong>Categories:</strong>&nbsp; 
 			<span class="categories">
 			
-			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			    <a class='category' href='Anything.html'>胡写</a>&nbsp;
 			 
 			</span>
 		    </p>
@@ -177,12 +131,9 @@ initialize会走和objc_msgSend一样的消息发送原则，也就是会有覆�
 
 	    <p class="meta">
 	    
-	        <a class="basic-alignment left" href="15378876731909.html" 
-	        title="Previous Post: AFN源码分析-开篇">&laquo; AFN源码分析-开篇</a>
 	    
-	    
-	        <a class="basic-alignment right" href="15378876731075.html" 
-	        title="Next Post: 《Effective Objective-C 2.0》读书笔记1---消息发送">《Effective Objective-C 2.0》读书笔记1---消息发送 &raquo;</a>
+	        <a class="basic-alignment right" href="15407404509104.html" 
+	        title="Next Post: Retro Meeting -> 团队的自我疗伤">Retro Meeting -> 团队的自我疗伤 &raquo;</a>
 	    
 	    </p>
 	  </footer>

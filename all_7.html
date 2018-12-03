@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <title>
     
-  吐槽《盛世的蝼蚁》 - 野火🔥
+  野火🔥
   
 
   </title>
@@ -80,83 +80,44 @@ $(document).ready(function(event) {
 </nav>
   <div id="main">
     <div id="content"> 
-<div>
-	<article class="hentry" role="article">
-	<header>
-			  	<h1 class="entry-title">吐槽《盛世的蝼蚁》</h1>
-				<p class="meta"><time datetime="2016-09-12T23:01:13+08:00" pubdate data-updated="true">2016/9/12</time></p>
-			 </header>
-		  	<div class="entry-content">
-			  	<hr/>
+<div class="blog-index">
 
-<h2 id="toc_0">有人还没看过这篇文章，所以文章结尾附上原文</h2>
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876731528.html">Android 开发锁屏屏蔽Home键、原生锁屏界面</a></h1>
+			<p class="meta"><time datetime="2014-03-10T23:01:13+08:00" 
+			pubdate data-updated="true">2014/3/10</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<p>最近开发锁屏应用，需要屏蔽返回、音量、Home键，返回和音量很好弄，关键是Home键如何搞。花了很多心思，终于搞定了，项目代码涉密，不方便全传上来，下面主要介绍这个思路。</p>
 
-<blockquote>
-<p>说是吐槽《盛世的蝼蚁》，其实是想表达下朋友圈中的这个病毒分享现象。</p>
-</blockquote>
+<h2 id="toc_0">一、原理</h2>
 
-<p>每次出现这种群体性分享情况，我的第一印象都是“暴民政治”，这堆暴民！民众懂个屁啊，国家肯定是精英治理。</p>
+<p>Android2.3版本以前通过AttachWindows就可以很简单实现屏蔽，下面着重说4.0以后的。<br/>
+访谈及结果分析</p>
 
-<p>国家的存在的主要目的是维护秩序，换句话说，维护大多数人的利益。维稳是国家的天然职责，而对穷人的福利却不是。国家和底层群众的基本关系就是，国家一定要避免底层群众揭竿而起。</p>
+<h3 id="toc_1">1、向系统注册锁屏界面Activity为启动器</h3>
 
-<p>读过《中国是部金融史》，才知道什么才叫做天地不仁，以万物为刍狗。</p>
+<p>这块是需要将该应用设定为桌面程序：<br/>
 
-<span id="more"></span><!-- more -->
-
-<p><img src="media/15378876730780/blog_shengshidelouyi.jpeg" alt="blog_shengshidelouyi"/></p>
-
-			</div>
-
-		
-	  
-		<footer>
-		 <p class="meta">
-
-			<strong>Categories:</strong>&nbsp; 
-			<span class="categories">
-			
-			    <a class='category' href='Anything.html'>胡写</a>&nbsp;
-			 
-			</span>
-		    </p>
-		    <p class="meta">
-		      
-		 </p>
-	    
-		<div class="sharing">
-		  <div id="disqus_thread"></div>
-<script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES * * */
-    var disqus_shortname = 'billchaiblog';
-    
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
-          
-            <div id="disqus_thread"></div>
-          
-
-          
 
 		</div>
 
-	    <p class="meta">
-	    
-	        <a class="basic-alignment left" href="15378876732771.html" 
-	        title="Previous Post: QDaily - Android MVP改造">&laquo; QDaily - Android MVP改造</a>
-	    
-	    
-	        <a class="basic-alignment right" href="15378876731775.html" 
-	        title="Next Post: QDaily app流量和文章打开速度优化--js和css的加载逻辑">QDaily app流量和文章打开速度优化--js和css的加载逻辑 &raquo;</a>
-	    
-	    </p>
-	  </footer>
+		 
+		 <footer>
+      	<a rel="full-article" href="15378876731528.html#more">read more &rarr;</a>
+    	</footer>
+    	
+
 	</article>
+  
+	<div class="pagination">
+	
+<a href="archives.html">Blog Archives</a>
+	 <a class="next" href="all_6.html">Newer &rarr;</a>  
+	    
+	</div>
 </div>
  <aside class="sidebar"> 
 
