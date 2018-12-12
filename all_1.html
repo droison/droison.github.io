@@ -84,6 +84,46 @@ $(document).ready(function(event) {
 
 	<article>
 		 <header>
+		  	<h1 class="entry-title"><a href="15378876732218.html">Hello 2018</a></h1>
+			<p class="meta"><time datetime="2018-01-08T23:01:13+08:00" 
+			pubdate data-updated="true">2018/1/8</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<blockquote>
+<p>写了两篇17年的感悟，这一篇写一下对18年的一些期望。</p>
+</blockquote>
+
+<h3 id="toc_0">新年寄语</h3>
+
+<blockquote>
+<p><strong>突破、胸怀、守时</strong><br/>
+我希望，这三个寄语，能贯穿一年的主线，引领我一年的成长。</p>
+</blockquote>
+
+<p><strong>突破是我对一年最大的期望了。</strong><br/>
+18年3月27日，是我头条入职1周年，也是我毕业参加工作4整年的日子。毕业后先去了微信，然后是好奇心日报，再到头条，作为一个iOS开发，已经4个年头，虽然成为了一个最基层的技术领导者，但瓶颈也随之出现。<br/>
+今年，努力寻找在工作上肩负起更大的责任，或者在技术方向上寻找一个全新的领域。</p>
+
+<p><strong>胸怀一个男人应有的素质</strong><br/>
+18年，我即将会组建家庭，标志的成为一个完整的自然人，有道是成家立业。<br/>
+随之而来的，是家庭生活，双方长辈的关系，琐事和纠纷也许也会不期而至。<br/>
+有事做得好，有时做的差，其实都是家人，影响本身不大，重要的更多是态度。作为一个男人，在家庭中，尤其要有包容的胸怀，有心胸，能包容女人的脾气，能在婆媳中增加缓冲，永远起到积极的作用。<br/>
+嗯，28年来，心胸这个词第一次进入了我的个人要求中，提到这个词，能感觉到自己的成长。</p>
+
+<p><strong>守时是品德，想表达的更多是一些传统素质</strong><br/>
+守信，应该是立于世界的基本品质，自认为一直坚持的不错，或者并不需要坚持，只需要不被错误引导即可。<br/>
+但守时，毕业后渐渐堕落，和大家同流。虽有太多理由可以原谅自己。但我依旧相信，生活中有些东西，值得一直坚持，18年，言而有信从守时开始做起。</p>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
 		  	<h1 class="entry-title"><a href="15378876732252.html">2017年的几点感悟</a></h1>
 			<p class="meta"><time datetime="2018-01-02T23:01:13+08:00" 
 			pubdate data-updated="true">2018/1/2</time></p>
@@ -822,60 +862,6 @@ NSOperationQueue类的实例。操作队列管理操作对象的执行。</li>
 		
 
 	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876732563.html">JSPatch的一些使用注意点</a></h1>
-			<p class="meta"><time datetime="2016-11-30T23:01:13+08:00" 
-			pubdate data-updated="true">2016/11/30</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<p>JSPatch代码量不大，满满的都是神机妙算，到处都是黑科技。</p>
-
-<h2 id="toc_0">主要的坑 -- UIWebView相关</h2>
-
-<p>如果在JSPatch的代码使用前，app没有初始化过UIWebView，那会造成UIWebView中JS不能解析的问题，打开网页根本不能看。解决方案：</p>
-
-<!--more-->
-
-<pre><code class="language-text">JSPatch使用前先alloc一个UIWebView，然后让ARC自动dealloc它就好了：
-
-UIWebView *webView = [[UIWebView alloc]init];   //Useless. Just to load the UIWebview framework.
-webView.frame = CGRectZero;
-
-[JPEngine startEngine];
-
-[self startCache:^(NSString * script) {
-    [JPEngine evaluateScript:script];
-}]; 
-</code></pre>
-
-<p>哪怕初始化过UIWebView，也不能在使用JSPatch代码的时候进行UIWebView的初始化（既不能相同runloop初始化UIWebView），否则会造成WebView不稳定，极容易crash：</p>
-
-<pre><code class="language-text">JavaScriptCore  WTF::equal(WTF::StringImpl const*, unsigned char const*) + 116
-JavaScriptCore  std::__1::pair&lt;std::__1::pair&lt;WTF::StringImpl**, bool&gt;, unsigned int&gt; WTF::HashTable&lt;WTF::StringImpl*, WTF::StringImpl*, WTF::IdentityExtractor, WTF::StringHash, WTF::HashTraits&lt;WTF::StringImpl*&gt;, WTF::HashTraits&lt;WTF::StringImpl*&gt; &gt;::fullLookupForWriting&lt;WTF::HashSetTranslatorAdapter&lt;WTF::CStringTranslator&gt;, unsigned char const*&gt;(unsigned char const* const&amp;) + 268
-JavaScriptCore  WTF::HashTableAddResult&lt;WTF::HashTableIterator&lt;WTF::StringImpl*, WTF::StringImpl*, WTF::IdentityExtractor, WTF::StringHash, WTF::HashTraits&lt;WTF::StringImpl*&gt;, WTF::HashTraits&lt;WTF::StringImpl*&gt; &gt; &gt; WTF::HashTable&lt;WTF::StringImpl*, WTF::StringImpl*, WTF::IdentityExtractor, WTF::StringHash, WTF::HashTraits&lt;WTF::StringImpl*&gt;, WTF::HashTraits&lt;WTF::StringImpl*&gt; &gt;::addPassingHashCode&lt;WTF::HashSetTranslatorAdapter&lt;WTF::CStringTranslator&gt;, unsigned char const* const&amp;, unsigned char const* const&amp;&gt;(unsigned char const* const&amp;&amp;&amp;, unsigned char const* const&amp;&amp;&amp;) + 200
-JavaScriptCore  WTF::AtomicStringImpl::add(unsigned char const*) + 160
-WebCore WebCore::Settings::initializeDefaultFontFamilies() + 720
-WebCore WebCore::Settings::Settings(WebCore::Page*) + 484
-WebCore WebCore::Settings::create(WebCore::Page*) + 36
-WebCore WebCore::Page::Page(WebCore::PageConfiguration&amp;&amp;) + 184
-WebKitLegacy    -[WebView(WebPrivate) _commonInitializationWithFrameName:groupName:] + 1712
-WebKitLegacy    -[WebView(WebPrivate) _initWithFrame:frameName:groupName:] + 132
-UIKit   -[UIWebDocumentView initWithWebView:frame:] + 332
-UIKit   -[UIWebBrowserView initWithWebView:frame:] + 48
-UIKit   -[UIWebBrowserView initWithFrame:] + 44
-UIKit   -[UIWebView _webViewCommonInitWithWebView:scalesPageToFit:] + 244
-UIKit   -[UIWebView initWithFrame:] + 76
-</code></pre>
-
-
-		</div>
-
-		
-
-	</article>
   
 	<div class="pagination">
 	 <a class="prev" href="all_2.html">&larr; Older</a> 
@@ -898,7 +884,7 @@ UIKit   -[UIWebView initWithFrame:] + 76
 	      </li>
 	  
 	      <li class="post">
-	        <a href="Anything.html"><strong>胡写&nbsp;(14)</strong></a>
+	        <a href="Anything.html"><strong>胡写&nbsp;(15)</strong></a>
 	        
 	        
 	        
@@ -916,6 +902,12 @@ UIKit   -[UIWebView initWithFrame:] + 76
 	<section>
 	  <h1>Recent Posts</h1>
 	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15446191606030.html">团队管理的感慨：不要让有共同特征的人走的太近</a>
+		      </li>
+	     
 	  
 	      
 		      <li class="post">
@@ -938,12 +930,6 @@ UIKit   -[UIWebView initWithFrame:] + 76
 	      
 		      <li class="post">
 		        <a href="15378876730248.html">面试常见：iOS Category</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
 		      </li>
 	     
 	  

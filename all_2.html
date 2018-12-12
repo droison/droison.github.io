@@ -84,6 +84,60 @@ $(document).ready(function(event) {
 
 	<article>
 		 <header>
+		  	<h1 class="entry-title"><a href="15378876732563.html">JSPatch的一些使用注意点</a></h1>
+			<p class="meta"><time datetime="2016-11-30T23:01:13+08:00" 
+			pubdate data-updated="true">2016/11/30</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<p>JSPatch代码量不大，满满的都是神机妙算，到处都是黑科技。</p>
+
+<h2 id="toc_0">主要的坑 -- UIWebView相关</h2>
+
+<p>如果在JSPatch的代码使用前，app没有初始化过UIWebView，那会造成UIWebView中JS不能解析的问题，打开网页根本不能看。解决方案：</p>
+
+<!--more-->
+
+<pre><code class="language-text">JSPatch使用前先alloc一个UIWebView，然后让ARC自动dealloc它就好了：
+
+UIWebView *webView = [[UIWebView alloc]init];   //Useless. Just to load the UIWebview framework.
+webView.frame = CGRectZero;
+
+[JPEngine startEngine];
+
+[self startCache:^(NSString * script) {
+    [JPEngine evaluateScript:script];
+}]; 
+</code></pre>
+
+<p>哪怕初始化过UIWebView，也不能在使用JSPatch代码的时候进行UIWebView的初始化（既不能相同runloop初始化UIWebView），否则会造成WebView不稳定，极容易crash：</p>
+
+<pre><code class="language-text">JavaScriptCore  WTF::equal(WTF::StringImpl const*, unsigned char const*) + 116
+JavaScriptCore  std::__1::pair&lt;std::__1::pair&lt;WTF::StringImpl**, bool&gt;, unsigned int&gt; WTF::HashTable&lt;WTF::StringImpl*, WTF::StringImpl*, WTF::IdentityExtractor, WTF::StringHash, WTF::HashTraits&lt;WTF::StringImpl*&gt;, WTF::HashTraits&lt;WTF::StringImpl*&gt; &gt;::fullLookupForWriting&lt;WTF::HashSetTranslatorAdapter&lt;WTF::CStringTranslator&gt;, unsigned char const*&gt;(unsigned char const* const&amp;) + 268
+JavaScriptCore  WTF::HashTableAddResult&lt;WTF::HashTableIterator&lt;WTF::StringImpl*, WTF::StringImpl*, WTF::IdentityExtractor, WTF::StringHash, WTF::HashTraits&lt;WTF::StringImpl*&gt;, WTF::HashTraits&lt;WTF::StringImpl*&gt; &gt; &gt; WTF::HashTable&lt;WTF::StringImpl*, WTF::StringImpl*, WTF::IdentityExtractor, WTF::StringHash, WTF::HashTraits&lt;WTF::StringImpl*&gt;, WTF::HashTraits&lt;WTF::StringImpl*&gt; &gt;::addPassingHashCode&lt;WTF::HashSetTranslatorAdapter&lt;WTF::CStringTranslator&gt;, unsigned char const* const&amp;, unsigned char const* const&amp;&gt;(unsigned char const* const&amp;&amp;&amp;, unsigned char const* const&amp;&amp;&amp;) + 200
+JavaScriptCore  WTF::AtomicStringImpl::add(unsigned char const*) + 160
+WebCore WebCore::Settings::initializeDefaultFontFamilies() + 720
+WebCore WebCore::Settings::Settings(WebCore::Page*) + 484
+WebCore WebCore::Settings::create(WebCore::Page*) + 36
+WebCore WebCore::Page::Page(WebCore::PageConfiguration&amp;&amp;) + 184
+WebKitLegacy    -[WebView(WebPrivate) _commonInitializationWithFrameName:groupName:] + 1712
+WebKitLegacy    -[WebView(WebPrivate) _initWithFrame:frameName:groupName:] + 132
+UIKit   -[UIWebDocumentView initWithWebView:frame:] + 332
+UIKit   -[UIWebBrowserView initWithWebView:frame:] + 48
+UIKit   -[UIWebBrowserView initWithFrame:] + 44
+UIKit   -[UIWebView _webViewCommonInitWithWebView:scalesPageToFit:] + 244
+UIKit   -[UIWebView initWithFrame:] + 76
+</code></pre>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
 		  	<h1 class="entry-title"><a href="15378876732597.html">RN学习5——QDaily iOS app中通信和热修复实践</a></h1>
 			<p class="meta"><time datetime="2016-11-27T23:01:13+08:00" 
 			pubdate data-updated="true">2016/11/27</time></p>
@@ -623,38 +677,6 @@ Android6.0引入了动态权限控制，7.0使用了<code>私有目录被限制�
     	
 
 	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876730639.html">微信上最近很火很炫的广告是怎么实现的</a></h1>
-			<p class="meta"><time datetime="2016-08-07T23:01:13+08:00" 
-			pubdate data-updated="true">2016/8/7</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<hr/>
-
-<h2 id="toc_0">首先致敬微信团队，再一次引领了移动互联网产品的发展方向，给手机端广告再开了一扇门！</h2>
-
-<blockquote>
-<p>感谢曾经在微信工作的经历，让我更理解互联网</p>
-
-<p>如果文章有任何不妥的地方，请直接邮件<a href="mailto:chaisong.cn@gmail.com">chaisong.cn@gmail.com</a></p>
-
-<p>如果你喜欢我的文章，可以直接访问我的<a href="http://www.chaisong.xyz">博客</a>，欢迎批评指正。</p>
-</blockquote>
-
-
-
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876730639.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
   
 	<div class="pagination">
 	 <a class="prev" href="all_3.html">&larr; Older</a> 
@@ -677,7 +699,7 @@ Android6.0引入了动态权限控制，7.0使用了<code>私有目录被限制�
 	      </li>
 	  
 	      <li class="post">
-	        <a href="Anything.html"><strong>胡写&nbsp;(14)</strong></a>
+	        <a href="Anything.html"><strong>胡写&nbsp;(15)</strong></a>
 	        
 	        
 	        
@@ -695,6 +717,12 @@ Android6.0引入了动态权限控制，7.0使用了<code>私有目录被限制�
 	<section>
 	  <h1>Recent Posts</h1>
 	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15446191606030.html">团队管理的感慨：不要让有共同特征的人走的太近</a>
+		      </li>
+	     
 	  
 	      
 		      <li class="post">
@@ -717,12 +745,6 @@ Android6.0引入了动态权限控制，7.0使用了<code>私有目录被限制�
 	      
 		      <li class="post">
 		        <a href="15378876730248.html">面试常见：iOS Category</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a>
 		      </li>
 	     
 	  
