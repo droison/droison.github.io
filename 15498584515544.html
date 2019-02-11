@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <title>
     
-  iOS diary140807 - 野火🔥
+  写在19年新年上班第一天 - 野火🔥
   
 
   </title>
@@ -83,67 +83,73 @@ $(document).ready(function(event) {
 <div>
 	<article class="hentry" role="article">
 	<header>
-			  	<h1 class="entry-title">iOS diary140807</h1>
-				<p class="meta"><time datetime="2014-08-07T23:01:13+08:00" pubdate data-updated="true">2014/8/7</time></p>
+			  	<h1 class="entry-title">写在19年新年上班第一天</h1>
+				<p class="meta"><time datetime="2019-02-11T12:14:11+08:00" pubdate data-updated="true">2019/2/11</time></p>
 			 </header>
 		  	<div class="entry-content">
-			  	<h2 id="toc_0">自定义uitableviewcell的宽度，以及一些诡异的问题处理</h2>
+			  	<p>过去的18年，自己从一个小伙子变成了一个丈夫，生活中更加充实但少了思考，生命中多了一个人占据了自己的空余时间，能体会到奋斗和冲劲在身体中的流失，安于现状的基因开始萌芽。</p>
 
-<p>项目需要，希望uitableview处于页面中中间部分，但滚动指示条依然在整个window的边缘，解决办法无非两种：  </p>
+<p><img src="media/15498584515544/IMG_BAF23BA17096-1.jpeg" alt="座右铭" style="width:400px;"/></p>
 
-<ol>
-<li>把cell做小<br/></li>
-<li>把指示条放远</li>
-</ol>
+<p><strong>不忘初心</strong>。这话说的容易，落实很难。<br/>
+<strong>诚实守信，务实敢为</strong>。这是去年的感悟。</p>
 
-<p>先说第二种方法：发现可以设置uitableview的scrollIndicatorInsets，从而任意改变指示条的位置，但是，这个位置只能在uitableview范围内！<br/><br/>
-那就只剩下第一种方法了，比较简单的就是自定义cell，把里面的内容都做一些内边距，这样看起来效果就像居中了～但问题在于，如果如此，cell的点击、删除、编辑等等uitableviewcell默认的一些系统方法展示出来的UI效果，都会是整个宽度的。<br/><br/>
-cell做小另一种方法就是修改scrollview的contentinset，因为uitableview继承自uiscrollview，这种方式的问题在于：依然不能改变cell的宽度，cell的宽度会默认设置为uitableview的宽度而不是scrollview的。<br/>
-最后，采用了网上常用的覆写uitableviewcell的setFrame方法来完成这个工作，实际效果非常好：  </p>
+<p>公历新年时候总结了自己的过去一年，因为工作完成了一步突破，给自己打分很高，相应的，也给今年的自己更高的挑战。元旦时候，定下了技术持续突破、提升自我管理、提升沟通能力、建立业余爱好四个Objective，期望能指引自己一年的。</p>
 
-<pre><code class="language-text">- (void)setFrame:(CGRect)frame {
-    frame.origin.x += ROOT_PORTRAIT_CONTENT_MARGIN_LEFT;
-    frame.size.width -= 2 * ROOT_PORTRAIT_CONTENT_MARGIN_LEFT; 
-    [super setFrame:frame];
-  }
+<span id="more"></span><!-- more -->
+
+<p>松林的管理topic学习，我选择了“激励机制建设”部分，期望也是能和个人的目标紧扣。</p>
+
+<p>过了今年，就是而立之年了。期待今年，在继续保持技术敏感度和深度的基础上，走更加综合的路线。</p>
+
+<h3 id="toc_0">一、技术持续突破</h3>
+
+<pre><code class="language-text">上一年突破主要是IGListKit相关产生的，突破要靠转型，今年的技术目标在转型今年靠Android、靠Kotlin。
 </code></pre>
 
-<p>但是在iOS7下，使用该方法会出现一些诡异的问题：</p>
+<ul>
+<li>1. 要成为另一个技术栈的专家，能面试、也能通过面试的程度。</li>
+</ul>
 
-<pre><code class="language-text">    Probably at least one of the constraints in the following list is one you don&#39;t want. Try this: (1) look at each constraint and try to figure out which you don&#39;t expect; (2) find the code that added the unwanted constraint or constraints and fix it. (Note: If you&#39;re seeing NSAutoresizingMaskLayoutConstraints that you don&#39;t understand, refer to the documentation for the UIView property translatesAutoresizingMaskIntoConstraints) 
-(
-    &quot;&lt;NSAutoresizingMaskLayoutConstraint:0xc094560 h=--&amp; v=--&amp; H:[UITableViewWrapperView:0xc68c390(768)]&gt;&quot;,
-    &quot;&lt;NSAutoresizingMaskLayoutConstraint:0xbfd4250 h=-&amp;- v=--&amp; TimeLineLCellImg:0xbfa97e0.width == UITableViewWrapperView:0xc68c390.width - 972&gt;&quot;
-)
+<h3 id="toc_1">二、自我管理开始达到榜样作用</h3>
 
-    Will attempt to recover by breaking constraint 
-&lt;NSAutoresizingMaskLayoutConstraint:0xbfd4250 h=-&amp;- v=--&amp; TimeLineLCellImg:0xbfa97e0.width == UITableViewWrapperView:0xc68c390.width - 972&gt;
+<pre><code class="language-text">上一年大量使用了trello做项目管理，比较多的应用了滴答清单管理了一些备忘，有一些心得；很多不良习惯都做了一些纠正。
+三十而立，自我管理需要有更高的要求。
 </code></pre>
 
-<p>通过研究iOS7的修改点，发现现在uitableviewcell的superview是UITableViewWrapperView，而不是uitableview。查看log日志，发现是由于我们在修改frame的时候和设置的AutoresizingMask冲突，虽然最终显示的正确，但是吐出warning日志还是需要处理。<br/><br/>
-找到冲突原因，修改就比较容易了，让uitableviewcell的frame为我们自己设置的，而不是采用AutoresizingMask的方式自动生成，因此在setframe中添加代码：   </p>
+<ul>
+<li>1. 阅读一本儒家著作（现代解释版即可）</li>
+<li>2. 通读至少一本相关管理学著作（高效能人士习惯、单核工作法）</li>
+<li>3. 早起，坚持计划、日记</li>
+<li>4. 继续坚持清单和日程管理：守信、守时，不拖延。</li>
+</ul>
 
-<pre><code class="language-text">[self setAutoresizingMask:(UIViewAutoresizingNone)];
+<h3 id="toc_2">三、管理能力，沟通能力，心理学知识初窥门径</h3>
+
+<pre><code class="language-text">去年看了一些书，对管理学有了一些惊奇。
 </code></pre>
 
-<p>注意：不能通过设置[self setTranslatesAutoresizingMaskIntoConstraints:NO]而直接禁止Autoresizing，因为这样必须设置layoutconstraint采用autolayout的方式。通过log看出是将cell的宽度和它的superview的宽度做了autoresizing，只需打断这个设置即可。</p>
+<ul>
+<li>1. 在一个管理学topic下有探索，达到分享水平</li>
+<li>2. 沟通能力要注意实践和总结</li>
+<li>3. 找一本入门的心理学书籍扫扫盲</li>
+</ul>
 
-<h2 id="toc_1">iOS根据class name生成class实例：</h2>
+<h3 id="toc_3">四、业余爱好</h3>
 
-<pre><code class="language-text">NSString *className = @&quot;AbcViewController&quot;;
-
-if (NSClassFromString(className)) {
-
-    Class aClass = NSClassFromString(className);
-    id instance = [[aClass alloc] init];
-
-    if ([instance isKindOfClass:[UIViewController class]]) {
-
-        [(UIViewController *)instance setTitle:@&quot;New Title&quot;];
-        [self.navigationController pushViewController:(UIViewController *)instance animated:YES];
-    }
-}
+<pre><code class="language-text">余生漫长，要有方向。打牌也好，运动也罢，书法，摄影都行
 </code></pre>
+
+<ul>
+<li>1. 目标只有一个，找打一个坚持而又热爱的爱好 </li>
+</ul>
+
+<hr/>
+
+<hr/>
+
+<p><code>最后，附一个和老婆的合影，18年开始，我不仅仅要做一个好儿子，还要记得做一个好丈夫，以后，还要做一个好父亲。</code><br/>
+<img src="media/15498584515544/IMG_2203%20%E4%B8%8B%E5%8D%889.16.32.jpg" alt="新年合影" style="width:450px;"/></p>
 
 			</div>
 
@@ -155,7 +161,7 @@ if (NSClassFromString(className)) {
 			<strong>Categories:</strong>&nbsp; 
 			<span class="categories">
 			
-			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			    <a class='category' href='Anything.html'>胡写</a>&nbsp;
 			 
 			</span>
 		    </p>
@@ -187,12 +193,9 @@ if (NSClassFromString(className)) {
 
 	    <p class="meta">
 	    
-	        <a class="basic-alignment left" href="15378876731419.html" 
-	        title="Previous Post: iOS diary140812">&laquo; iOS diary140812</a>
 	    
-	    
-	        <a class="basic-alignment right" href="15378876731488.html" 
-	        title="Next Post: iOS diary140807">iOS diary140807 &raquo;</a>
+	        <a class="basic-alignment right" href="15446191606030.html" 
+	        title="Next Post: 团队管理的感慨：不要让有共同特征的人走的太近">团队管理的感慨：不要让有共同特征的人走的太近 &raquo;</a>
 	    
 	    </p>
 	  </footer>
