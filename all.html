@@ -84,6 +84,65 @@ $(document).ready(function(event) {
 
 	<article>
 		 <header>
+		  	<h1 class="entry-title"><a href="15613470463264.html">LiveData组件分享</a></h1>
+			<p class="meta"><time datetime="2019-03-24T11:30:46+08:00" 
+			pubdate data-updated="true">2019/3/24</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<p><strong>八卦暖场环节</strong></p>
+
+<h1 id="toc_0">引：从Google AAC 和 MVVM开始说起</h1>
+
+<blockquote>
+<p>LiveData推出于Google I/O 2017 的 architecture components ，一般和ViewModel、Room、LifeCycle同时介绍，尤其是LifeCycle和ViewModel。最终核心还是期望这些组件能用有效的支持在Android端实现MVVM。</p>
+</blockquote>
+
+<h2 id="toc_1">MVP vs MVVM</h2>
+
+<p>MVP 是MVC模式的变种，它已经存在了数十年了。</p>
+
+<pre><code class="language-text">Android领域广泛应用MVP源于Google在2016年年初推出的Android Architecture Blueprints
+</code></pre>
+
+<p>MVP和MVC的核心区别在于数据流传输和组织方式，内在思想是面向接口编程，代价是大量胶水代码。</p>
+
+<p><img src="media/15613470463264/15613472117525.jpg" alt=""/></p>
+
+<p>在2005年，微软的WPF和SL架构师John Gossman在他的博客中公开了MVVM模式。是之前PM（Presenter Model）模式的演化。</p>
+
+<p>不像MVP，ViewModel 不需要View的引用。View绑定到ViewModel中的一个属性。这个属性展示了Model对象的数据以及View的其它状态特性。由于ViewModel 对象被设置为View的DataContent，View和ViewModel之间的绑定易于构建。如果ViewModel 里面的属性值改变了，那些新的值会通过数据绑定传递到View。当用户点击View的一个按钮，ViewModel 里面的一个命令就会执行完成需要的动作。ViewModel而不是View执行了Model数据的修改。<code>View类不知道Model类的存在，ViewModel 和Model也不知道View</code>。实际上，Model完全不知道ViewModel和View存在的事实。</p>
+
+<blockquote>
+<p>MVVM：“Keeping UI code simple and free of app logic in order to make it easier to manage”<br/>
+一种组件逻辑分离的架构模式，让UI部分逻辑更加内聚。<br/>
+注：不是名字中有ViewModel、VM的就是MVVM架构，就像有的名字中带Presenter不一定就是MVP，它很可能只是想写一个MVP架构。</p>
+</blockquote>
+
+<p><img src="media/15613470463264/15613473603270.jpg" alt=""/></p>
+
+<p><img src="media/15613470463264/15613473671528.jpg" alt=""/></p>
+
+<p>MVVM的关键在于双向绑定，LiveData就是用于解决这个。</p>
+
+<blockquote>
+<p>ViewModel组件本次不表，建议后续研究，本次不做发散。</p>
+</blockquote>
+
+
+
+		</div>
+
+		 
+		 <footer>
+      	<a rel="full-article" href="15613470463264.html#more">read more &rarr;</a>
+    	</footer>
+    	
+
+	</article>
+ 
+	<article>
+		 <header>
 		  	<h1 class="entry-title"><a href="15498584515544.html">写在19年新年上班第一天</a></h1>
 			<p class="meta"><time datetime="2019-02-11T12:14:11+08:00" 
 			pubdate data-updated="true">2019/2/11</time></p>
@@ -142,11 +201,15 @@ $(document).ready(function(event) {
 		 </header>
 	  	<div class="entry-content">
 		  	
-		  	<p><a href="rocket://subscribe/article?group_id=1233">肥料</a></p>
+		  	<p><a href="sslocal://thread_detail?tid=1628695135821832">帖子详情页</a></p>
+
+<p><a href="sslocal://concern?cid=1621904795894830">话题页</a></p>
 
 <p><a href="sslocal://repost_page?cover_url=http://p1.pstatp.com/list/pgc-image/RBzdrWmIzLNHLI&amp;fw_id=6633983643108770317&amp;fw_id_type=4&amp;fw_user_id=3242684112&amp;group_id=6633983643108770317&amp;is_video=0&amp;opt_id=6633983643108770317&amp;opt_id_type=4&amp;repost_operation_type=1&amp;repost_type=211&amp;title=%E6%B5%B7%E5%A4%96%E7%BD%91%EF%BC%9A%E5%8D%8E%E4%B8%BACFO%E5%AD%9F%E6%99%9A%E8%88%9F%E7%A6%BB%E5%BC%80%E6%B3%95%E9%99%A2%20%E8%8E%B7%E5%87%86%E4%BF%9D%E9%87%8A%E5%90%8E%E9%A6%96%E6%AC%A1%E9%9C%B2%E9%9D%A2">转发发布器</a></p>
 
 <p><a href="sslocal://repost_page?cover_url=http%3a%2f%2fp1.pstatp.com%2flist%2fpgc-image%2fRBzdrWmIzLNHLI&amp;fw_id=6633983643108770317&amp;fw_id_type=4&amp;fw_user_id=3242684112&amp;group_id=6633983643108770317&amp;is_video=0&amp;opt_id=6633983643108770317&amp;opt_id_type=4&amp;repost_operation_type=1&amp;repost_type=211&amp;title=%e6%b5%b7%e5%a4%96%e7%bd%91%ef%bc%9a%e5%8d%8e%e4%b8%baCFO%e5%ad%9f%e6%99%9a%e8%88%9f%e7%a6%bb%e5%bc%80%e6%b3%95%e9%99%a2%2b%e8%8e%b7%e5%87%86%e4%bf%9d%e9%87%8a%e5%90%8e%e9%a6%96%e6%ac%a1%e9%9c%b2%e9%9d%a2">转发发布器encode</a></p>
+
+<p><a href="sslocal://send_thread?from_where=31&amp;show_et_status=4&amp;category_id=near&amp;publish_mode=1&amp;stay_after_post=true">附近频道发布器</a></p>
 
 <p><a href="sslocal://send_thread?from_where=31&amp;show_et_status=00000&amp;post_content=#%E5%9C%B0%E9%9C%87#&amp;post_content_rich_span=%7Blinks:%5B%7Blength:4,start:0,id_type:0,id:0,title:TODO,link:WhatTheFuck,text:,type:2%7D%5D%7D&amp;post_images=%5b%7b%22uri%22%3a+%22tos-cn-i-0022%2fe2c7fecb42f84b76b7c1a1a399280ff4%22%2c%22url%22%3a+%22http%3a%2f%2fsf3-ttcdn-tos.pstatp.com%2fimg%2ftos-cn-i-0022%2fe2c7fecb42f84b76b7c1a1a399280ff4%7e200x200_c1.jpeg%22%7d%2c+%7b%22uri%22%3a+%22tos-cn-i-0022%2f1fbf91d10be14f6993e88184f7d05bf8%22%2c%22url%22%3a+%22http%3a%2f%2fsf1-ttcdn-tos.pstatp.com%2fimg%2ftos-cn-i-0022%2f1fbf91d10be14f6993e88184f7d05bf8%7e400x261_c1.jpeg%22%7d%5d">发布器</a></p>
 
@@ -410,35 +473,6 @@ IO操作很恐怖，哪怕只是很轻量级的处理<br/>
     	
 
 	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a></h1>
-			<p class="meta"><time datetime="2018-04-02T23:01:13+08:00" 
-			pubdate data-updated="true">2018/4/2</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<blockquote>
-<p>源于4月2日在小组内的分享。<br/>
-图床为Google相册，看不了自己准备梯子。</p>
-</blockquote>
-
-<p><img src="https://lh3.googleusercontent.com/-3jEV3avy7vY/WtriDp896UI/AAAAAAAAHDc/lCPKHvEM0CY7Gq1BugbSTZFkf60iD_SbQCHMYCw/I/ListDiff%2B" alt="ListDiff 学习与分析.001"/></p>
-
-<p><img src="https://lh3.googleusercontent.com/-KfR_MU43kyc/WtrjMBGv0XI/AAAAAAAAHE0/aGRivjQBYMgz9LFzDQtIDz4o9QKDwfbSQCHMYCw/I/ListDiff%2B" alt="ListDiff 学习与分析.002"/></p>
-
-
-
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876732151.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
   
 	<div class="pagination">
 	 <a class="prev" href="all_1.html">&larr; Older</a> 
@@ -454,7 +488,7 @@ IO操作很恐怖，哪怕只是很轻量级的处理<br/>
 	  <ul id="recent_posts">
 	  
 	      <li class="post">
-	        <a href="tech.html"><strong>技术&nbsp;(58)</strong></a>
+	        <a href="tech.html"><strong>技术&nbsp;(59)</strong></a>
 	        
 	        
 	        
@@ -482,6 +516,12 @@ IO操作很恐怖，哪怕只是很轻量级的处理<br/>
 	  
 	      
 		      <li class="post">
+		        <a href="15613470463264.html">LiveData组件分享</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
 		        <a href="15498584515544.html">写在19年新年上班第一天</a>
 		      </li>
 	     
@@ -501,12 +541,6 @@ IO操作很恐怖，哪怕只是很轻量级的处理<br/>
 	      
 		      <li class="post">
 		        <a href="15407404509104.html">Retro Meeting -> 团队的自我疗伤</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15379393489219.html">【从历年weak看iOS面试】</a>
 		      </li>
 	     
 	  

@@ -84,6 +84,30 @@ $(document).ready(function(event) {
 
 	<article>
 		 <header>
+		  	<h1 class="entry-title"><a href="15378876730851.html">使用iOS UI分析工具reveal和FLEX查看任意app</a></h1>
+			<p class="meta"><time datetime="2015-03-02T23:01:13+08:00" 
+			pubdate data-updated="true">2015/3/2</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<p>对于iOS开发，<a href="http://revealapp.com/">reveal</a>和<a href="https://github.com/Flipboard/FLEX">FLEX</a>应该都不陌生，相比于reveal，FLEX堪称单机版reveal，虽然没有reveal直观，但更加方便，最新版本的FLEX增加了很多网络调试的功能，使得不仅仅应用于UI部分。</p>
+
+<p>在使用上，reveal只需把framework动态库放到工程中，然后在同一wifi下的Mac下查看即可。</p>
+
+
+
+		</div>
+
+		 
+		 <footer>
+      	<a rel="full-article" href="15378876730851.html#more">read more &rarr;</a>
+    	</footer>
+    	
+
+	</article>
+ 
+	<article>
+		 <header>
 		  	<h1 class="entry-title"><a href="15378876730817.html">使用sublime来写markdown</a></h1>
 			<p class="meta"><time datetime="2015-02-28T23:01:13+08:00" 
 			pubdate data-updated="true">2015/2/28</time></p>
@@ -471,79 +495,6 @@ dispatch_once不仅意味着代码仅会被运行一次，而且还是线程安�
 		
 
 	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876731454.html">iOS diary140807</a></h1>
-			<p class="meta"><time datetime="2014-08-07T23:01:13+08:00" 
-			pubdate data-updated="true">2014/8/7</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<h2 id="toc_0">自定义uitableviewcell的宽度，以及一些诡异的问题处理</h2>
-
-<p>项目需要，希望uitableview处于页面中中间部分，但滚动指示条依然在整个window的边缘，解决办法无非两种：  </p>
-
-<ol>
-<li>把cell做小<br/></li>
-<li>把指示条放远</li>
-</ol>
-
-<p>先说第二种方法：发现可以设置uitableview的scrollIndicatorInsets，从而任意改变指示条的位置，但是，这个位置只能在uitableview范围内！<br/><br/>
-那就只剩下第一种方法了，比较简单的就是自定义cell，把里面的内容都做一些内边距，这样看起来效果就像居中了～但问题在于，如果如此，cell的点击、删除、编辑等等uitableviewcell默认的一些系统方法展示出来的UI效果，都会是整个宽度的。<br/><br/>
-cell做小另一种方法就是修改scrollview的contentinset，因为uitableview继承自uiscrollview，这种方式的问题在于：依然不能改变cell的宽度，cell的宽度会默认设置为uitableview的宽度而不是scrollview的。<br/>
-最后，采用了网上常用的覆写uitableviewcell的setFrame方法来完成这个工作，实际效果非常好：  </p>
-
-<pre><code class="language-text">- (void)setFrame:(CGRect)frame {
-    frame.origin.x += ROOT_PORTRAIT_CONTENT_MARGIN_LEFT;
-    frame.size.width -= 2 * ROOT_PORTRAIT_CONTENT_MARGIN_LEFT; 
-    [super setFrame:frame];
-  }
-</code></pre>
-
-<p>但是在iOS7下，使用该方法会出现一些诡异的问题：</p>
-
-<pre><code class="language-text">    Probably at least one of the constraints in the following list is one you don&#39;t want. Try this: (1) look at each constraint and try to figure out which you don&#39;t expect; (2) find the code that added the unwanted constraint or constraints and fix it. (Note: If you&#39;re seeing NSAutoresizingMaskLayoutConstraints that you don&#39;t understand, refer to the documentation for the UIView property translatesAutoresizingMaskIntoConstraints) 
-(
-    &quot;&lt;NSAutoresizingMaskLayoutConstraint:0xc094560 h=--&amp; v=--&amp; H:[UITableViewWrapperView:0xc68c390(768)]&gt;&quot;,
-    &quot;&lt;NSAutoresizingMaskLayoutConstraint:0xbfd4250 h=-&amp;- v=--&amp; TimeLineLCellImg:0xbfa97e0.width == UITableViewWrapperView:0xc68c390.width - 972&gt;&quot;
-)
-
-    Will attempt to recover by breaking constraint 
-&lt;NSAutoresizingMaskLayoutConstraint:0xbfd4250 h=-&amp;- v=--&amp; TimeLineLCellImg:0xbfa97e0.width == UITableViewWrapperView:0xc68c390.width - 972&gt;
-</code></pre>
-
-<p>通过研究iOS7的修改点，发现现在uitableviewcell的superview是UITableViewWrapperView，而不是uitableview。查看log日志，发现是由于我们在修改frame的时候和设置的AutoresizingMask冲突，虽然最终显示的正确，但是吐出warning日志还是需要处理。<br/><br/>
-找到冲突原因，修改就比较容易了，让uitableviewcell的frame为我们自己设置的，而不是采用AutoresizingMask的方式自动生成，因此在setframe中添加代码：   </p>
-
-<pre><code class="language-text">[self setAutoresizingMask:(UIViewAutoresizingNone)];
-</code></pre>
-
-<p>注意：不能通过设置[self setTranslatesAutoresizingMaskIntoConstraints:NO]而直接禁止Autoresizing，因为这样必须设置layoutconstraint采用autolayout的方式。通过log看出是将cell的宽度和它的superview的宽度做了autoresizing，只需打断这个设置即可。</p>
-
-<h2 id="toc_1">iOS根据class name生成class实例：</h2>
-
-<pre><code class="language-text">NSString *className = @&quot;AbcViewController&quot;;
-
-if (NSClassFromString(className)) {
-
-    Class aClass = NSClassFromString(className);
-    id instance = [[aClass alloc] init];
-
-    if ([instance isKindOfClass:[UIViewController class]]) {
-
-        [(UIViewController *)instance setTitle:@&quot;New Title&quot;];
-        [self.navigationController pushViewController:(UIViewController *)instance animated:YES];
-    }
-}
-</code></pre>
-
-
-		</div>
-
-		
-
-	</article>
   
 	<div class="pagination">
 	 <a class="prev" href="all_7.html">&larr; Older</a> 
@@ -559,7 +510,7 @@ if (NSClassFromString(className)) {
 	  <ul id="recent_posts">
 	  
 	      <li class="post">
-	        <a href="tech.html"><strong>技术&nbsp;(58)</strong></a>
+	        <a href="tech.html"><strong>技术&nbsp;(59)</strong></a>
 	        
 	        
 	        
@@ -587,6 +538,12 @@ if (NSClassFromString(className)) {
 	  
 	      
 		      <li class="post">
+		        <a href="15613470463264.html">LiveData组件分享</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
 		        <a href="15498584515544.html">写在19年新年上班第一天</a>
 		      </li>
 	     
@@ -606,12 +563,6 @@ if (NSClassFromString(className)) {
 	      
 		      <li class="post">
 		        <a href="15407404509104.html">Retro Meeting -> 团队的自我疗伤</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15379393489219.html">【从历年weak看iOS面试】</a>
 		      </li>
 	     
 	  

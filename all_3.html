@@ -84,6 +84,43 @@ $(document).ready(function(event) {
 
 	<article>
 		 <header>
+		  	<h1 class="entry-title"><a href="15378876731775.html">QDaily app流量和文章打开速度优化--js和css的加载逻辑</a></h1>
+			<p class="meta"><time datetime="2016-09-12T23:01:13+08:00" 
+			pubdate data-updated="true">2016/9/12</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<hr/>
+
+<blockquote>
+<p>本文属于“好奇心日报app的流量和文章打开速度优化”系列文章第二篇，主要介绍为实现文章尽快的打开速度而进行的js和css的预载和缓存以及重用的逻辑。</p>
+
+<p>整篇代码均为Objective-C，Android可以参考书写。</p>
+</blockquote>
+
+<h2 id="toc_0">前言</h2>
+
+<p>好奇心日报所有文章都是自产，js和css文件在所有文章中都使用的一套进行逻辑和样式处理。在每次前端同事修改了js或者css代码后，会给该文件直接生成一个64位的hashcode附在其后，以区分不同版本，用于浏览器端更新使用，例如：</p>
+
+<pre><code class="language-text">    http://app3.qdaily.com/assets/app3/common-bc6aa258d92609720eb97f34f86f978367bd3d849c9c0bbc82feeed9e79b6623.js
+</code></pre>
+
+<p>其中主要包括common.js、show.js、common.css和show.css四个文件。</p>
+
+
+
+		</div>
+
+		 
+		 <footer>
+      	<a rel="full-article" href="15378876731775.html#more">read more &rarr;</a>
+    	</footer>
+    	
+
+	</article>
+ 
+	<article>
+		 <header>
 		  	<h1 class="entry-title"><a href="15378876731564.html">【转】Awesome Adb</a></h1>
 			<p class="meta"><time datetime="2016-09-03T23:01:13+08:00" 
 			pubdate data-updated="true">2016/9/3</time></p>
@@ -480,36 +517,6 @@ python ../Script/autobuild.py -w QDaily.xcworkspace -s QDaily -t QDaily -o `dirn
     	
 
 	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876730464.html">移动端开发好文20160625</a></h1>
-			<p class="meta"><time datetime="2016-06-25T23:01:13+08:00" 
-			pubdate data-updated="true">2016/6/25</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<p>周六，放松下，没看几篇文章。最近写博客传图很麻烦，今天写了一个Mac端的小程序，简单传图到qiniu上。下周写好了我传到github上，然后写个文章介绍下。</p>
-
-<h3 id="toc_0">1、<a href="https://mp.weixin.qq.com/s?__biz=MzAwNDY1ODY2OQ==&amp;mid=2649286306&amp;idx=1&amp;sn=d6b2865e033a99de60b2d4314c6e0a25&amp;key=77421cf58af4a6532ddbd6ed388c94eb7ddc4160c59c059f109bc1711d2639586212bdb7b3fe128896b7b85598b16b34&amp;ascene=0">微信Android热补丁实践演进之路</a></h3>
-
-<blockquote>
-<p>微信终端开发中心的另一篇好文，业界已经传遍了。</p>
-
-<p>微信出品，都是长文，都是竞品。算是给所有还在做android热修复的朋友一个指明。个人之前用过andfix，感觉兼容性很差，给版本提高了1%的crash率，很伤心。微信还挺推崇Nuwa的，看来可以尝试一下。</p>
-
-<p>文章底部的参考文章很详尽，想了解学习android hotfix的同学算是找到所以呢地图了。<br/>
-
-
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876730464.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
   
 	<div class="pagination">
 	 <a class="prev" href="all_4.html">&larr; Older</a> 
@@ -525,7 +532,7 @@ python ../Script/autobuild.py -w QDaily.xcworkspace -s QDaily -t QDaily -o `dirn
 	  <ul id="recent_posts">
 	  
 	      <li class="post">
-	        <a href="tech.html"><strong>技术&nbsp;(58)</strong></a>
+	        <a href="tech.html"><strong>技术&nbsp;(59)</strong></a>
 	        
 	        
 	        
@@ -553,6 +560,12 @@ python ../Script/autobuild.py -w QDaily.xcworkspace -s QDaily -t QDaily -o `dirn
 	  
 	      
 		      <li class="post">
+		        <a href="15613470463264.html">LiveData组件分享</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
 		        <a href="15498584515544.html">写在19年新年上班第一天</a>
 		      </li>
 	     
@@ -572,12 +585,6 @@ python ../Script/autobuild.py -w QDaily.xcworkspace -s QDaily -t QDaily -o `dirn
 	      
 		      <li class="post">
 		        <a href="15407404509104.html">Retro Meeting -> 团队的自我疗伤</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15379393489219.html">【从历年weak看iOS面试】</a>
 		      </li>
 	     
 	  

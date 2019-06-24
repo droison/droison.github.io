@@ -84,6 +84,28 @@ $(document).ready(function(event) {
 
 	<article>
 		 <header>
+		  	<h1 class="entry-title"><a href="15378876730358.html">自定义Android开源库CSKit介绍</a></h1>
+			<p class="meta"><time datetime="2016-04-02T23:01:13+08:00" 
+			pubdate data-updated="true">2016/4/2</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<p>整个项目框架包含单例管理(MManagerCenter)，网络请求及文件下载(VolleyPlus)和事件总线管理(MMBus)的一个集合框架。还处于检验阶段，使用方法（Android studio）：</p>
+
+
+
+		</div>
+
+		 
+		 <footer>
+      	<a rel="full-article" href="15378876730358.html#more">read more &rarr;</a>
+    	</footer>
+    	
+
+	</article>
+ 
+	<article>
+		 <header>
 		  	<h1 class="entry-title"><a href="15378876732010.html">AFN源码分析-AFHTTPConnectionOperation</a></h1>
 			<p class="meta"><time datetime="2016-03-13T23:01:13+08:00" 
 			pubdate data-updated="true">2016/3/13</time></p>
@@ -482,95 +504,6 @@ for (AFURLConnectionOperation *operation in operations) {
     	
 
 	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876731318.html">iOS hook实践（1）</a></h1>
-			<p class="meta"><time datetime="2015-11-19T23:01:13+08:00" 
-			pubdate data-updated="true">2015/11/19</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<blockquote>
-<p>最近为了玖富理财的自动化投钱，狠狠的研究了下如何hack别人的app inject自己的代码，收货良多。同时发现自己对此非常感兴趣，成就感膨胀！</p>
-
-<p>so，今年多了一个目标：读完《iOS逆向工程（第二版）》，已经duokan下单，监督自己。</p>
-
-<p>感谢微信，给了我进入iOS大门的机会，感谢微信，叫我系统化的iOS研究方法，给了我编写动态库和入门hack的基础，我将在此继续学习，继续充实。</p>
-</blockquote>
-
-<h2 id="toc_0">一个不知道算不算开头的开头</h2>
-
-<p>这将是一个系列文章，包含各种学习研究过程，有生涩的基础，也有生动的实践，系列文章将伴随我的整个研究过程。</p>
-
-<p>系列文章需要懂得iOS的基础知识，并且对iOS开发以及攻防有较多的兴趣的同行阅读，如果您是老鸟，请多多指正其中的不足。</p>
-
-<p>本文将主要就是对近期的hack收货进行简单归集，避免忘记。</p>
-
-<h2 id="toc_1">基本知识</h2>
-
-<ul>
-<li>越狱</li>
-<li>动态库dylib</li>
-<li>dlopen指令</li>
-<li>ipa重签名</li>
-</ul>
-
-<h2 id="toc_2">几个工具</h2>
-
-<ul>
-<li><code>pp助手</code>，我也很无语，不过这个用的真心多，越狱，文件查看，ipa安装，ssh打开，真心简单易用。</li>
-<li><code>charles</code>，没的说，网络分析</li>
-<li><code>MachOView</code></li>
-<li><code>010 Editor</code></li>
-<li><code>FLEX</code></li>
-<li><code>THOS</code></li>
-<li><code>iOSOpenDev</code></li>
-</ul>
-
-<h2 id="toc_3">重签名</h2>
-
-<p>如果改了原来代码，势必需要重签名，重签名是个坑，下面写两个对我有帮助的博文，稍后单独一片文章介绍我是如何踩坑的。</p>
-
-<p>先来两张图，这两段代码是最后的完成稿：</p>
-
-<p><img src="media/15378876731318/iOSResign1.png" alt="iOSResign1"/><br/>
-<img src="media/15378876731318/iOSResign2.png" alt="iOSResign2"/></p>
-
-<p><a href="http://www.cnblogs.com/YungMing/p/4016511.html">iOS 证书管理、验证、打包流程</a>，一点基础知识，小白先看看。</p>
-
-<p><a href="http://www.olinone.com/?p=198">iOS证书及ipa包重签名探究</a>，按照网上的一般攻略，总是失败，原来是iOS8.1后增加了安全机制。这篇是针对的一些解法，不过应该企业签名才是最终的王道解决。</p>
-
-<p><a href="http://objccn.io/issue-17-2/">代码签名探析</a>，最详细的解析，代码重签名进阶使用。</p>
-
-<p><a href="http://blog.csdn.net/qinwei008/article/details/42379009">iOS APP反重签名技术详解</a>，知道了怎么重签，就要知道怎么攻防，避免别人用相同的方式搞你。</p>
-
-<h2 id="toc_4">几篇有用的博文</h2>
-
-<p><a href="http://www.blogfshare.com/inject-with-njb.html">http://www.blogfshare.com/inject-with-njb.html</a></p>
-
-<p><a href="http://wiki.jikexueyuan.com/project/ios-security-defense/injection.html">http://wiki.jikexueyuan.com/project/ios-security-defense/injection.html</a></p>
-
-<p><a href="http://www.opensource.apple.com/source/dyld/dyld-210.2.3/src/dyld.cpp">http://www.opensource.apple.com/source/dyld/dyld-210.2.3/src/dyld.cpp</a></p>
-
-<p><a href="http://www.cnblogs.com/xiongwj0910/archive/2012/08/16/2642992.html">http://www.cnblogs.com/xiongwj0910/archive/2012/08/16/2642992.html</a></p>
-
-<p><a href="https://nadavrub.wordpress.com/2015/07/23/injecting-code-to-an-ios-appstore-app/">https://nadavrub.wordpress.com/2015/07/23/injecting-code-to-an-ios-appstore-app/</a></p>
-
-<h2 id="toc_5">推荐的几个很不错的博主</h2>
-
-<p><a href="http://nianxi.net/">念茜</a>的博客，业界知名iOS美女程序员，支付宝的iOS安全工程师</p>
-
-<p><a href="http://www.blogfshare.com/block-code-inject.html">Alone_Monkey</a>的博客，在安全领域也很有研究，真心长江后浪推前浪！</p>
-
-<p><a href="http://www.olinone.com/">庞海礁</a>，在重签名部分从他这里收获了很多，推荐有空看看。</p>
-
-
-		</div>
-
-		
-
-	</article>
   
 	<div class="pagination">
 	 <a class="prev" href="tech_4.html">&larr; Older</a> 
@@ -586,7 +519,7 @@ for (AFURLConnectionOperation *operation in operations) {
 	  <ul id="recent_posts">
 	  
 	      <li class="post">
-	        <a href="tech.html"><strong>技术&nbsp;(58)</strong></a>
+	        <a href="tech.html"><strong>技术&nbsp;(59)</strong></a>
 	        
 	        
 	        
@@ -614,6 +547,12 @@ for (AFURLConnectionOperation *operation in operations) {
 	  
 	      
 		      <li class="post">
+		        <a href="15613470463264.html">LiveData组件分享</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
 		        <a href="15498584515544.html">写在19年新年上班第一天</a>
 		      </li>
 	     
@@ -633,12 +572,6 @@ for (AFURLConnectionOperation *operation in operations) {
 	      
 		      <li class="post">
 		        <a href="15407404509104.html">Retro Meeting -> 团队的自我疗伤</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15379393489219.html">【从历年weak看iOS面试】</a>
 		      </li>
 	     
 	  

@@ -1,0 +1,648 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  LiveData组件分享 - 野火🔥
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="生命如野火，骄傲而顽强">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">野火🔥</a></h1>
+  
+    <h2>生命如野火，骄傲而顽强</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">LiveData组件分享</h1>
+				<p class="meta"><time datetime="2019-03-24T11:30:46+08:00" pubdate data-updated="true">2019/3/24</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<p><strong>八卦暖场环节</strong></p>
+
+<h1 id="toc_0">引：从Google AAC 和 MVVM开始说起</h1>
+
+<blockquote>
+<p>LiveData推出于Google I/O 2017 的 architecture components ，一般和ViewModel、Room、LifeCycle同时介绍，尤其是LifeCycle和ViewModel。最终核心还是期望这些组件能用有效的支持在Android端实现MVVM。</p>
+</blockquote>
+
+<h2 id="toc_1">MVP vs MVVM</h2>
+
+<p>MVP 是MVC模式的变种，它已经存在了数十年了。</p>
+
+<pre><code class="language-text">Android领域广泛应用MVP源于Google在2016年年初推出的Android Architecture Blueprints
+</code></pre>
+
+<p>MVP和MVC的核心区别在于数据流传输和组织方式，内在思想是面向接口编程，代价是大量胶水代码。</p>
+
+<p><img src="media/15613470463264/15613472117525.jpg" alt=""/></p>
+
+<p>在2005年，微软的WPF和SL架构师John Gossman在他的博客中公开了MVVM模式。是之前PM（Presenter Model）模式的演化。</p>
+
+<p>不像MVP，ViewModel 不需要View的引用。View绑定到ViewModel中的一个属性。这个属性展示了Model对象的数据以及View的其它状态特性。由于ViewModel 对象被设置为View的DataContent，View和ViewModel之间的绑定易于构建。如果ViewModel 里面的属性值改变了，那些新的值会通过数据绑定传递到View。当用户点击View的一个按钮，ViewModel 里面的一个命令就会执行完成需要的动作。ViewModel而不是View执行了Model数据的修改。<code>View类不知道Model类的存在，ViewModel 和Model也不知道View</code>。实际上，Model完全不知道ViewModel和View存在的事实。</p>
+
+<blockquote>
+<p>MVVM：“Keeping UI code simple and free of app logic in order to make it easier to manage”<br/>
+一种组件逻辑分离的架构模式，让UI部分逻辑更加内聚。<br/>
+注：不是名字中有ViewModel、VM的就是MVVM架构，就像有的名字中带Presenter不一定就是MVP，它很可能只是想写一个MVP架构。</p>
+</blockquote>
+
+<p><img src="media/15613470463264/15613473603270.jpg" alt=""/></p>
+
+<p><img src="media/15613470463264/15613473671528.jpg" alt=""/></p>
+
+<p>MVVM的关键在于双向绑定，LiveData就是用于解决这个。</p>
+
+<blockquote>
+<p>ViewModel组件本次不表，建议后续研究，本次不做发散。</p>
+</blockquote>
+
+<span id="more"></span><!-- more -->
+
+<hr/>
+
+<p><code>官方概念环节</code></p>
+
+<h1 id="toc_2">一、（What）什么是LiveData？</h1>
+
+<p><strong>简单说就是LifeCycle在观察者模式中的结合运用。</strong></p>
+
+<p>LiveData有很多好处（<a href="https://tech.meituan.com/2018/07/26/android-livedatabus.html">美团曾经用它替换EventBus</a>)</p>
+
+<ul>
+<li><strong>UI和实时数据保持一致</strong> 因为LiveData采用的是观察者模式，这样一来就可以在数据发生改变时获得通知，更新UI。</li>
+<li><strong>避免内存泄漏</strong> 观察者被绑定到组件的生命周期上，当被绑定的组件销毁（destroy）时，观察者会立刻自动清理自身的数据。</li>
+<li><p><strong>不会再产生由于Activity处于stop状态而引起的崩溃</strong> 因为根本收不到通知</p></li>
+<li><p><strong>不需要再解决生命周期带来的问题</strong> LiveData可以感知被绑定的组件的生命周期，只有在活跃状态才会通知数据变化。</p></li>
+<li><p><strong>实时数据刷新</strong> 当组件处于活跃状态或者从不活跃状态到活跃状态时总是能收到最新的数据。</p></li>
+<li><p><strong>解决Configuration Change问题</strong> 在屏幕发生旋转或者被回收再次启动，立刻就能收到最新的数据。-&gt;依赖ViewModel</p></li>
+</ul>
+
+<blockquote>
+<p>鉴于LiveData的特性（结合MVVM使用），如果过去习惯使用RxJava来做响应式编程，那依然继续用，唯一区别就是alloc和dealloc记得注册和反注册。</p>
+</blockquote>
+
+<hr/>
+
+<p><strong>有趣的使用环节</strong></p>
+
+<h1 id="toc_3">二、（How）LiveData怎么用？</h1>
+
+<blockquote>
+<p>个人习惯，看源码 先使用-&gt;工具类-&gt;最常用扩展类-&gt;核心类</p>
+</blockquote>
+
+<h2 id="toc_4">普通用法（ActionDataManager用法）</h2>
+
+<p>如何合理的使用ActionDataManager </p>
+
+<ul>
+<li>Tips1: LiveData的Observe具有立即回调的特性，所以不需要单独的配置初始化</li>
+<li>Tips2: LiveData的setValue需要主线程操作，否则用postValue，但在切线程的时候getValue值不正确</li>
+</ul>
+
+<p>默认LiveData是abstract class，setValue和postValue都是protected修饰，大多数时候我们使用<strong>MutableLiveData</strong>，唯一区别是该类的setValue和postValue是public。</p>
+
+<pre><code class="language-java">LiveData&lt;ActionData&gt; liveData = ActionDataManager.INSTANCE.getActionLiveData(getId());
+if (liveData != null) {
+    liveData.observe(AbsUgcFeedFragment.this, new Observer&lt;ActionData&gt;() {
+        @Override
+        public void onChanged(@Nullable ActionData actionData) {
+            // do some thing
+        }
+    });
+}
+</code></pre>
+
+<p>上述代码中就展示了如何使用LiveData，我们只需要定义观察到数据变化后的操作，并在适当的时机触发数据更新。</p>
+
+<ul>
+<li>observe后onChanged会立即回调</li>
+<li>LiveData的更新只会在LifecycleOwner的lifeCycle在State为RESUMED回调，其他情况不回调</li>
+<li>通知变化会在回到前台（RESUMED）后一起回调</li>
+<li>destroyed后会自动移除observer</li>
+</ul>
+
+<p>如果不需要生命周期管理，可以使用LiveData#observeForever，但需要手动removeObserver：</p>
+
+<pre><code class="language-java">liveData.observeForever(new Observer&lt;ActionData&gt;() {
+    @Override
+    public void onChanged(@Nullable ActionData actionData) {
+        // do some thing
+    }
+});
+</code></pre>
+
+<h2 id="toc_5">还有一些推荐的高级用法</h2>
+
+<blockquote>
+<p>&quot;以下三个用法和代码都比较精妙&quot;</p>
+</blockquote>
+
+<p><strong>1、Transformations#map()</strong><br/>
+用于是把一个数据类型变换为另外一个数据类型。</p>
+
+<pre><code class="language-kotlin">val userLiveData: LiveData = UserLiveData() // value是User，有name和lastname两属性
+val userName: LiveData = Transformations.map(userLiveData) {    
+    user -&gt; &quot;${user.name} ${user.lastName}&quot;
+} // value是String
+</code></pre>
+
+<p>源码实现：<br/>
+<img src="media/15613470463264/15613480338221.jpg" alt=""/></p>
+
+<p>这里用到了 LiveData 的另一个子类 MediatorLiveData。接下来看一看这是个什么东西。</p>
+
+<p><strong>MediatorLiveData</strong><br/>
+从 <code>Transformations#map()</code> 源码中可以看到，MediatorLiveData 有一个 <code>MediatorLiveData#addSource()</code> 方法，这个方法改变了数据内容。 也就是说，我们可以通过 <code>MediatorLiveData</code> 将多个 LiveData 源数据集合起来，如下图所示： <br/>
+<img src="media/15613470463264/15613480748320.jpg" alt=""/></p>
+
+<p>一段Demo</p>
+
+<pre><code class="language-kotlin">class MediatorLiveDataFragment : Fragment() {     
+    private val changeObserver = Observer&lt;String&gt; { 
+        value -&gt;  value?.let { txt_fragment.text = it }    
+    }     
+
+    override fun onAttach(context: Context?) {        
+        super.onAttach(context)        
+        val mediatorLiveData = MediatorLiveData&lt;String&gt;()        
+        mediatorLiveData.addSource(getliveDataA())  { 
+            mediatorLiveData.value = &quot;A:$it&quot; 
+        }        
+        mediatorLiveData.addSource(getliveDataB())   { 
+            mediatorLiveData.value = &quot;B:$it&quot; 
+        }        
+        mediatorLiveData.observe(this, changeObserver)    
+    }    
+    // .. some other Fragment specific code .. 
+}
+</code></pre>
+
+<p><strong>特征：</strong></p>
+
+<ul>
+<li>任何一个LiveData的更新都会回调该source的Observer（用了observeForever，但生命周期时机和真实的LifeCycleOwner一致）</li>
+<li>不可见状态同时修改LiveData源，后add的source后调用<br/>
+用途：同时监听网络回来数据的LiveData和数据库数据LiveData</li>
+</ul>
+
+<p><strong>Transformations#switchMap()</strong><br/>
+把一个数据变化为另外一个 LiveData 。<br/>
+<strong>特征：</strong>根据SwitchLiveData（用于控制的LiveData）动态切换LiveData。<br/>
+<strong>用途：</strong>登录逻辑（选个开关，换成密码登录、验证码登录等等）</p>
+
+<p>源码实现：<br/>
+<img src="media/15613470463264/15613481127829.jpg" alt=""/></p>
+
+<hr/>
+
+<p><strong>枯燥无味的代码环节</strong></p>
+
+<h1 id="toc_6">三、（Why）LiveData怎么实现的？</h1>
+
+<blockquote>
+<p>此处需要一些前置概念，Lifecycle、LifecycleOwner、Lifecycling、FullLifecycleObserver、GenericLifecycleObserver、LifecycleObserver<br/>
+Lifecycling整个框架设计比较有趣，建议研究下，避免发散，本次不表。</p>
+</blockquote>
+
+<h2 id="toc_7">模版方法</h2>
+
+<ul>
+<li><code>onActive()</code>：方法在LiveData至少有一个活跃的observer（RESUME）的时候才会调用</li>
+<li><code>onInactive()</code>：当LiveData没有一个活跃的观察者的时候这个方法会被调用
+上述方法会在任何一个LifecycleOwner的state改变时尝试check一次。<br/>
+MediatorLiveData就使用了上述时机。</li>
+</ul>
+
+<h2 id="toc_8">重要Public方法</h2>
+
+<ul>
+<li><code>setValue()</code>：即时更新，需要在主线程</li>
+<li><code>postValue()</code>：下一个main message loop更新。不及时</li>
+<li><code>observe()</code>：望文生义，observe会立即收到change回调</li>
+<li><code>observeForever()</code> ：望文生义</li>
+<li><code>removeObserver()</code> ：望文生义，remove操作不会造成change回调</li>
+<li><code>removeObservers()</code> ：望文生义</li>
+</ul>
+
+<h2 id="toc_9">类图：</h2>
+
+<p><img src="media/15613470463264/15613481777805.jpg" alt=""/></p>
+
+<h2 id="toc_10">调用时序图：</h2>
+
+<p><img src="media/15613470463264/15613481877141.jpg" alt=""/></p>
+
+<p>下面结合LiveData的两个步骤分析，为什么LiveData具有Google给出的这么多特点。按照使用来说，LiveData主要是分为订阅和通知两个步骤。</p>
+
+<h2 id="toc_11">订阅</h2>
+
+<pre><code class="language-java">@MainThread
+public void observe(@NonNull LifecycleOwner owner, @NonNull Observer observer) {
+    if (owner.getLifecycle().getCurrentState() == DESTROYED) {
+        // ignore
+        return;
+    }
+    LifecycleBoundObserver wrapper = new LifecycleBoundObserver(owner, observer);
+    ObserverWrapper existing = mObservers.putIfAbsent(observer, wrapper);
+    if (existing != null &amp;&amp; !existing.isAttachedTo(owner)) {
+        throw new IllegalArgumentException(&quot;Cannot add the same observer&quot;
+            + &quot; with different lifecycles&quot;);
+    }
+    if (existing != null) {
+        return;
+    }
+    owner.getLifecycle().addObserver(wrapper);
+}
+
+class LifecycleBoundObserver extends ObserverWrapper implements GenericLifecycleObserver {
+    @NonNull final LifecycleOwner mOwner;
+     ...
+    @Override
+    boolean shouldBeActive() {
+        return mOwner.getLifecycle().getCurrentState().isAtLeast(STARTED);
+    }
+    @Override
+    public void onStateChanged(LifecycleOwner source, Lifecycle.Event event) {
+        if (mOwner.getLifecycle().getCurrentState() == DESTROYED) {
+            removeObserver(mObserver);
+            return;
+        }
+        activeStateChanged(shouldBeActive());
+    }
+    ...
+    @Override
+    void detachObserver() {
+        mOwner.getLifecycle().removeObserver(this);
+    }
+}
+</code></pre>
+
+<p>订阅动作做了两件事</p>
+
+<ol>
+<li>将观察者对象与LifecycleOwner绑定成一个LifecycleBoundObserver，并形成观察者与LifecycleBoundObserver的映射；</li>
+<li>LifecycleBoundObserver观察LifecycleOwner的生命周期。<br/>
+这就实现了Observer是数据观察者，LifecycleBoundObserver是生命周期观察者，观察LifecycleOwner的生命周期。</li>
+</ol>
+
+<h2 id="toc_12">通知</h2>
+
+<p>通知有两种形式，分别是数据变化通知和LifecycleOwner生命周期变化通知。</p>
+
+<h2 id="toc_13">数据变化通知：</h2>
+
+<p>setValue是在主线程执行的数据更新方法，postValue是在异步线程执行的数据更新方法，这两个方法最后都调用到了dispatchingValue(null)。</p>
+
+<pre><code class="language-java">private void dispatchingValue(@Nullable ObserverWrapper initiator) {
+    if (mDispatchingValue) {
+        mDispatchInvalidated = true;
+        return;
+    }
+    mDispatchingValue = true;
+    do {
+        mDispatchInvalidated = false;
+        if (initiator != null) {
+            considerNotify(initiator);
+            initiator = null;
+        } else {
+            for (Iterator&lt;Map.Entry&lt;Observer&lt;T&gt;, ObserverWrapper&gt;&gt; iterator =
+                mObservers.iteratorWithAdditions(); iterator.hasNext(); ) {
+                considerNotify(iterator.next().getValue());
+                if (mDispatchInvalidated) {
+                    break;
+                }
+            }
+        }
+    } while (mDispatchInvalidated);
+    mDispatchingValue = false;
+}
+
+private void considerNotify(ObserverWrapper observer) {
+    if (!observer.mActive) {
+        return;
+    }
+    if (!observer.shouldBeActive()) {
+        observer.activeStateChanged(false);
+        return;
+    }
+    if (observer.mLastVersion &gt;= mVersion) {
+        return;
+    }
+    observer.mLastVersion = mVersion;
+    //noinspection unchecked
+    observer.mObserver.onChanged((T) mData);
+}
+</code></pre>
+
+<p>执行流程如下<br/>
+<img src="media/15613470463264/15613482356986.jpg" alt=""/></p>
+
+<h2 id="toc_14">LifecycleOwner的生命周期变化通知：</h2>
+
+<pre><code class="language-java">class LifecycleBoundObserver extends ObserverWrapper implements GenericLifecycleObserver {
+    @Override
+    public void onStateChanged(LifecycleOwner source, Lifecycle.Event event) {
+        if (mOwner.getLifecycle().getCurrentState() == DESTROYED) {
+            removeObserver(mObserver);
+            return;
+        }
+        activeStateChanged(shouldBeActive());
+    }
+}
+
+private abstract class ObserverWrapper {
+    void activeStateChanged(boolean newActive) {
+        if (newActive == mActive) {
+            return;
+        }
+        // immediately set active state, so we&#39;d never dispatch anything to inactive
+        // owner
+        mActive = newActive;
+        boolean wasInactive = LiveData.this.mActiveCount == 0;
+        LiveData.this.mActiveCount += mActive ? 1 : -1;
+        if (wasInactive &amp;&amp; mActive) {
+            onActive();
+        }
+        if (LiveData.this.mActiveCount == 0 &amp;&amp; !mActive) {
+            onInactive();
+        }
+        if (mActive) {
+            dispatchingValue(this);
+        }
+    }
+}
+</code></pre>
+
+<p>LifecycleBoundObserver注册了LifecycleOwner的生命周期监听，当实现了LifecycleOwner的组件生命周期发生变化时，Lifecycle回调onStateChanged，大致流程如下。<br/>
+<img src="media/15613470463264/15613482737458.jpg" alt=""/></p>
+
+<p>当观察者数量从0到1时调用onActive，从1到0调用onInactive，最后走数据派发。举例，观察者组件从后台切到前台时，mActive状态从false变为true，LiveData执行了dispatchValue，所以观察者对象能收到LiveData最后更新的数据。</p>
+
+<h2 id="toc_15">总结</h2>
+
+<p>LiveData作为数据观察者，不仅能观察数据变化，还能感知组件生命周期，这就决定了为什么能收到最新的数据。在组件不再active之后，不会再收到数据回调。还有组件从inactive到active状态时，又能接受到最新的数据。</p>
+
+<p>关于Google自称解决Configuration Change问题，在屏幕发生旋转或者被回收再次启动，立刻就能收到最新的数据。<br/>
+这个说法没错，状态变更是能收到最新数据，但是这要求LiveData 没有被销毁。这就需要我们另外存储保存LiveData ，在LiveData类的注释中，最后一段这样写到：<br/>
+<img src="media/15613470463264/15613482851187.jpg" alt=""/></p>
+
+<hr/>
+
+<ul>
+<li>推荐其他阅读：LiveData beyond the ViewModel — Reactive patterns using Transformations and MediatorLiveData </li>
+</ul>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='tech.html'>技术</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'billchaiblog';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          
+            <div id="disqus_thread"></div>
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	    
+	        <a class="basic-alignment right" href="15498584515544.html" 
+	        title="Next Post: 写在19年新年上班第一天">写在19年新年上班第一天 &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="tech.html"><strong>技术&nbsp;(59)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Anything.html"><strong>胡写&nbsp;(16)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15613470463264.html">LiveData组件分享</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15498584515544.html">写在19年新年上班第一天</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15446191606030.html">团队管理的感慨：不要让有共同特征的人走的太近</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15438122075796.html">头条测试内链</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15407404509104.html">Retro Meeting -> 团队的自我疗伤</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'billchaiblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+
+<script type="text/javascript">
+var disqus_shortname = 'billchaiblog'; 
+
+(function () {
+var s = document.createElement('script'); s.async = true;
+s.type = 'text/javascript';
+s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+  
+    
+
+
+
+
+</body>
+</html>

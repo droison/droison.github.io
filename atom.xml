@@ -4,7 +4,7 @@
   <title><![CDATA[野火🔥]]></title>
   <link href="http://www.chaisong.xyz/atom.xml" rel="self"/>
   <link href="http://www.chaisong.xyz/"/>
-  <updated>2019-02-11T21:23:12+08:00</updated>
+  <updated>2019-06-24T12:15:56+08:00</updated>
   <id>http://www.chaisong.xyz/</id>
   <author>
     <name><![CDATA[]]></name>
@@ -12,6 +12,391 @@
   </author>
   <generator uri="http://www.coderforart.com/">CoderForArt</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[LiveData组件分享]]></title>
+    <link href="http://www.chaisong.xyz/15613470463264.html"/>
+    <updated>2019-06-24T11:30:46+08:00</updated>
+    <id>http://www.chaisong.xyz/15613470463264.html</id>
+    <content type="html"><![CDATA[
+<p><strong>八卦暖场环节</strong></p>
+
+<h1 id="toc_0">引：从Google AAC 和 MVVM开始说起</h1>
+
+<blockquote>
+<p>LiveData推出于Google I/O 2017 的 architecture components ，一般和ViewModel、Room、LifeCycle同时介绍，尤其是LifeCycle和ViewModel。最终核心还是期望这些组件能用有效的支持在Android端实现MVVM。</p>
+</blockquote>
+
+<h2 id="toc_1">MVP vs MVVM</h2>
+
+<p>MVP 是MVC模式的变种，它已经存在了数十年了。</p>
+
+<pre><code class="language-text">Android领域广泛应用MVP源于Google在2016年年初推出的Android Architecture Blueprints
+</code></pre>
+
+<p>MVP和MVC的核心区别在于数据流传输和组织方式，内在思想是面向接口编程，代价是大量胶水代码。</p>
+
+<p><img src="media/15613470463264/15613472117525.jpg" alt=""/></p>
+
+<p>在2005年，微软的WPF和SL架构师John Gossman在他的博客中公开了MVVM模式。是之前PM（Presenter Model）模式的演化。</p>
+
+<p>不像MVP，ViewModel 不需要View的引用。View绑定到ViewModel中的一个属性。这个属性展示了Model对象的数据以及View的其它状态特性。由于ViewModel 对象被设置为View的DataContent，View和ViewModel之间的绑定易于构建。如果ViewModel 里面的属性值改变了，那些新的值会通过数据绑定传递到View。当用户点击View的一个按钮，ViewModel 里面的一个命令就会执行完成需要的动作。ViewModel而不是View执行了Model数据的修改。<code>View类不知道Model类的存在，ViewModel 和Model也不知道View</code>。实际上，Model完全不知道ViewModel和View存在的事实。</p>
+
+<blockquote>
+<p>MVVM：“Keeping UI code simple and free of app logic in order to make it easier to manage”<br/>
+一种组件逻辑分离的架构模式，让UI部分逻辑更加内聚。<br/>
+注：不是名字中有ViewModel、VM的就是MVVM架构，就像有的名字中带Presenter不一定就是MVP，它很可能只是想写一个MVP架构。</p>
+</blockquote>
+
+<p><img src="media/15613470463264/15613473603270.jpg" alt=""/></p>
+
+<p><img src="media/15613470463264/15613473671528.jpg" alt=""/></p>
+
+<p>MVVM的关键在于双向绑定，LiveData就是用于解决这个。</p>
+
+<blockquote>
+<p>ViewModel组件本次不表，建议后续研究，本次不做发散。</p>
+</blockquote>
+
+<span id="more"></span><!-- more -->
+
+<hr/>
+
+<p><code>官方概念环节</code></p>
+
+<h1 id="toc_2">一、（What）什么是LiveData？</h1>
+
+<p><strong>简单说就是LifeCycle在观察者模式中的结合运用。</strong></p>
+
+<p>LiveData有很多好处（<a href="https://tech.meituan.com/2018/07/26/android-livedatabus.html">美团曾经用它替换EventBus</a>)</p>
+
+<ul>
+<li><strong>UI和实时数据保持一致</strong> 因为LiveData采用的是观察者模式，这样一来就可以在数据发生改变时获得通知，更新UI。</li>
+<li><strong>避免内存泄漏</strong> 观察者被绑定到组件的生命周期上，当被绑定的组件销毁（destroy）时，观察者会立刻自动清理自身的数据。</li>
+<li><p><strong>不会再产生由于Activity处于stop状态而引起的崩溃</strong> 因为根本收不到通知</p></li>
+<li><p><strong>不需要再解决生命周期带来的问题</strong> LiveData可以感知被绑定的组件的生命周期，只有在活跃状态才会通知数据变化。</p></li>
+<li><p><strong>实时数据刷新</strong> 当组件处于活跃状态或者从不活跃状态到活跃状态时总是能收到最新的数据。</p></li>
+<li><p><strong>解决Configuration Change问题</strong> 在屏幕发生旋转或者被回收再次启动，立刻就能收到最新的数据。-&gt;依赖ViewModel</p></li>
+</ul>
+
+<blockquote>
+<p>鉴于LiveData的特性（结合MVVM使用），如果过去习惯使用RxJava来做响应式编程，那依然继续用，唯一区别就是alloc和dealloc记得注册和反注册。</p>
+</blockquote>
+
+<hr/>
+
+<p><strong>有趣的使用环节</strong></p>
+
+<h1 id="toc_3">二、（How）LiveData怎么用？</h1>
+
+<blockquote>
+<p>个人习惯，看源码 先使用-&gt;工具类-&gt;最常用扩展类-&gt;核心类</p>
+</blockquote>
+
+<h2 id="toc_4">普通用法（ActionDataManager用法）</h2>
+
+<p>如何合理的使用ActionDataManager </p>
+
+<ul>
+<li>Tips1: LiveData的Observe具有立即回调的特性，所以不需要单独的配置初始化</li>
+<li>Tips2: LiveData的setValue需要主线程操作，否则用postValue，但在切线程的时候getValue值不正确</li>
+</ul>
+
+<p>默认LiveData是abstract class，setValue和postValue都是protected修饰，大多数时候我们使用<strong>MutableLiveData</strong>，唯一区别是该类的setValue和postValue是public。</p>
+
+<pre><code class="language-java">LiveData&lt;ActionData&gt; liveData = ActionDataManager.INSTANCE.getActionLiveData(getId());
+if (liveData != null) {
+    liveData.observe(AbsUgcFeedFragment.this, new Observer&lt;ActionData&gt;() {
+        @Override
+        public void onChanged(@Nullable ActionData actionData) {
+            // do some thing
+        }
+    });
+}
+</code></pre>
+
+<p>上述代码中就展示了如何使用LiveData，我们只需要定义观察到数据变化后的操作，并在适当的时机触发数据更新。</p>
+
+<ul>
+<li>observe后onChanged会立即回调</li>
+<li>LiveData的更新只会在LifecycleOwner的lifeCycle在State为RESUMED回调，其他情况不回调</li>
+<li>通知变化会在回到前台（RESUMED）后一起回调</li>
+<li>destroyed后会自动移除observer</li>
+</ul>
+
+<p>如果不需要生命周期管理，可以使用LiveData#observeForever，但需要手动removeObserver：</p>
+
+<pre><code class="language-java">liveData.observeForever(new Observer&lt;ActionData&gt;() {
+    @Override
+    public void onChanged(@Nullable ActionData actionData) {
+        // do some thing
+    }
+});
+</code></pre>
+
+<h2 id="toc_5">还有一些推荐的高级用法</h2>
+
+<blockquote>
+<p>&quot;以下三个用法和代码都比较精妙&quot;</p>
+</blockquote>
+
+<p><strong>1、Transformations#map()</strong><br/>
+用于是把一个数据类型变换为另外一个数据类型。</p>
+
+<pre><code class="language-kotlin">val userLiveData: LiveData = UserLiveData() // value是User，有name和lastname两属性
+val userName: LiveData = Transformations.map(userLiveData) {    
+    user -&gt; &quot;${user.name} ${user.lastName}&quot;
+} // value是String
+</code></pre>
+
+<p>源码实现：<br/>
+<img src="media/15613470463264/15613480338221.jpg" alt=""/></p>
+
+<p>这里用到了 LiveData 的另一个子类 MediatorLiveData。接下来看一看这是个什么东西。</p>
+
+<p><strong>MediatorLiveData</strong><br/>
+从 <code>Transformations#map()</code> 源码中可以看到，MediatorLiveData 有一个 <code>MediatorLiveData#addSource()</code> 方法，这个方法改变了数据内容。 也就是说，我们可以通过 <code>MediatorLiveData</code> 将多个 LiveData 源数据集合起来，如下图所示： <br/>
+<img src="media/15613470463264/15613480748320.jpg" alt=""/></p>
+
+<p>一段Demo</p>
+
+<pre><code class="language-kotlin">class MediatorLiveDataFragment : Fragment() {     
+    private val changeObserver = Observer&lt;String&gt; { 
+        value -&gt;  value?.let { txt_fragment.text = it }    
+    }     
+
+    override fun onAttach(context: Context?) {        
+        super.onAttach(context)        
+        val mediatorLiveData = MediatorLiveData&lt;String&gt;()        
+        mediatorLiveData.addSource(getliveDataA())  { 
+            mediatorLiveData.value = &quot;A:$it&quot; 
+        }        
+        mediatorLiveData.addSource(getliveDataB())   { 
+            mediatorLiveData.value = &quot;B:$it&quot; 
+        }        
+        mediatorLiveData.observe(this, changeObserver)    
+    }    
+    // .. some other Fragment specific code .. 
+}
+</code></pre>
+
+<p><strong>特征：</strong></p>
+
+<ul>
+<li>任何一个LiveData的更新都会回调该source的Observer（用了observeForever，但生命周期时机和真实的LifeCycleOwner一致）</li>
+<li>不可见状态同时修改LiveData源，后add的source后调用<br/>
+用途：同时监听网络回来数据的LiveData和数据库数据LiveData</li>
+</ul>
+
+<p><strong>Transformations#switchMap()</strong><br/>
+把一个数据变化为另外一个 LiveData 。<br/>
+<strong>特征：</strong>根据SwitchLiveData（用于控制的LiveData）动态切换LiveData。<br/>
+<strong>用途：</strong>登录逻辑（选个开关，换成密码登录、验证码登录等等）</p>
+
+<p>源码实现：<br/>
+<img src="media/15613470463264/15613481127829.jpg" alt=""/></p>
+
+<hr/>
+
+<p><strong>枯燥无味的代码环节</strong></p>
+
+<h1 id="toc_6">三、（Why）LiveData怎么实现的？</h1>
+
+<blockquote>
+<p>此处需要一些前置概念，Lifecycle、LifecycleOwner、Lifecycling、FullLifecycleObserver、GenericLifecycleObserver、LifecycleObserver<br/>
+Lifecycling整个框架设计比较有趣，建议研究下，避免发散，本次不表。</p>
+</blockquote>
+
+<h2 id="toc_7">模版方法</h2>
+
+<ul>
+<li><code>onActive()</code>：方法在LiveData至少有一个活跃的observer（RESUME）的时候才会调用</li>
+<li><code>onInactive()</code>：当LiveData没有一个活跃的观察者的时候这个方法会被调用
+上述方法会在任何一个LifecycleOwner的state改变时尝试check一次。<br/>
+MediatorLiveData就使用了上述时机。</li>
+</ul>
+
+<h2 id="toc_8">重要Public方法</h2>
+
+<ul>
+<li><code>setValue()</code>：即时更新，需要在主线程</li>
+<li><code>postValue()</code>：下一个main message loop更新。不及时</li>
+<li><code>observe()</code>：望文生义，observe会立即收到change回调</li>
+<li><code>observeForever()</code> ：望文生义</li>
+<li><code>removeObserver()</code> ：望文生义，remove操作不会造成change回调</li>
+<li><code>removeObservers()</code> ：望文生义</li>
+</ul>
+
+<h2 id="toc_9">类图：</h2>
+
+<p><img src="media/15613470463264/15613481777805.jpg" alt=""/></p>
+
+<h2 id="toc_10">调用时序图：</h2>
+
+<p><img src="media/15613470463264/15613481877141.jpg" alt=""/></p>
+
+<p>下面结合LiveData的两个步骤分析，为什么LiveData具有Google给出的这么多特点。按照使用来说，LiveData主要是分为订阅和通知两个步骤。</p>
+
+<h2 id="toc_11">订阅</h2>
+
+<pre><code class="language-java">@MainThread
+public void observe(@NonNull LifecycleOwner owner, @NonNull Observer observer) {
+    if (owner.getLifecycle().getCurrentState() == DESTROYED) {
+        // ignore
+        return;
+    }
+    LifecycleBoundObserver wrapper = new LifecycleBoundObserver(owner, observer);
+    ObserverWrapper existing = mObservers.putIfAbsent(observer, wrapper);
+    if (existing != null &amp;&amp; !existing.isAttachedTo(owner)) {
+        throw new IllegalArgumentException(&quot;Cannot add the same observer&quot;
+            + &quot; with different lifecycles&quot;);
+    }
+    if (existing != null) {
+        return;
+    }
+    owner.getLifecycle().addObserver(wrapper);
+}
+
+class LifecycleBoundObserver extends ObserverWrapper implements GenericLifecycleObserver {
+    @NonNull final LifecycleOwner mOwner;
+     ...
+    @Override
+    boolean shouldBeActive() {
+        return mOwner.getLifecycle().getCurrentState().isAtLeast(STARTED);
+    }
+    @Override
+    public void onStateChanged(LifecycleOwner source, Lifecycle.Event event) {
+        if (mOwner.getLifecycle().getCurrentState() == DESTROYED) {
+            removeObserver(mObserver);
+            return;
+        }
+        activeStateChanged(shouldBeActive());
+    }
+    ...
+    @Override
+    void detachObserver() {
+        mOwner.getLifecycle().removeObserver(this);
+    }
+}
+</code></pre>
+
+<p>订阅动作做了两件事</p>
+
+<ol>
+<li>将观察者对象与LifecycleOwner绑定成一个LifecycleBoundObserver，并形成观察者与LifecycleBoundObserver的映射；</li>
+<li>LifecycleBoundObserver观察LifecycleOwner的生命周期。<br/>
+这就实现了Observer是数据观察者，LifecycleBoundObserver是生命周期观察者，观察LifecycleOwner的生命周期。</li>
+</ol>
+
+<h2 id="toc_12">通知</h2>
+
+<p>通知有两种形式，分别是数据变化通知和LifecycleOwner生命周期变化通知。</p>
+
+<h2 id="toc_13">数据变化通知：</h2>
+
+<p>setValue是在主线程执行的数据更新方法，postValue是在异步线程执行的数据更新方法，这两个方法最后都调用到了dispatchingValue(null)。</p>
+
+<pre><code class="language-java">private void dispatchingValue(@Nullable ObserverWrapper initiator) {
+    if (mDispatchingValue) {
+        mDispatchInvalidated = true;
+        return;
+    }
+    mDispatchingValue = true;
+    do {
+        mDispatchInvalidated = false;
+        if (initiator != null) {
+            considerNotify(initiator);
+            initiator = null;
+        } else {
+            for (Iterator&lt;Map.Entry&lt;Observer&lt;T&gt;, ObserverWrapper&gt;&gt; iterator =
+                mObservers.iteratorWithAdditions(); iterator.hasNext(); ) {
+                considerNotify(iterator.next().getValue());
+                if (mDispatchInvalidated) {
+                    break;
+                }
+            }
+        }
+    } while (mDispatchInvalidated);
+    mDispatchingValue = false;
+}
+
+private void considerNotify(ObserverWrapper observer) {
+    if (!observer.mActive) {
+        return;
+    }
+    if (!observer.shouldBeActive()) {
+        observer.activeStateChanged(false);
+        return;
+    }
+    if (observer.mLastVersion &gt;= mVersion) {
+        return;
+    }
+    observer.mLastVersion = mVersion;
+    //noinspection unchecked
+    observer.mObserver.onChanged((T) mData);
+}
+</code></pre>
+
+<p>执行流程如下<br/>
+<img src="media/15613470463264/15613482356986.jpg" alt=""/></p>
+
+<h2 id="toc_14">LifecycleOwner的生命周期变化通知：</h2>
+
+<pre><code class="language-java">class LifecycleBoundObserver extends ObserverWrapper implements GenericLifecycleObserver {
+    @Override
+    public void onStateChanged(LifecycleOwner source, Lifecycle.Event event) {
+        if (mOwner.getLifecycle().getCurrentState() == DESTROYED) {
+            removeObserver(mObserver);
+            return;
+        }
+        activeStateChanged(shouldBeActive());
+    }
+}
+
+private abstract class ObserverWrapper {
+    void activeStateChanged(boolean newActive) {
+        if (newActive == mActive) {
+            return;
+        }
+        // immediately set active state, so we&#39;d never dispatch anything to inactive
+        // owner
+        mActive = newActive;
+        boolean wasInactive = LiveData.this.mActiveCount == 0;
+        LiveData.this.mActiveCount += mActive ? 1 : -1;
+        if (wasInactive &amp;&amp; mActive) {
+            onActive();
+        }
+        if (LiveData.this.mActiveCount == 0 &amp;&amp; !mActive) {
+            onInactive();
+        }
+        if (mActive) {
+            dispatchingValue(this);
+        }
+    }
+}
+</code></pre>
+
+<p>LifecycleBoundObserver注册了LifecycleOwner的生命周期监听，当实现了LifecycleOwner的组件生命周期发生变化时，Lifecycle回调onStateChanged，大致流程如下。<br/>
+<img src="media/15613470463264/15613482737458.jpg" alt=""/></p>
+
+<p>当观察者数量从0到1时调用onActive，从1到0调用onInactive，最后走数据派发。举例，观察者组件从后台切到前台时，mActive状态从false变为true，LiveData执行了dispatchValue，所以观察者对象能收到LiveData最后更新的数据。</p>
+
+<h2 id="toc_15">总结</h2>
+
+<p>LiveData作为数据观察者，不仅能观察数据变化，还能感知组件生命周期，这就决定了为什么能收到最新的数据。在组件不再active之后，不会再收到数据回调。还有组件从inactive到active状态时，又能接受到最新的数据。</p>
+
+<p>关于Google自称解决Configuration Change问题，在屏幕发生旋转或者被回收再次启动，立刻就能收到最新的数据。<br/>
+这个说法没错，状态变更是能收到最新数据，但是这要求LiveData 没有被销毁。这就需要我们另外存储保存LiveData ，在LiveData类的注释中，最后一段这样写到：<br/>
+<img src="media/15613470463264/15613482851187.jpg" alt=""/></p>
+
+<hr/>
+
+<ul>
+<li>推荐其他阅读：LiveData beyond the ViewModel — Reactive patterns using Transformations and MediatorLiveData </li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[写在19年新年上班第一天]]></title>
@@ -109,11 +494,15 @@
     <updated>2018-12-03T12:43:27+08:00</updated>
     <id>http://www.chaisong.xyz/15438122075796.html</id>
     <content type="html"><![CDATA[
-<p><a href="rocket://subscribe/article?group_id=1233">肥料</a></p>
+<p><a href="sslocal://thread_detail?tid=1628695135821832">帖子详情页</a></p>
+
+<p><a href="sslocal://concern?cid=1621904795894830">话题页</a></p>
 
 <p><a href="sslocal://repost_page?cover_url=http://p1.pstatp.com/list/pgc-image/RBzdrWmIzLNHLI&amp;fw_id=6633983643108770317&amp;fw_id_type=4&amp;fw_user_id=3242684112&amp;group_id=6633983643108770317&amp;is_video=0&amp;opt_id=6633983643108770317&amp;opt_id_type=4&amp;repost_operation_type=1&amp;repost_type=211&amp;title=%E6%B5%B7%E5%A4%96%E7%BD%91%EF%BC%9A%E5%8D%8E%E4%B8%BACFO%E5%AD%9F%E6%99%9A%E8%88%9F%E7%A6%BB%E5%BC%80%E6%B3%95%E9%99%A2%20%E8%8E%B7%E5%87%86%E4%BF%9D%E9%87%8A%E5%90%8E%E9%A6%96%E6%AC%A1%E9%9C%B2%E9%9D%A2">转发发布器</a></p>
 
 <p><a href="sslocal://repost_page?cover_url=http%3a%2f%2fp1.pstatp.com%2flist%2fpgc-image%2fRBzdrWmIzLNHLI&amp;fw_id=6633983643108770317&amp;fw_id_type=4&amp;fw_user_id=3242684112&amp;group_id=6633983643108770317&amp;is_video=0&amp;opt_id=6633983643108770317&amp;opt_id_type=4&amp;repost_operation_type=1&amp;repost_type=211&amp;title=%e6%b5%b7%e5%a4%96%e7%bd%91%ef%bc%9a%e5%8d%8e%e4%b8%baCFO%e5%ad%9f%e6%99%9a%e8%88%9f%e7%a6%bb%e5%bc%80%e6%b3%95%e9%99%a2%2b%e8%8e%b7%e5%87%86%e4%bf%9d%e9%87%8a%e5%90%8e%e9%a6%96%e6%ac%a1%e9%9c%b2%e9%9d%a2">转发发布器encode</a></p>
+
+<p><a href="sslocal://send_thread?from_where=31&amp;show_et_status=4&amp;category_id=near&amp;publish_mode=1&amp;stay_after_post=true">附近频道发布器</a></p>
 
 <p><a href="sslocal://send_thread?from_where=31&amp;show_et_status=00000&amp;post_content=#%E5%9C%B0%E9%9C%87#&amp;post_content_rich_span=%7Blinks:%5B%7Blength:4,start:0,id_type:0,id:0,title:TODO,link:WhatTheFuck,text:,type:2%7D%5D%7D&amp;post_images=%5b%7b%22uri%22%3a+%22tos-cn-i-0022%2fe2c7fecb42f84b76b7c1a1a399280ff4%22%2c%22url%22%3a+%22http%3a%2f%2fsf3-ttcdn-tos.pstatp.com%2fimg%2ftos-cn-i-0022%2fe2c7fecb42f84b76b7c1a1a399280ff4%7e200x200_c1.jpeg%22%7d%2c+%7b%22uri%22%3a+%22tos-cn-i-0022%2f1fbf91d10be14f6993e88184f7d05bf8%22%2c%22url%22%3a+%22http%3a%2f%2fsf1-ttcdn-tos.pstatp.com%2fimg%2ftos-cn-i-0022%2f1fbf91d10be14f6993e88184f7d05bf8%7e400x261_c1.jpeg%22%7d%5d">发布器</a></p>
 
@@ -762,86 +1151,6 @@ Introduction to Computation and Programming Using Python(2nd)</p>
 <h3 id="toc_0">10月更新</h3>
 
 <p>没想到网易云跟帖也关闭了，以后彻底换disqu了，图床也换google了，不理墙内用户了。</p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[再见 好奇心日报]]></title>
-    <link href="http://www.chaisong.xyz/15378876732493.html"/>
-    <updated>2018-09-25T23:01:13+08:00</updated>
-    <id>http://www.chaisong.xyz/15378876732493.html</id>
-    <content type="html"><![CDATA[
-<blockquote>
-<p>昨天下午，收到了人生第二份《离职证明》，我也正式在法律上不再属于好奇心日报了。</p>
-
-<p>写这篇文章，缅怀一下这两年的时光，因为这段工作的结束需要一个仪式感。<br/>
-同时也鼓励我下一段工作，希望接下来在头条依然能够保持旺盛的学习和工作热情，保持谦卑和自省的态度。<br/>
-祝愿好奇心日报越来越好！</p>
-</blockquote>
-
-<p>和好奇心日报的纠缠源于很早的外包，14年的一个周六晚上，中秋节前后，印象中天气很热，在TIT南边巷子里吃麻辣烫，广州麻辣烫的独有味道直到现在还让我流出口水。徐源说有个Android外包要做，做不？我说，当然做。那会儿事情不多，微信的工作虽然忙碌但压力不大，而且很规律。</p>
-
-<span id="more"></span><!-- more -->
-
-<p>当时已经有小半年没碰过Android的开发了，在微信新学习的iOS对我来讲挑战很大，也很有劲。工程建好的时候，感觉对eclipse、对java都很生疏，我很害怕，难道以前的本事都不会了吗？Android studio当时已经被google放出来1年了，但依然不像现在这么稳定，鉴于eclipse也生疏了，而且是独立开发，我果断转型了新IDE，现在想想当初付出的辛苦和努力是多么的正确。<br/>
-那会儿我的Android开发技术和思想都很初级，初级到我都不忍心浏览当初的代码。从外包开始到现在这两年多以来，我见证了好奇心日报的成长，好奇心日报也见证了我技术的成熟。</p>
-
-<p>再后来，公司一直找不到合适的客户端开发，我就先后维护了iOS和Android两端的几个小版本，可能是公司感觉我还挺认真的吧，技术也不错，几个创始人萌生了挖我过去的想法。<br/>
-没错，一开始，我是抗拒的。</p>
-
-<p>但随着时间增加，心态慢慢有了变化。<br/>
-在广州的一年，我的个人感情都停留在上一段的失败阴影中，对于爱情都比较抗拒，一直单身。<br/>
-广州是一个粤语环境很浓郁的地方，有很强的本土文化，我又是一个在语言上毫无天赋的人，一直像一个旁观者在自己活着。<br/>
-那时候和两个单身男生一起合租，微信下班很晚，我要11点多才到家，如果在工作日，我到家时房间是黑的，所有人都睡了，但如果放假前一天，我9点多就回去了，家里还是黑的，所有人都出去过节了。每当此时，都有一种浓郁的独在异乡为异客之感。</p>
-
-<p>再后来，徐源和黄老师去广州专门找了我，说实话，那会太年轻，我没见过市面，没见过钱，确实心动了。而且当时齐修已经加入好奇心了，我想，他都认为不错，可能确实是个好机会吧。人一旦动心，好多时候就不可抗拒了，尽管后来好多条件没有和期望中那么好，我还是在年后突破阻力，毅然回到了北京，中途仅仅休息了一天，记得是周一离职的，周三就在这边入职了。</p>
-
-<p>在好奇心日报，先是建立了整个Android的技术栈，微信给我最大的财富不是这个金子招牌，是教会了我的学习能力。</p>
-
-<p>来了好奇心后，我的第一个下属是十个Android开发C君，是个很了解市面上开源框架的人，在修改和review他的代码过程中，我看了很多知名的开源库，了解了很多实现，以非常快的速度hold住了Android项目，终于打开了工作局面。那时候比较闲，我甚至养了一只小狗，她叫奥莉，但很不幸，后来她成为了我一直的伤痛。</p>
-
-<p>刚入职的时候，有个iOS开发Z君，我名义上是他的上级，却从没有真正领导过他。他性格很强，技术很好，我在他身上学会了很多，尤其是他后来留下的iOS代码，给我开阔了很多思维。</p>
-
-<p>第二个真正意义的下属D君，他也是个iOS开发，技术水平还好，就是人工作热情不高，喜欢偷懒。他和刚刚说的C一样，都是在我之前就已经在公司的老员工，我作为空降领导其实在其中的关系是很复杂的，第一次带团队，遇上这些情况对我是个挑战。</p>
-
-<p>入职不久，丁锟就来了我这里，帮我做Android客户端。他是我的发小，我多年的同学，我的好朋友、好哥们。他想向互联网方向转型，我也需要团队里有个“自己人”，所以就利用职务之便，把毫无经验的他拉过来做我手下。这是我第三个下属，丁锟很聪明，学东西快，但毕竟不是计算机出身，行业跨度很大，在他身上培养我也使了很多劲，也担心他以后会后悔自己的选择。索性，他现在已经混出来了，不在需要我带他了，我也替他高兴。</p>
-
-<p>再后来，我先后又招了四个同事，随着人员流动，项目前进，制度建立，终于完善了队伍。好奇心日报也从1.0版本到了现在的3.3.6版本，可以说，每个版本都倾注着我的心血。</p>
-
-<p>15年下半年到16年年初，我工作特别辛苦，几乎天天加班。<br/>
-先是广告上线，当时后台技术也不成熟，半夜起来处理问题无数，印象深刻的被电话叫醒就足足有3次，其中两次来公司，另外一次在家搞到4点电脑没电，6点起床后来公司继续。<br/>
-再之后是iPad版本，这是我投入了很多精力的一个版本，时间非常紧张，但事实上完成的很漂亮，1年多都没做过什么修复，扩展性和维护性都还不错，是我见过市面上对split view支持最好的一个iPad app。<br/>
-然后就是紧张的3.0版本，一个翻天覆地的改变却要求在短短的1个多月完成，那会的脾气暴躁，火几乎一点就着，一直到16年春节前三天还在加班，最后几天我高烧到39度，这是我这两年唯一一次得病，年前2天的时候半夜我们提包，一直在公司到3点多，索性这个版本也很漂亮，上线后没什么大的问题，一切还算顺利。</p>
-
-<p>3.0完成在16年年初，我当时非常不满意当时的工作，反感公司不重视技术团队，反感外行管理内行，反感上级的管理艺术太过粗暴，反感公司的薪酬和福利制度...同时，也对公司的发展心存悲观。<br/>
-新年后，3.0版本稳定了，我找徐源谈，我说，出来工作，都是为了赚钱，或者现在给钱多，或者以后能发展好，公司现在给的薪水低于外面的，个人技术又没什么提高，而且公司也迟迟看不到爆发点，我打算离开了。那是16年的2月底三月初吧，和现在时间差不多，我当时面试了5家公司，拿了其中的4个offer，底气很足。<br/>
-然而公司没有很使劲的挽留，我却也没走，可能是第一次跳槽之后，我对跳槽很谨慎吧；也可能公司给了薪水的提升，外面的薪水也没那么有吸引力了，而且徐源也承诺改变一些制度，承诺扩充团队的，让我权衡起来还想再看一年吧；也有可能当时勇哥加入公司，让我又对公司的发展燃起希望了吧？</p>
-
-<p>大规模招人也在我决定留下开始，上面说的又招来的4个同事都是那之后的事情了。<br/>
-16年这一年，我完善组建了团队，慢慢从一个工程师转变成了架构师和真正的team leader，有了项目管理、代码管理和团队管理建设的经验和心得。<br/>
-16年这一年，由于个人争取的缘故，多了个人学习的时间，完整的看了很多的Android和iOS领域的开源代码，提高了很多。<br/>
-16年这一年，由于位置的缘故，在团队大胆采用react native，扩展了技术栈，开阔了视野，感觉没有虚度自己的光阴。</p>
-
-<p>然而，小团队的瓶颈也在不断的收获后越来越清晰，虽然薪水还不错，但我还是希望更多的提高，我希望能在深度上有更多的学习，更好的平台，以及更清晰的公司发展。这一次我的目标很明确，只面试了3个公司，也非常幸运的拿到了全部的offer，分别是支付宝、今日头条和快手。支付宝是我当时最想去的公司，慕名其光环；头条是在16年面试的时候认识了yuxin，他知道我一直希望寻求一个team leader的角色，可能我在之前的面试他非常满意吧，这一次头条扩张业务线主动邀请了我；快手其实没那么渴望去，是那会等待支付宝和头条offer时候比较无聊，武泽推荐的，慕名其土豪的名声～<br/>
-从个人的职业生涯规划来讲，头条的这个职位是最理想的选择，我甚至没有一点算计薪水情况，诚然薪水我也很满意。这一次，没有纠结，我很坚定，也跃跃欲试，希望到头条创造更多的价值。</p>
-
-<p>从头到尾，在好奇心日报一共工作了23个月，包含之前在微信的13个月，工作了整整3年。<br/>
-我最感谢好奇心日报的，是它带给我宽松和自由的时间，我的母亲在15年出现了眼底出血，去过很多次医院，我甚至不用请假就可以一上午一上午的陪她辗转于医院和家里，做激光手术的时候经常下午3点多才到公司，这份福利我一直享受到现在，这周的所有上午，我依然陪着我的母亲周转与3个医院之间。<br/>
-还有，我要感谢好奇心日报，感谢徐源，信任我给了我独当一面的机会，从更好的高度看待一个app，看待客户端的技术栈，学习了技术，也锻炼了团队管理技巧。<br/>
-我还要感谢我的组员，我第一次带队伍，很多次试错，他们给了我的宽容和温暖。<br/>
-而且，在好奇心日报这两年，由于工作环境的宽松，我和父母先后在投资了几个房子，二手房的手续繁多复杂，如果在其它公司，很难有这么充裕的时间。也得益于公司在北京东部，我才有这么方便的机会。</p>
-
-<p>前天，在组内做交接，我讲了很多设计上的思考和代码的规范，最后我说，这些都是我的建议，反正，以后是你们来写，爱怎么写就这么写吧，反正，这些代码就交给你们了。<br/>
-说完我眼睛就湿了。</p>
-
-<p>写到这，想起下午和邹韵说的话，“好奇心日报的Android和iOS客户端，从1.0版本到现在，它的每个功能，每次改版，每个优化，每一行代码都倾注我的心血，从明天开始，它就归别人管了”。</p>
-
-<p>附两个合影吧，纪念我这次热血的经历：</p>
-
-<p><img src="http://obp30zydr.bkt.clouddn.com/qdailyteam1.jpeg" alt="qdailyteam1"/></p>
-
-<p><img src="http://obp30zydr.bkt.clouddn.com/qdailyteam2.jpeg" alt="qdailyteam2"/></p>
 
 ]]></content>
   </entry>
