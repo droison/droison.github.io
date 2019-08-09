@@ -84,6 +84,199 @@ $(document).ready(function(event) {
 
 	<article>
 		 <header>
+		  	<h1 class="entry-title"><a href="15378876730603.html">今日好文20160627-30</a></h1>
+			<p class="meta"><time datetime="2016-06-30T23:01:13+08:00" 
+			pubdate data-updated="true">2016/6/30</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<p>这几天先用swift把一键上传七牛的代码写好了，学着了一些osx的开发技巧，oc swfit的混编，swift的闭包，还有swift最让新用户崩溃的半弱类型(? or !)。</p>
+
+<h4 id="toc_0">1、<a href="https://mp.weixin.qq.com/s?__biz=MzI4NjAzODk0OQ==&amp;mid=2652684385&amp;idx=1&amp;sn=51eef21eeb54936366e05358fe3f3da4&amp;scene=25&amp;srcid=06223YqAs1JrGqKnWQiH82Vm">Swift 范的 CGRect、CGSize 和 CGPoint</a></h4>
+
+<p>先来个轻松的。规范下swift的书写，看完不累，而且貌似有些收获。程序员要有代码洁癖。</p>
+
+<p>一个小技巧，之前用scheme也达到了类似的效果，不过没有这么彻底。主要区分在预编译指令这里的区别。不过对于跳转的app url scheme在修改了bundleid后会出现问题。例如跳转微信授权和分享后会，会回不到当前app。大多时候都是很方便的。<br/>
+<!--more--></p>
+
+<h4 id="toc_1">2、<a href="http://www.jianshu.com/p/07066199ad03">Q-ImageView 图片云处理接口封装</a></h4>
+
+<p>马上就要用qiniu解放流量，文章对接口做了很多封装 可以参考下</p>
+
+<h4 id="toc_2">3、<a href="http://www.jianshu.com/p/02424e35daf1">android版本更新策略</a></h4>
+
+<p>QDaily一直有应用更新策略，不过一直不完善。应该增加旧版本强制更新的方案。可以参考该代码作一个plugin</p>
+
+<h4 id="toc_3">4、<a href="https://github.com/AlanCheen/Android-Resources/blob/master/Architecture.md">Android 架构整理</a></h4>
+
+<p>对android下mvp和mvvm做了一个不错的整理。其中MVP部分由于谷歌出品 更加值得借鉴</p>
+
+<h4 id="toc_4">5、<a href="http://mp.weixin.qq.com/s?__biz=MzI4NjAzODk0OQ==&amp;mid=2652684442&amp;idx=1&amp;sn=c6e0665e00cafae0ae6fe1514420a0d6">使用 Xcode 8 为 iMessage 创建表情包插件</a></h4>
+
+<p>算是一个新的思路的，不用写代码编辑一个表情包，不过意义不大。首先它只是个表情包，看起来和一个zip区别也不大，而且是个独立组件，没有宿主app</p>
+
+<h4 id="toc_5">6、将QDaily的iOS版结合jenkins进行持续集成</h4>
+
+<p>核心脚本：<a href="http://liumh.com/2015/11/25/ios-auto-archive-ipa/">iOS自动打包并发布脚本</a>。亲测非常好用，简单修改并用shell进行了封装，就成功打包ipa并上传到蒲公英。类似的，修改蒲公英处的代码就可以实现上传到任何服务器。自定义shell如下：</p>
+
+<pre><code class="language-shell">cd `dirname $0` &amp;&amp; \
+
+cd ../QDaily &amp;&amp; \
+
+git checkout new &amp;&amp; \
+
+git pull &amp;&amp; \
+
+pod install --verbose --no-repo-update &amp;&amp; \
+
+python ../Script/autobuild.py -w QDaily.xcworkspace -s QDaily -t QDaily -o `dirname $0`&quot;/QDailyBeta.ipa&quot;
+</code></pre>
+
+<p>其中autobuild.py脚本参考源码<a href="https://github.com/carya/Util">https://github.com/carya/Util</a>。本地脚本里面的CONFIGURATION我填写的releaseBeta以区分生产环境和开发环境，具体可以参考我的另一篇<a href="http://www.chaisong.xyz/2016/06/29/%E4%BD%BF%E7%94%A8iOS%20APP%E7%9A%84Build%20Configuration%E5%8C%BA%E5%88%86%E5%BC%80%E5%8F%91%E5%92%8C%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83/">文章</a></p>
+
+<p>关于jenkins有两个不错的参考链接：<a href="http://reviewcode.cn/article.html?reviewId=11">http://reviewcode.cn/article.html?reviewId=11</a>和<a href="http://xuanyiliu.com/chixujicheng/">http://xuanyiliu.com/chixujicheng/</a>。</p>
+
+<p>在jenkins中，配置直接调用我们的脚本即可。</p>
+
+<p>iOS版本打包已经成功。唯一有个问题就是默认scheme不存在，需要打开xcode生成一个，猜测可能是由于这一块的被我加进gitignore里了，没有上传上去。</p>
+
+<h4 id="toc_6">7、<a href="http://www.jianshu.com/p/b4746a29d3fc">surge神器+ss傻瓜配置指南</a></h4>
+
+<p>程序员都应该会用梯子。iOS9下最好用的梯子，没有之一。自己在海外有VPS，搭了ss，一直以来我的mac都是用ss的，现在在我的iPhone也可以了。</p>
+
+<p>注意download configuration要填写图片中的那个。</p>
+
+<p>至于surge怎么下载，这个不需要教吧。无非就是花钱买 OR 各种正版破解助手 OR 越狱了。反正我是用同步推备份了一个。</p>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876730886.html">使用iOS APP的Build Configuration区分开发和生产环境</a></h1>
+			<p class="meta"><time datetime="2016-06-29T23:01:13+08:00" 
+			pubdate data-updated="true">2016/6/29</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<blockquote>
+<p>前两天看文章<a href="http://swift.gg/2016/04/22/using-xcode-targets/">使用 Xcode 的 Target 区分开发和生产环境</a>，感觉这个虽然是一种区分开发和生产环境比较强大的方法，但也有比较轻量级的，下面就分享下QDaily采用的配置Build Configuration方案。</p>
+</blockquote>
+
+<p>区分测试环境和生产环境的上面的链接已经说了：区分统计数据、区分crash log、区分server地址、区分本地数据库...</p>
+
+<p>每个工程默认会有两个Build Configure，即debug和release，我们就在这里做文章，增加一个releaseBeta版本，用来打包内部测试环境版本。</p>
+
+<p>QDaily在这里主要区分了app name，app icon，app bundleId（测试推送），并增加了一个全局的预处理宏BETA，代码中通过BETA标志进行和DEBUG相似的处理</p>
+
+<!--more-->
+
+<h2 id="toc_0">创建并配置新的Build Configuration</h2>
+
+<h3 id="toc_1">1、新建</h3>
+
+<p>我们主要是测试版需要区分，DEBUG版本并不需要，所以duplicate了release的默认配置。新建完记得改名，下面我已经新建过了，就没有改名那一步了。</p>
+
+<p><img src="media/15378876730886/1467187036.jpg" alt="1467187036"/></p>
+
+<h3 id="toc_2">2、区分app name、bundle Id</h3>
+
+<p>所有步骤看图，非常方便，非常简单。<br/>
+<img src="media/15378876730886/1467187354.jpg" alt="1467187354"/></p>
+
+<h3 id="toc_3">3、设置一个预处理宏和编译器标志BETA</h3>
+
+<p>具体看下图步骤，增加一个BETA：<br/>
+<img src="media/15378876730886/1467187656.jpg" alt="1467187656"/></p>
+
+<p>我们app中现在还没有使用swift，所以也就没有做swift的设置，如果需要可以去参考顶部的引用链接进行设置。</p>
+
+<p>这样代码里就能直接进行调用了。eg：<br/>
+<img src="media/15378876730886/1467187790.jpg" alt="1467187790"/></p>
+
+<h3 id="toc_4">4、修改releaseBeta的app icon</h3>
+
+<p>这里要分两步，先在images.xcassets中新建一个针对beta版本的app icon：<br/>
+<img src="media/15378876730886/1467188193.jpg" alt="1467188193"/></p>
+
+<p>我们这里已经建立过了，下一步就不示范了。这里我们把新icon命名为AppIconBeta。</p>
+
+<p>第二步和上面相似，在对应位置上填上我们对新icon的命名就好了：<br/>
+<img src="media/15378876730886/1467188417.jpg" alt="1467188417"/></p>
+
+<h3 id="toc_5">5、其它区分</h3>
+
+<p>所有build settings中的选项都可以用Build Configuration来进行区分设置，这里就不一一进行示范了。QDaily只有上面这些做了处理，其它都是通过BETA宏在代码里的操作。</p>
+
+<h2 id="toc_6">使用 Build Configuration</h2>
+
+<p>大多时候，我们都只是在编写release包时候需要对线上和开发环境进行区分，我们只需要修改archive中的scheme就好了：</p>
+
+<p>先选择app target的Edit Scheme。<br/>
+<img src="media/15378876730886/1467188720.jpg" alt="1467188720"/></p>
+
+<p>然后在Archive中选择我们新建的那个就好了。<br/>
+<img src="media/15378876730886/1467188810.jpg" alt="1467188810"/></p>
+
+<h2 id="toc_7">关于管理多个 Build Configuration 的一些注意事项</h2>
+
+<p>和新建target相比，亲测没有任何注意事项...你只要注意不要把releaseBeta传到appstore就行了。</p>
+
+<h2 id="toc_8">文章最后的推荐</h2>
+
+<p>安利一个我写的Mac下轻松上传到七牛传图的app，本文加了这么多图片，表示毫无压力，非常简单。</p>
+
+<p>截屏后点击“上传剪切板图片到七牛”这个按钮（也可以拖拽图片文件上传）。<br/>
+<img src="media/15378876730886/1467189012.jpg" alt="1467189012"/></p>
+
+<p>完成后这个外链url会默认在你的剪切板。当然也可以完成后点击“Copy MarkDown URL”，这样会直接copy一个下面这样的字符串在剪切板，你可以在你的md文件中直接使用：</p>
+
+<p><img src="media/15378876730886/1467189147.jpg" alt="1467189147"/></p>
+
+<p>真是markdown博客书写者的福音啊。那么这么NB的app哪里有呢？稍后整理完成我会放出链接来~</p>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876730432.html">移动端开发好文20160626</a></h1>
+			<p class="meta"><time datetime="2016-06-26T23:01:13+08:00" 
+			pubdate data-updated="true">2016/6/26</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<h3 id="toc_0">1、<a href="http://www.jianshu.com/p/a4a6222654a0">Android App 不死之路</a></h3>
+
+<blockquote>
+<p>软件开发者要有自己的节操，有时候为了推送需要，有一个非常小的进程常驻后台还可以接受。国内安卓生态就是被这种自以为nb的开发毁掉的。 <br/>
+不过技术本身没有错，可以看看底层实现。不过这类技术可用性不高。</p>
+</blockquote>
+
+<h3 id="toc_1">2、<a href="http://web.jobbole.com/86441">ES6 有什么新东西？</a></h3>
+
+
+
+		</div>
+
+		 
+		 <footer>
+      	<a rel="full-article" href="15378876730432.html#more">read more &rarr;</a>
+    	</footer>
+    	
+
+	</article>
+ 
+	<article>
+		 <header>
 		  	<h1 class="entry-title"><a href="15378876730464.html">移动端开发好文20160625</a></h1>
 			<p class="meta"><time datetime="2016-06-25T23:01:13+08:00" 
 			pubdate data-updated="true">2016/6/25</time></p>
@@ -555,167 +748,6 @@ for (AFURLConnectionOperation *operation in operations) {
 		
 
 	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876731943.html">AFN源码分析-AFURLRequestSerialization</a></h1>
-			<p class="meta"><time datetime="2016-03-12T23:01:13+08:00" 
-			pubdate data-updated="true">2016/3/12</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<h3 id="toc_0">AFURLRequestSerialization</h3>
-
-<p>该Class为用于对<code>请求</code>参数进行拼接、http body组合以及header配置。</p>
-
-<p>包含3个具体的实现类：AFHTTPRequestSerializer、AFJSONRequestSerializer、AFPropertyListRequestSerializer，主要针对3种不同的请求参数组合格式。定义了一个protocol--AFMultipartFormData，用于对数据上传使用。本类中一半篇幅进行POST multi上传情况的处理。</p>
-
-<p>所有HTTPHeaderField的参数都通过一个固定的setValue:forValue的方法进行设定，不再赘述。其它还可以设置需要auth的用户名密码、写在body中数据的编码格式等。有一个比较不错的设计：可以通过传入block的形式将参数部分拼接的具体实现抛回给调用方，用以特殊定制。</p>
-
-<p>比较有意思的在于，本类为几个成员变量默认增加了KVO观察者。观察参数包括：allowsCellularAccess、cachePolicy、HTTPShouldHandleCookies、HTTPShouldUsePipelining、HTTPShouldUsePipelining、networkServiceType、timeoutInterval，这几个参数同时也是NSMutableURLRequest的成员变量的对应key值，通过这种方式实现了动态的参数设定：即设置当前Serializer会自动设置其Request参数。</p>
-
-<h4 id="toc_1">1、请求参数设定</h4>
-
-<p>针对的都是GET、DELETE、HEAD请求，会将传入的NSArray、NSDictionary、NSSet parameters做格式化为URL参数，将PUT、POST、PATCH encode在body中。在对NSArray、NSDictionary、NSSet格式的参数进行处理时，首先会使用向外暴漏block进行拼接，block生成的string在url参数中会直接加载url后，body根据传入的encodeCode进行字符串编码。</p>
-
-<h4 id="toc_2">2、POST文件上传</h4>
-
-<p>仅POST请求可以进行文件上传，content-type为multipart/form-data。本类中一般的篇幅都是对文件上传进行处理的。</p>
-
-<p>在对外使用接口上，针对文件上传会通过block抛回一个id<AFMultipartFormData>对象，调用方在此block进行文件的绑定，包括文件data、fileName以及mime等，这种设计方案在好奇心日报的Android也进行了一次基本类似的实现，经实际使用，直观好用。</p>
-
-<p>具体实现是定义了一个名为AFStreamingMultipartFormData 实现了 AFMultipartFormData protocol，负责回传给调用方加以使用。</p>
-
-<p>针对其中通过NSDictionary这种方式传进来得参数，类中定义个一个名为AFQueryStringPair的对象，主要对参数进行相应的格式化，转成需要key-value形式，然后通过appendPartWithFormData:name:这个方法进行拼装。针对这层数据，再使用一个名叫AFHTTPBodyPart的对象进行第二次封装，这里会封装stringEncoding，本组数据的headers，数据与数据之间的boundary，其中的body（可能是data、inputStream、fileUrl等）和对应数据长度bodyContentLength。<code>这里非常适合在学习HTTP 1.1协议适合进行学习或者查看</code>。</p>
-
-<blockquote>
-<p>此处有两个习惯比较好：一是使用NSParametersAssert对参数进行非空检查，而是对bool值得返回函数进行了error的反馈，具体看代码片段：</p>
-</blockquote>
-
-<pre><code class="language-objectivec">- (BOOL)appendPartWithFileURL:(NSURL *)fileURL
-                         name:(NSString *)name
-                     fileName:(NSString *)fileName
-                     mimeType:(NSString *)mimeType
-                        error:(NSError * __autoreleasing *)error
-{
-    NSParameterAssert(fileURL);
-    NSParameterAssert(name);
-    NSParameterAssert(fileName);
-    NSParameterAssert(mimeType);
-
-    if (![fileURL isFileURL]) {
-        NSDictionary *userInfo = @{NSLocalizedFailureReasonErrorKey: NSLocalizedStringFromTable(@&quot;Expected URL to be a file URL&quot;, @&quot;AFNetworking&quot;, nil)};
-        if (error) {
-            *error = [[NSError alloc] initWithDomain:AFURLRequestSerializationErrorDomain code:NSURLErrorBadURL userInfo:userInfo];
-        }
-        return NO;
-    }
-    ....
-  }
-</code></pre>
-
-<p>上面的最后会拼在一个NSInputSteam的子类AFMultipartBodyStream中，该类最后会进行流的最终拼接和上传。</p>
-
-<p>上传中可以设置上传的大小以及每个具体子资源写入的延迟，用于在3G和EDGE下选择使用。（文档这么讲，不懂，以后了解）</p>
-
-
-		</div>
-
-		
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876731909.html">AFN源码分析-开篇</a></h1>
-			<p class="meta"><time datetime="2016-03-10T23:01:13+08:00" 
-			pubdate data-updated="true">2016/3/10</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<h3 id="toc_0">开篇准备&amp;目录分析</h3>
-
-<p>学AFNetWorking2.0很有必要先看业界的这个<a href="http://nshipster.cn/afnetworking-2/">入门架构分析</a>，本部分基本就是对该文章的二次描述。</p>
-
-<h4 id="toc_1">旧版核心 --- NSURLConnection + NSOperation</h4>
-
-<p>AFN在2.0时代有两类网络加载方案，一套是传承下来的NSURLConnection+NSOperation方案。</p>
-
-<p>其中NSURLConnection是负责网络请求，异步地加载一个NSURLRequest对象，调用 delegate进行相关的回调处理；NSOperation是抽象类，模拟单个计算单元，有状态、优先级、依赖等功能，可以取消。AFNetworking将两者结合在一起，可以从头到尾监视请求的状态，并储存请求、响应、响应数据等中间状态。</p>
-
-<p>在整个设计中所有的网络请求通过一个AFNetWorking线程通过NSURLConnection发送，NSURLConnection会新启一个线程用CFSocket去做网络请求，成功后的数据会回调在AFNetWorking线程，再抛回到UI线程的。</p>
-
-<h4 id="toc_2">新版新增 --- NSURLSession</h4>
-
-<p>NSURLSession是iOS7时代开始一个用于网络请求、上传、下载的抽象组件。</p>
-
-<p>AFNetWorking中定义了一个AFURLSessionManager，以用于创建、管理基于 NSURLSessionConfiguration 对象的 NSURLSession 对象的类，也可以管理 session 的数据、下载/上传任务，实现 session 和其相关联的任务的 delegate 方法。</p>
-
-<h4 id="toc_3">目录分析：</h4>
-
-<ol>
-<li><code>UIKit文件夹</code>：对一些系统组件的扩展，最终的应用级的东西</li>
-<li><code>Security</code>：名如其意。文件夹只有一个类，主要用于关于HTTPS认证相关的工具类</li>
-<li><code>Reachability</code>：文件夹只有一个类，用于网络环境检查以及相关切换、广播等</li>
-<li><code>Serialization</code>：两个类，分别用于请求数据、HTTP请求header以及一些请求操作的封装、序列化操作，以及对response数据的反序列化。通过这两个类，将网络请求的in和out部分完全抽象出来，有利于进一步的定制化和扩展。</li>
-<li><code>NSURLConnection</code>：根据NSURLConnection组成的网络请求封装方案</li>
-<li><code>NSURLSession</code>：根据NSURLSession组成的网络请求封装方案</li>
-</ol>
-
-<h3 id="toc_4">预计研究顺序</h3>
-
-<p>秉承着个人一贯的研究框架的源码顺序：先若干基础工具类---&gt;再从调用类（一般叫manager）开始进行结构分支梳理---&gt;manager下面具体管理的各个分支类---&gt;具体应用层次的封装。根据上述过程，将源码研究分成几个步骤，由于NSURLConnection + NSOperation方案的研究价值更大一些，所以会先从这里入手：</p>
-
-<ol>
-<li>Security+Reachability文件夹，主要用于了解功能和熟悉API。</li>
-<li>AFHTTPRequestOperationManager，从manager入手，先了解比较泛的调用框架</li>
-<li>Serialization文件夹，基本和上面的manager结合了解大体结构和使用</li>
-<li>AFHTTPRequestOperation &amp; AFURLConnectionOperation，方案1的核心部分，这里结合了NSURLConnection和NSOperation，基本都是具体实现和最终使用中一些不太常用的小技巧，多线程学习一块比较推荐的部分</li>
-<li>NSURLSession文件夹，该了解方案2了，这里就比较孤立了，因为准备工作都在方案1研究中完成了</li>
-<li>UIKit文件夹，了解下都有什么现成的封装，都用了哪些比较优秀个特性。</li>
-</ol>
-
-<h3 id="toc_5">参考</h3>
-
-<ul>
-<li><a href="http://nshipster.cn/afnetworking-2/">AFNetworking 2.0</a></li>
-<li><a href="http://blog.cnbang.net/tech/2320/">AFNetworking2.0源码解析&lt;一&gt;</a></li>
-<li><a href="http://blog.cnbang.net/tech/2371/">AFNetworking2.0源码解析&lt;二&gt;</a></li>
-<li><a href="http://blog.cnbang.net/tech/2416/">AFNetworking2.0源码解析&lt;三&gt;</a></li>
-<li><a href="http://blog.cnbang.net/tech/2456/">AFNetworking2.0源码解析&lt;四&gt;</a></li>
-</ul>
-
-
-		</div>
-
-		
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876731044.html">《Effective Objective-C 2.0》读书笔记3---tips</a></h1>
-			<p class="meta"><time datetime="2016-03-03T23:01:13+08:00" 
-			pubdate data-updated="true">2016/3/3</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<blockquote>
-<p>读书笔记第三篇，主要就是学习总结书中的一些小知识点，这些知识点对于学习理解iOS系统有一定的帮助，不过若以后转向swift可能没有太多用处。<br/>
-此处文章先hold住，慢慢补充</p>
-</blockquote>
-
-
-
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876731044.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
   
 	<div class="pagination">
 	 <a class="prev" href="all_5.html">&larr; Older</a> 
@@ -738,7 +770,7 @@ for (AFURLConnectionOperation *operation in operations) {
 	      </li>
 	  
 	      <li class="post">
-	        <a href="Anything.html"><strong>胡写&nbsp;(16)</strong></a>
+	        <a href="Anything.html"><strong>胡写&nbsp;(19)</strong></a>
 	        
 	        
 	        
@@ -759,6 +791,24 @@ for (AFURLConnectionOperation *operation in operations) {
 	  
 	      
 		      <li class="post">
+		        <a href="15653372657357.html">在互联网公司，App开发需要怎么的项目管理？</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15611669279804.html">年中思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15615190654300.html">从数据看北京教育资源</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
 		        <a href="15613470463264.html">LiveData组件分享</a>
 		      </li>
 	     
@@ -766,24 +816,6 @@ for (AFURLConnectionOperation *operation in operations) {
 	      
 		      <li class="post">
 		        <a href="15498584515544.html">写在19年新年上班第一天</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15446191606030.html">团队管理的感慨：不要让有共同特征的人走的太近</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15438122075796.html">头条测试内链</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15407404509104.html">Retro Meeting -> 团队的自我疗伤</a>
 		      </li>
 	     
 	  

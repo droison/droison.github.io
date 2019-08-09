@@ -84,6 +84,167 @@ $(document).ready(function(event) {
 
 	<article>
 		 <header>
+		  	<h1 class="entry-title"><a href="15378876731943.html">AFN源码分析-AFURLRequestSerialization</a></h1>
+			<p class="meta"><time datetime="2016-03-12T23:01:13+08:00" 
+			pubdate data-updated="true">2016/3/12</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<h3 id="toc_0">AFURLRequestSerialization</h3>
+
+<p>该Class为用于对<code>请求</code>参数进行拼接、http body组合以及header配置。</p>
+
+<p>包含3个具体的实现类：AFHTTPRequestSerializer、AFJSONRequestSerializer、AFPropertyListRequestSerializer，主要针对3种不同的请求参数组合格式。定义了一个protocol--AFMultipartFormData，用于对数据上传使用。本类中一半篇幅进行POST multi上传情况的处理。</p>
+
+<p>所有HTTPHeaderField的参数都通过一个固定的setValue:forValue的方法进行设定，不再赘述。其它还可以设置需要auth的用户名密码、写在body中数据的编码格式等。有一个比较不错的设计：可以通过传入block的形式将参数部分拼接的具体实现抛回给调用方，用以特殊定制。</p>
+
+<p>比较有意思的在于，本类为几个成员变量默认增加了KVO观察者。观察参数包括：allowsCellularAccess、cachePolicy、HTTPShouldHandleCookies、HTTPShouldUsePipelining、HTTPShouldUsePipelining、networkServiceType、timeoutInterval，这几个参数同时也是NSMutableURLRequest的成员变量的对应key值，通过这种方式实现了动态的参数设定：即设置当前Serializer会自动设置其Request参数。</p>
+
+<h4 id="toc_1">1、请求参数设定</h4>
+
+<p>针对的都是GET、DELETE、HEAD请求，会将传入的NSArray、NSDictionary、NSSet parameters做格式化为URL参数，将PUT、POST、PATCH encode在body中。在对NSArray、NSDictionary、NSSet格式的参数进行处理时，首先会使用向外暴漏block进行拼接，block生成的string在url参数中会直接加载url后，body根据传入的encodeCode进行字符串编码。</p>
+
+<h4 id="toc_2">2、POST文件上传</h4>
+
+<p>仅POST请求可以进行文件上传，content-type为multipart/form-data。本类中一般的篇幅都是对文件上传进行处理的。</p>
+
+<p>在对外使用接口上，针对文件上传会通过block抛回一个id<AFMultipartFormData>对象，调用方在此block进行文件的绑定，包括文件data、fileName以及mime等，这种设计方案在好奇心日报的Android也进行了一次基本类似的实现，经实际使用，直观好用。</p>
+
+<p>具体实现是定义了一个名为AFStreamingMultipartFormData 实现了 AFMultipartFormData protocol，负责回传给调用方加以使用。</p>
+
+<p>针对其中通过NSDictionary这种方式传进来得参数，类中定义个一个名为AFQueryStringPair的对象，主要对参数进行相应的格式化，转成需要key-value形式，然后通过appendPartWithFormData:name:这个方法进行拼装。针对这层数据，再使用一个名叫AFHTTPBodyPart的对象进行第二次封装，这里会封装stringEncoding，本组数据的headers，数据与数据之间的boundary，其中的body（可能是data、inputStream、fileUrl等）和对应数据长度bodyContentLength。<code>这里非常适合在学习HTTP 1.1协议适合进行学习或者查看</code>。</p>
+
+<blockquote>
+<p>此处有两个习惯比较好：一是使用NSParametersAssert对参数进行非空检查，而是对bool值得返回函数进行了error的反馈，具体看代码片段：</p>
+</blockquote>
+
+<pre><code class="language-objectivec">- (BOOL)appendPartWithFileURL:(NSURL *)fileURL
+                         name:(NSString *)name
+                     fileName:(NSString *)fileName
+                     mimeType:(NSString *)mimeType
+                        error:(NSError * __autoreleasing *)error
+{
+    NSParameterAssert(fileURL);
+    NSParameterAssert(name);
+    NSParameterAssert(fileName);
+    NSParameterAssert(mimeType);
+
+    if (![fileURL isFileURL]) {
+        NSDictionary *userInfo = @{NSLocalizedFailureReasonErrorKey: NSLocalizedStringFromTable(@&quot;Expected URL to be a file URL&quot;, @&quot;AFNetworking&quot;, nil)};
+        if (error) {
+            *error = [[NSError alloc] initWithDomain:AFURLRequestSerializationErrorDomain code:NSURLErrorBadURL userInfo:userInfo];
+        }
+        return NO;
+    }
+    ....
+  }
+</code></pre>
+
+<p>上面的最后会拼在一个NSInputSteam的子类AFMultipartBodyStream中，该类最后会进行流的最终拼接和上传。</p>
+
+<p>上传中可以设置上传的大小以及每个具体子资源写入的延迟，用于在3G和EDGE下选择使用。（文档这么讲，不懂，以后了解）</p>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876731909.html">AFN源码分析-开篇</a></h1>
+			<p class="meta"><time datetime="2016-03-10T23:01:13+08:00" 
+			pubdate data-updated="true">2016/3/10</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<h3 id="toc_0">开篇准备&amp;目录分析</h3>
+
+<p>学AFNetWorking2.0很有必要先看业界的这个<a href="http://nshipster.cn/afnetworking-2/">入门架构分析</a>，本部分基本就是对该文章的二次描述。</p>
+
+<h4 id="toc_1">旧版核心 --- NSURLConnection + NSOperation</h4>
+
+<p>AFN在2.0时代有两类网络加载方案，一套是传承下来的NSURLConnection+NSOperation方案。</p>
+
+<p>其中NSURLConnection是负责网络请求，异步地加载一个NSURLRequest对象，调用 delegate进行相关的回调处理；NSOperation是抽象类，模拟单个计算单元，有状态、优先级、依赖等功能，可以取消。AFNetworking将两者结合在一起，可以从头到尾监视请求的状态，并储存请求、响应、响应数据等中间状态。</p>
+
+<p>在整个设计中所有的网络请求通过一个AFNetWorking线程通过NSURLConnection发送，NSURLConnection会新启一个线程用CFSocket去做网络请求，成功后的数据会回调在AFNetWorking线程，再抛回到UI线程的。</p>
+
+<h4 id="toc_2">新版新增 --- NSURLSession</h4>
+
+<p>NSURLSession是iOS7时代开始一个用于网络请求、上传、下载的抽象组件。</p>
+
+<p>AFNetWorking中定义了一个AFURLSessionManager，以用于创建、管理基于 NSURLSessionConfiguration 对象的 NSURLSession 对象的类，也可以管理 session 的数据、下载/上传任务，实现 session 和其相关联的任务的 delegate 方法。</p>
+
+<h4 id="toc_3">目录分析：</h4>
+
+<ol>
+<li><code>UIKit文件夹</code>：对一些系统组件的扩展，最终的应用级的东西</li>
+<li><code>Security</code>：名如其意。文件夹只有一个类，主要用于关于HTTPS认证相关的工具类</li>
+<li><code>Reachability</code>：文件夹只有一个类，用于网络环境检查以及相关切换、广播等</li>
+<li><code>Serialization</code>：两个类，分别用于请求数据、HTTP请求header以及一些请求操作的封装、序列化操作，以及对response数据的反序列化。通过这两个类，将网络请求的in和out部分完全抽象出来，有利于进一步的定制化和扩展。</li>
+<li><code>NSURLConnection</code>：根据NSURLConnection组成的网络请求封装方案</li>
+<li><code>NSURLSession</code>：根据NSURLSession组成的网络请求封装方案</li>
+</ol>
+
+<h3 id="toc_4">预计研究顺序</h3>
+
+<p>秉承着个人一贯的研究框架的源码顺序：先若干基础工具类---&gt;再从调用类（一般叫manager）开始进行结构分支梳理---&gt;manager下面具体管理的各个分支类---&gt;具体应用层次的封装。根据上述过程，将源码研究分成几个步骤，由于NSURLConnection + NSOperation方案的研究价值更大一些，所以会先从这里入手：</p>
+
+<ol>
+<li>Security+Reachability文件夹，主要用于了解功能和熟悉API。</li>
+<li>AFHTTPRequestOperationManager，从manager入手，先了解比较泛的调用框架</li>
+<li>Serialization文件夹，基本和上面的manager结合了解大体结构和使用</li>
+<li>AFHTTPRequestOperation &amp; AFURLConnectionOperation，方案1的核心部分，这里结合了NSURLConnection和NSOperation，基本都是具体实现和最终使用中一些不太常用的小技巧，多线程学习一块比较推荐的部分</li>
+<li>NSURLSession文件夹，该了解方案2了，这里就比较孤立了，因为准备工作都在方案1研究中完成了</li>
+<li>UIKit文件夹，了解下都有什么现成的封装，都用了哪些比较优秀个特性。</li>
+</ol>
+
+<h3 id="toc_5">参考</h3>
+
+<ul>
+<li><a href="http://nshipster.cn/afnetworking-2/">AFNetworking 2.0</a></li>
+<li><a href="http://blog.cnbang.net/tech/2320/">AFNetworking2.0源码解析&lt;一&gt;</a></li>
+<li><a href="http://blog.cnbang.net/tech/2371/">AFNetworking2.0源码解析&lt;二&gt;</a></li>
+<li><a href="http://blog.cnbang.net/tech/2416/">AFNetworking2.0源码解析&lt;三&gt;</a></li>
+<li><a href="http://blog.cnbang.net/tech/2456/">AFNetworking2.0源码解析&lt;四&gt;</a></li>
+</ul>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876731044.html">《Effective Objective-C 2.0》读书笔记3---tips</a></h1>
+			<p class="meta"><time datetime="2016-03-03T23:01:13+08:00" 
+			pubdate data-updated="true">2016/3/3</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<blockquote>
+<p>读书笔记第三篇，主要就是学习总结书中的一些小知识点，这些知识点对于学习理解iOS系统有一定的帮助，不过若以后转向swift可能没有太多用处。<br/>
+此处文章先hold住，慢慢补充</p>
+</blockquote>
+
+
+
+		</div>
+
+		 
+		 <footer>
+      	<a rel="full-article" href="15378876731044.html#more">read more &rarr;</a>
+    	</footer>
+    	
+
+	</article>
+ 
+	<article>
+		 <header>
 		  	<h1 class="entry-title"><a href="15378876731075.html">《Effective Objective-C 2.0》读书笔记1---消息发送</a></h1>
 			<p class="meta"><time datetime="2016-03-02T23:01:13+08:00" 
 			pubdate data-updated="true">2016/3/2</time></p>
@@ -329,76 +490,6 @@ $(document).ready(function(event) {
     	
 
 	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876730711.html">在iOS下为他人App开发自动化操作插件，实现挂机操作（1）</a></h1>
-			<p class="meta"><time datetime="2015-11-15T23:01:13+08:00" 
-			pubdate data-updated="true">2015/11/15</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<pre><code class="language-text">手机上经常会有一些需要我们重复操作的事情，做这些事情为的仅仅是一些利益结果，而并不关心过程，例如游戏打怪升级的固定关口，微信抢红包，或者一些别的什么商品的抢购流程。这时候如果能够有自动化插件就是最美妙的了。
-</code></pre>
-
-
-
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876730711.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876731110.html">otto源码解析及探索修改</a></h1>
-			<p class="meta"><time datetime="2015-06-13T23:01:13+08:00" 
-			pubdate data-updated="true">2015/6/13</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<p>本人之前在微信做iOS开发时，曾使用微信自己开发的 ExtensionCenter 框架来做事件的订阅和发布，使得代码各个层级完美解耦，当时就希望能将该思想应用于 Android开发领域。<br/><br/>
-在进行现有项目调研的过程中，发现了Android上的开源工程EventBus 和 otto，这两个工程和我想实现的ExtensionCenter思想非常类似，在具体应用上使用了java特有的特性，但也有一些不足。本文将首先针对otto的架构设计和源码进行分析，之后介绍个人融合 微信iOS版中ExtensionCenter思想的修改版otto的框架。</p>
-
-
-
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876731110.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876730322.html">自己动手在xcode6下编写dylib动态库文件</a></h1>
-			<p class="meta"><time datetime="2015-03-02T23:01:13+08:00" 
-			pubdate data-updated="true">2015/3/2</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<p>WWDC2014上发布的Xcode6在iOS上开放了动态库，可以直接通过xcode6*版本进行构建自己的framework动态库，具体可以参见<a href="https://developer.apple.com/library/prerelease/ios/documentation/DeveloperTools/Conceptual/WhatsNewXcode/Articles/xcode_6_0.html">New Features in Xcode 6</a>至于具体能不能通过Appstore的审核，尚不清楚。</p>
-
-<p>本文着重描述如何生成打包dylib动态库文件，对于生成dynamic framework请参见blog <a href="http://foggry.com/blog/2014/06/12/wwdc2014zhi-iosshi-yong-dong-tai-ku/">WWDC2014之iOS使用动态库</a>。</p>
-
-
-
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876730322.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
   
 	<div class="pagination">
 	 <a class="prev" href="all_6.html">&larr; Older</a> 
@@ -421,7 +512,7 @@ $(document).ready(function(event) {
 	      </li>
 	  
 	      <li class="post">
-	        <a href="Anything.html"><strong>胡写&nbsp;(16)</strong></a>
+	        <a href="Anything.html"><strong>胡写&nbsp;(19)</strong></a>
 	        
 	        
 	        
@@ -442,6 +533,24 @@ $(document).ready(function(event) {
 	  
 	      
 		      <li class="post">
+		        <a href="15653372657357.html">在互联网公司，App开发需要怎么的项目管理？</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15611669279804.html">年中思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15615190654300.html">从数据看北京教育资源</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
 		        <a href="15613470463264.html">LiveData组件分享</a>
 		      </li>
 	     
@@ -449,24 +558,6 @@ $(document).ready(function(event) {
 	      
 		      <li class="post">
 		        <a href="15498584515544.html">写在19年新年上班第一天</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15446191606030.html">团队管理的感慨：不要让有共同特征的人走的太近</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15438122075796.html">头条测试内链</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15407404509104.html">Retro Meeting -> 团队的自我疗伤</a>
 		      </li>
 	     
 	  

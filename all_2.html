@@ -84,6 +84,98 @@ $(document).ready(function(event) {
 
 	<article>
 		 <header>
+		  	<h1 class="entry-title"><a href="15378876732390.html">简单处理不小心调用高版本API的问题</a></h1>
+			<p class="meta"><time datetime="2017-11-02T23:01:13+08:00" 
+			pubdate data-updated="true">2017/11/2</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<h1 id="toc_0">iOS API 版本检查</h1>
+
+<blockquote>
+<p>如果app兼容2个以上版本，那就需要注意低版本不能调用高版本API，为避免开发过程中不小心调用，必要的工具检查是必须的，下面介绍一种简单的方法处理。</p>
+</blockquote>
+
+<h3 id="toc_1">原理 ---- Clang</h3>
+
+<p>2015 年 clang 本身增加 API 版本检查功能，通过 -Wpartial-availability 这个 flag 可以打开，后续版本把 flag 变成了 -Wunguarded-availability。打开之后，clang 会把所有在低版本 iOS 上调用高版本 API 的情况用 warning 暴露出来，如下图所示。</p>
+
+<p><img src="https://lh3.googleusercontent.com/-zIv_o4Cf-0Q/WghOhF1OcuI/AAAAAAAAFiw/LJEY__p7Z_Ig2-FxfgJkOxxpJ_j9Q1c_QCHMYCw/I/15104938281303.jpg" alt=""/></p>
+
+<p><img src="https://lh3.googleusercontent.com/-klYKWIBPS4o/WghOUy4CjqI/AAAAAAAAFis/DqPbsG4IXXAJeg5PuoP-mDIFKQ1721PngCHMYCw/I/15104937777800.jpg" alt=""/></p>
+
+<h3 id="toc_2">具体实现</h3>
+
+<ul>
+<li>1、打开 <code>-Wunguarded-availability</code> 在调用高版本API时候报warning，为避免warning过多而忽视，用 <code>-Werror-unguarded-availability</code> 标记强制编译不过。</li>
+<li>2、针对pod需要在 podspec 中添加<code>compiler_flags</code>。</li>
+<li>3、如果代码本身安全（使用了 <code>respondsToSelector:</code> 保护），可以用 <code>#pragma clang diagnostic ignored</code> 的方式压掉警告，或者 <code>@available</code> 直接解决，如下图。</li>
+</ul>
+
+<p><img src="https://lh3.googleusercontent.com/-eGFR3umcjh8/WghPWGUvNoI/AAAAAAAAFi8/sndudmea1iIL0MiVnPwQvz3llHFqSCu4ACHMYCw/I/15104940402651.jpg" alt=""/></p>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876732425.html">关于Product Owner的思考</a></h1>
+			<p class="meta"><time datetime="2017-08-05T23:01:13+08:00" 
+			pubdate data-updated="true">2017/8/5</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<h2 id="toc_0">关于Product Owner的思考</h2>
+
+<blockquote>
+<p>Product Owner是Scrum里面的概念，上周末和able哥吃饭听到了这个概念，最近看了一些相关的文章，得到了一些收获。</p>
+</blockquote>
+
+<ol>
+<li>基本的能力，锻炼自己把技术问题抽象化，说出来让产品能理解的能力</li>
+<li>了解项目背景，通过充分沟通摸索出一个需求的核心目标，了解到哪些是可以妥协的点，哪些是坚持的点，这样在遇到技术困难的时候可以从技术投入成本和产品产出收益（注意，这里不是技术收益）权衡是否需要提出来，如果提出来是否准备好了妥善的解决方案，有方案意见被接纳的可能性会增大</li>
+<li>主动了解项目核心目标和关键性指标，了解策略和方案，了解 A/B 测试的分组策略和实验数据观察</li>
+<li>了解产品做事的方式，他们是至上往下做产品，目标导向，我们技术在看产品设计的时候是一个反向的过程，本来就是在一个信息和理解不对称的过程，我们看到的是结果，看不到过程（就像我们看别人代码是一样的过程），这个时候要通过文档，沟通等方式去增强理解。产品 sense 不是一下就能提升的，同理心很重要。</li>
+</ol>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15378876732459.html">多说换成网易云跟帖，评论都丢了</a></h1>
+			<p class="meta"><time datetime="2017-03-26T23:01:13+08:00" 
+			pubdate data-updated="true">2017/3/26</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<p>多说关闭了，换个替代品，网易出品，应该不会没事就倒闭吧。</p>
+
+<p>评论都导不出来了，不过也不是很多，以后评论从新开始吧。</p>
+
+<hr/>
+
+<h3 id="toc_0">10月更新</h3>
+
+<p>没想到网易云跟帖也关闭了，以后彻底换disqu了，图床也换google了，不理墙内用户了。</p>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
 		  	<h1 class="entry-title"><a href="15378876732493.html">再见 好奇心日报</a></h1>
 			<p class="meta"><time datetime="2017-03-24T23:01:13+08:00" 
 			pubdate data-updated="true">2017/3/24</time></p>
@@ -1009,99 +1101,6 @@ Android6.0引入了动态权限控制，7.0使用了<code>私有目录被限制�
 		
 
 	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876732737.html">闲聊计划</a></h1>
-			<p class="meta"><time datetime="2016-11-13T23:01:13+08:00" 
-			pubdate data-updated="true">2016/11/13</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<p>看了年初的计划，基本都没完成，基本都做了一些。</p>
-
-<p>以前会要求自己每周列一个计划给自己，下周看完成情况，也是基本上都完不成，但每周很充实，都学了很多。</p>
-
-<p>最近频繁往返京津、京冀，弄得自己好累，也耽误了个人的学习和提高，这样不好，缺少充实感和安全感，弄得这两天竟然怀疑人生。</p>
-
-<p>所以计划还是有用的，就如同三只青蛙的励志段子，起码它告诉我这段时间我最重要的那三只青蛙是什么，一有机会还是会去做的。</p>
-
-<p>这半年，看了几本书，写了几篇文章，学了一点新技术，也推动了组内的分享学习，挺好。<br/>
-涨了工资，买了房子，办了户口，还有些希望。<br/>
-也锻炼，也健身，也去咖啡馆研究过技术，不过没坚持，算是低谷吗？</p>
-
-<p>虽然没达标，但起码有些回忆。</p>
-
-<p>以后注意，还是要有点紧迫感。</p>
-
-<p>都是瞎扯，有个博客发泄，还挺好。</p>
-
-
-		</div>
-
-		
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876732771.html">QDaily - Android MVP改造</a></h1>
-			<p class="meta"><time datetime="2016-11-01T23:01:13+08:00" 
-			pubdate data-updated="true">2016/11/1</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<blockquote>
-<p>演进式框架设计。使得工程未来更有设计感和易于维护。<br/>
-上个月事情多，周末好多时间都周转于河北天津，而且有点懈怠，以后博客继续更新。</p>
-</blockquote>
-
-<p>整个改造思路来源于google的<a href="https://github.com/googlesamples/android-architecture">Android Architecture Blueprints</a>，google这个框架名字就非常霸气，<code>Android架构蓝图</code>，有了这个做参考，给了架构设计一个非常指导性的建议。<br/>
-
-
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876732771.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876730780.html">吐槽《盛世的蝼蚁》</a></h1>
-			<p class="meta"><time datetime="2016-09-12T23:01:13+08:00" 
-			pubdate data-updated="true">2016/9/12</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<hr/>
-
-<h2 id="toc_0">有人还没看过这篇文章，所以文章结尾附上原文</h2>
-
-<blockquote>
-<p>说是吐槽《盛世的蝼蚁》，其实是想表达下朋友圈中的这个病毒分享现象。</p>
-</blockquote>
-
-<p>每次出现这种群体性分享情况，我的第一印象都是“暴民政治”，这堆暴民！民众懂个屁啊，国家肯定是精英治理。</p>
-
-<p>国家的存在的主要目的是维护秩序，换句话说，维护大多数人的利益。维稳是国家的天然职责，而对穷人的福利却不是。国家和底层群众的基本关系就是，国家一定要避免底层群众揭竿而起。</p>
-
-<p>读过《中国是部金融史》，才知道什么才叫做天地不仁，以万物为刍狗。</p>
-
-
-
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876730780.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
   
 	<div class="pagination">
 	 <a class="prev" href="all_3.html">&larr; Older</a> 
@@ -1124,7 +1123,7 @@ Android6.0引入了动态权限控制，7.0使用了<code>私有目录被限制�
 	      </li>
 	  
 	      <li class="post">
-	        <a href="Anything.html"><strong>胡写&nbsp;(16)</strong></a>
+	        <a href="Anything.html"><strong>胡写&nbsp;(19)</strong></a>
 	        
 	        
 	        
@@ -1145,6 +1144,24 @@ Android6.0引入了动态权限控制，7.0使用了<code>私有目录被限制�
 	  
 	      
 		      <li class="post">
+		        <a href="15653372657357.html">在互联网公司，App开发需要怎么的项目管理？</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15611669279804.html">年中思考</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15615190654300.html">从数据看北京教育资源</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
 		        <a href="15613470463264.html">LiveData组件分享</a>
 		      </li>
 	     
@@ -1152,24 +1169,6 @@ Android6.0引入了动态权限控制，7.0使用了<code>私有目录被限制�
 	      
 		      <li class="post">
 		        <a href="15498584515544.html">写在19年新年上班第一天</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15446191606030.html">团队管理的感慨：不要让有共同特征的人走的太近</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15438122075796.html">头条测试内链</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15407404509104.html">Retro Meeting -> 团队的自我疗伤</a>
 		      </li>
 	     
 	  
