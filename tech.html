@@ -1,96 +1,121 @@
-
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
     
-  技术 - 野火🔥
+  技术 - Puck Chai
   
-
   </title>
-  <meta name="author" content="">
-  <meta name="description" content="生命如野火，骄傲而顽强">
-
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   
-  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
-  <script src="asset/js/modernizr-2.0.js"></script>
-  <script src="asset/js/jquery.min.js"></script>
+  
+  <link href="atom.xml" rel="alternate" title="Puck Chai" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/foundation.min.css" />
+    <link rel="stylesheet" href="asset/css/docs.css" />
+    <script src="asset/js/vendor/modernizr.js"></script>
+    <script src="asset/js/vendor/jquery.js"></script>
   <script src="asset/highlightjs/highlight.pack.js"></script>
-  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="asset/highlightjs/styles/github.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script>hljs.initHighlightingOnLoad();</script>
-
-  <style type="text/css">
-  .cat-children-p{ padding: 6px 0px;}
-  .hljs{background: none;}
-  </style>
-  <script type="text/javascript">
-  var isAddSildbar = true;
-  </script>
-  <script src="asset/js/octopress.js" type="text/javascript"></script>
-</head>
 <script type="text/javascript">
-//链接新开窗口
-function addBlankTargetForLinks () {
-  $('a[href^="http"]').each(function(){
-      $(this).attr('target', '_blank');
-  });
-}
-$(document).ready(function(event) {
-  addBlankTargetForLinks();
-});
+  function before_search(){
+    var searchVal = 'site:www.chaisong.xyz ' + document.getElementById('search_input').value;
+    document.getElementById('search_q').value = searchVal;
+    return true;
+  }
 </script>
-<body   >
-  <header role="banner"><hgroup>
-  <h1><a href="index.html">野火🔥</a></h1>
-  
-    <h2>生命如野火，骄傲而顽强</h2>
-  
-</hgroup>
+  </head>
+  <body class="antialiased hide-extras">
+    
+    <div class="marketing off-canvas-wrap" data-offcanvas>
+      <div class="inner-wrap">
 
-</header>
-  <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="http://google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
+
+<nav class="top-bar docs-bar hide-for-small" data-topbar>
+
+
+  <section class="top-bar-section">
+  <div class="row">
+      <div style="position: relative;width:100%;"><div style="position: absolute; width:100%;">
+        <ul id="main-menu" class="left">
+        
+        <li id=""><a target="_self" href="index.html">Home</a></li>
+        
+        <li id=""><a target="_self" href="archives.html">Archives</a></li>
+        
+        <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+        
+        </ul>
+
+        <ul class="right" id="search-wrap">
+          <li>
+<form target="_blank" onsubmit="return before_search();" action="https://google.com/search" method="get">
+    <input type="hidden" id="search_q" name="q" value="" />
+    <input tabindex="1" type="search" id="search_input"  placeholder="Search"/>
 </form>
-  
-<ul class="main-navigation">
-
-  <li id=""><a target="_self" href="index.html">Home</a></li>
-
-  <li id=""><a target="_self" href="archives.html">Archives</a></li>
-
-  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
-
-</ul>
+</li>
+          </ul>
+      </div></div>
+  </div>
+  </section>
 
 </nav>
-  <div id="main">
-    <div id="content"> 
-<div class="blog-index">
 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15613470463264.html">LiveData组件分享</a></h1>
-			<p class="meta"><time datetime="2019-03-24T11:30:46+08:00" 
-			pubdate data-updated="true">2019/3/24</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<p><strong>八卦暖场环节</strong></p>
+        <nav class="tab-bar show-for-small">
+  <a href="javascript:void(0)" class="left-off-canvas-toggle menu-icon">
+    <span> &nbsp; Puck Chai</span>
+  </a>
+</nav>
+
+<aside class="left-off-canvas-menu">
+      <ul class="off-canvas-list">
+        
+        <li><a target="_self" href="index.html">Home</a></li>
+        
+        <li><a target="_self" href="archives.html">Archives</a></li>
+        
+        <li><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+        
+
+    <li><label>Categories</label></li>
+
+        
+            <li><a href="tech.html">技术</a></li>
+        
+            <li><a href="Anything.html">胡写</a></li>
+        
+            <li><a href="QDaily.html">QDaily</a></li>
+         
+
+      </ul>
+    </aside>
+
+<a class="exit-off-canvas" href="#"></a>
+
+
+        <section id="main-content" role="main" class="scroll-container">
+        
+       
+
+ <script type="text/javascript">
+	$(function(){
+		$('#menu_item_index').addClass('is_active');
+	});
+</script>
+<div class="row">
+	<div class="large-8 medium-8 columns">
+		<div class="markdown-body home-categories">
+		
+			<div class="article">
+                <a class="clearlink" href="15613470463264.html">
+                
+                  <h1>LiveData组件分享</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p><strong>八卦暖场环节</strong></p>
 
 <h1 id="toc_0">引：从Google AAC 和 MVVM开始说起</h1>
 
@@ -130,26 +155,40 @@ $(document).ready(function(event) {
 </blockquote>
 
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15613470463264.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2019/3/24</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15613470463264.html#disqus_thread">comments</a>
+                      
 
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15613470463264.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15379393489219.html">【从历年weak看iOS面试】</a></h1>
-			<p class="meta"><time datetime="2018-09-26T13:22:28+08:00" 
-			pubdate data-updated="true">2018/9/26</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<ul>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15379393489219.html">
+                
+                  <h1>【从历年weak看iOS面试】</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<ul>
 <li><p>2013年<br/>
 面试官：代理用weak还是strong?<br/>
 我 ：weak 。<br/>
@@ -182,22 +221,40 @@ $(document).ready(function(event) {
 面试官：等写完后，面试官慢悠悠的说，小伙子不错，我考虑考虑，你先回去吧</p></li>
 </ul>
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2018/9/26</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15379393489219.html#disqus_thread">comments</a>
+                      
 
-		</div>
-
-		
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876730248.html">面试常见：iOS Category</a></h1>
-			<p class="meta"><time datetime="2018-08-09T23:01:13+08:00" 
-			pubdate data-updated="true">2018/8/9</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<hr/>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876730248.html">
+                
+                  <h1>面试常见：iOS Category</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<hr/>
 
 <blockquote>
 <p>面试非常多候选人，涉及到runtime相关知识Category是一个常见考察点，毕竟这是应用最多的runtime场景。<br/>
@@ -205,26 +262,40 @@ $(document).ready(function(event) {
 </blockquote>
 
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15378876730248.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2018/8/9</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876730248.html#disqus_thread">comments</a>
+                      
 
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876730248.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876732043.html">-[UIImage imageNamed:]方法导致的卡顿优化</a></h1>
-			<p class="meta"><time datetime="2018-05-04T23:01:13+08:00" 
-			pubdate data-updated="true">2018/5/4</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<h3 id="toc_0">引子</h3>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876732043.html">
+                
+                  <h1>-[UIImage imageNamed:]方法导致的卡顿优化</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h3 id="toc_0">引子</h3>
 
 <p>这两天追查app卡顿问题，打开time profiler查看方法耗时，惊奇发现<code>-[UIImage imageNamed:]</code>占用CPU时间很长：</p>
 
@@ -261,22 +332,40 @@ FPS优化一定要找到瓶颈，别贸然优化 --&gt; 合理使用工具<br/>
 IO操作很恐怖，哪怕只是很轻量级的处理<br/>
 有必要监控一下NSFileManager的IO操作情况</p>
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2018/5/4</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876732043.html#disqus_thread">comments</a>
+                      
 
-		</div>
-
-		
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876732116.html">【IGListKit】学习与分析2</a></h1>
-			<p class="meta"><time datetime="2018-04-16T23:01:13+08:00" 
-			pubdate data-updated="true">2018/4/16</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<blockquote>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876732116.html">
+                
+                  <h1>【IGListKit】学习与分析2</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<blockquote>
 <p>源于4月16日在小组内的分享<br/>
 图床为Google相册，看不了自己准备梯子。</p>
 </blockquote>
@@ -286,26 +375,40 @@ IO操作很恐怖，哪怕只是很轻量级的处理<br/>
 <p><img src="https://lh3.googleusercontent.com/-gZm3qfRkmlk/WtrkF9Zvm7I/AAAAAAAAHFc/70Ncz1Z5QwUSfJP01lW2RQ3OFSRazLUwgCHMYCw/I/IGList" alt="IGList学习2.002"/></p>
 
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15378876732116.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2018/4/16</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876732116.html#disqus_thread">comments</a>
+                      
 
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876732116.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876732151.html">【IGListKit】ListDiff 学习与分析1</a></h1>
-			<p class="meta"><time datetime="2018-04-02T23:01:13+08:00" 
-			pubdate data-updated="true">2018/4/2</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<blockquote>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876732151.html">
+                
+                  <h1>【IGListKit】ListDiff 学习与分析1</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<blockquote>
 <p>源于4月2日在小组内的分享。<br/>
 图床为Google相册，看不了自己准备梯子。</p>
 </blockquote>
@@ -315,26 +418,40 @@ IO操作很恐怖，哪怕只是很轻量级的处理<br/>
 <p><img src="https://lh3.googleusercontent.com/-KfR_MU43kyc/WtrjMBGv0XI/AAAAAAAAHE0/aGRivjQBYMgz9LFzDQtIDz4o9QKDwfbSQCHMYCw/I/ListDiff%2B" alt="ListDiff 学习与分析.002"/></p>
 
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15378876732151.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2018/4/2</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876732151.html#disqus_thread">comments</a>
+                      
 
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876732151.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876732321.html">UIResponder 响应链 拾遗</a></h1>
-			<p class="meta"><time datetime="2017-12-21T23:01:13+08:00" 
-			pubdate data-updated="true">2017/12/21</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<h2 id="toc_0">背景</h2>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876732321.html">
+                
+                  <h1>UIResponder 响应链 拾遗</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h2 id="toc_0">背景</h2>
 
 <p>基于ResponderChain可以做一些事件传递，将所有view的操作最终都送回到ViewController来处理，以实现view的功能单一性。如下：</p>
 
@@ -364,22 +481,40 @@ IO操作很恐怖，哪怕只是很轻量级的处理<br/>
 
 <p>childVC.view.nextResponder == childVC，childVC.nextResponder == childVC.view.superView，相当于在subView&amp;superView的响应联调中，插入了一个VC，与window和VC.view的关系是一致的。</p>
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2017/12/21</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876732321.html#disqus_thread">comments</a>
+                      
 
-		</div>
-
-		
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876732390.html">简单处理不小心调用高版本API的问题</a></h1>
-			<p class="meta"><time datetime="2017-11-02T23:01:13+08:00" 
-			pubdate data-updated="true">2017/11/2</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<h1 id="toc_0">iOS API 版本检查</h1>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876732390.html">
+                
+                  <h1>简单处理不小心调用高版本API的问题</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h1 id="toc_0">iOS API 版本检查</h1>
 
 <blockquote>
 <p>如果app兼容2个以上版本，那就需要注意低版本不能调用高版本API，为避免开发过程中不小心调用，必要的工具检查是必须的，下面介绍一种简单的方法处理。</p>
@@ -403,22 +538,40 @@ IO操作很恐怖，哪怕只是很轻量级的处理<br/>
 
 <p><img src="https://lh3.googleusercontent.com/-eGFR3umcjh8/WghPWGUvNoI/AAAAAAAAFi8/sndudmea1iIL0MiVnPwQvz3llHFqSCu4ACHMYCw/I/15104940402651.jpg" alt=""/></p>
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2017/11/2</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876732390.html#disqus_thread">comments</a>
+                      
 
-		</div>
-
-		
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876732528.html">【iOS】从同步锁到多线程</a></h1>
-			<p class="meta"><time datetime="2017-02-06T23:01:13+08:00" 
-			pubdate data-updated="true">2017/2/6</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<blockquote>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876732528.html">
+                
+                  <h1>【iOS】从同步锁到多线程</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<blockquote>
 <p>年前年后，忙的事情太多，没有继续更新博客，打算近期总结下过往。</p>
 
 <p>如果每天只是做需求，写UI，可能不需要知道太多多线程的知识。也许简单的GCD会使用，再加几个开源框架，大多数功能都能实现。但如果你想写个框架，开源出来，那多线程就是一个永远绕不开的话题。除非你是一个前端开发者，否则无论在公司里，还是供自己娱乐，如果你想把技术走向深入，那多线程都是必须要明白的事。</p>
@@ -861,22 +1014,40 @@ NSOperationQueue类的实例。操作队列管理操作对象的执行。</li>
 进程里面的一个执行过程流。每个线程都有它自己的栈空间，但除此之外同一进程的其他线程共享内存。</li>
 </ul>
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2017/2/6</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876732528.html#disqus_thread">comments</a>
+                      
 
-		</div>
-
-		
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876732563.html">JSPatch的一些使用注意点</a></h1>
-			<p class="meta"><time datetime="2016-11-30T23:01:13+08:00" 
-			pubdate data-updated="true">2016/11/30</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<p>JSPatch代码量不大，满满的都是神机妙算，到处都是黑科技。</p>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876732563.html">
+                
+                  <h1>JSPatch的一些使用注意点</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p>JSPatch代码量不大，满满的都是神机妙算，到处都是黑科技。</p>
 
 <h2 id="toc_0">主要的坑 -- UIWebView相关</h2>
 
@@ -915,123 +1086,184 @@ UIKit   -[UIWebView _webViewCommonInitWithWebView:scalesPageToFit:] + 244
 UIKit   -[UIWebView initWithFrame:] + 76
 </code></pre>
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2016/11/30</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				  
+          					    <span class="posted-in"><a href='Anything.html'>胡写</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876732563.html#disqus_thread">comments</a>
+                      
 
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+              
+
+
+			<div class="row">
+			  <div class="large-6 columns">
+			  <p class="text-left" style="padding-top:25px;">
+			   
+			  </p>
+			  </div>
+			  <div class="large-6 columns">
+			<p class="text-right" style="padding-top:25px;">
+			 <a href="tech_1.html">&raquo; Next Page</a> 
+			</p>
+			  </div>
+			</div>
 		</div>
+	</div><!-- large 8 -->
 
-		
+ <div class="large-4 medium-4 columns">
+  <div class="hide-for-small">
+    <div id="sidebar" class="sidebar">
+          <div id="site-info" class="site-info">
+            
+                <h1>Puck Chai</h1>
+                <div class="site-des">执行合一</div>
+                <div class="social">
 
-	</article>
-  
-	<div class="pagination">
-	 <a class="prev" href="tech_1.html">&larr; Older</a> 
-<a href="archives.html">Blog Archives</a>
-	 
-	    
-	</div>
+
+
+
+
+
+
+
+
+
+
+  <a target="_blank" class="rss" href="atom.xml" title="RSS">RSS</a>
+                
+              	 </div>
+          	</div>
+
+             
+
+              <div id="site-categories" class="side-item ">
+                <div class="side-header">
+                  <h2>Categories</h2>
+                </div>
+                <div class="side-content">
+
+      	<p class="cat-list">
+        
+            <a href="tech.html"><strong>技术</strong></a>
+        
+            <a href="Anything.html"><strong>胡写</strong></a>
+        
+            <a href="QDaily.html"><strong>QDaily</strong></a>
+         
+        </p>
+
+
+                </div>
+              </div>
+
+              <div id="site-categories" class="side-item">
+                <div class="side-header">
+                  <h2>Recent Posts</h2>
+                </div>
+                <div class="side-content">
+                <ul class="posts-list">
+	      
+		      
+			      <li class="post">
+			        <a href="15653372657357.html">在互联网公司，App开发需要怎么的项目管理？</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15611669279804.html">年中思考</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15615190654300.html">从数据看北京教育资源</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15613470463264.html">LiveData组件分享</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15498584515544.html">写在19年新年上班第一天</a>
+			      </li>
+		     
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		   
+		  		</ul>
+                </div>
+              </div>
+        </div><!-- sidebar -->
+      </div><!-- hide for small -->
+</div><!-- large 4 -->
+
+</div><!-- row -->
+
+ <div class="page-bottom clearfix">
+  <div class="row">
+   <p class="copyright">Copyright &copy; 2015
+Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
+  </div>
 </div>
- <aside class="sidebar"> 
 
-	<section>
-	  <h1>Categories</h1>
-	  <ul id="recent_posts">
-	  
-	      <li class="post">
-	        <a href="tech.html"><strong>技术&nbsp;(59)</strong></a>
-	        
-	        
-	        
-	      </li>
-	  
-	      <li class="post">
-	        <a href="Anything.html"><strong>胡写&nbsp;(19)</strong></a>
-	        
-	        
-	        
-	      </li>
-	  
-	      <li class="post">
-	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
-	        
-	        
-	        
-	      </li>
-	   
-	  </ul>
-	</section>
-	<section>
-	  <h1>Recent Posts</h1>
-	  <ul id="recent_posts">
-	  
-	      
-		      <li class="post">
-		        <a href="15653372657357.html">在互联网公司，App开发需要怎么的项目管理？</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15611669279804.html">年中思考</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15615190654300.html">从数据看北京教育资源</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15613470463264.html">LiveData组件分享</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15498584515544.html">写在19年新年上班第一天</a>
-		      </li>
-	     
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	   
-	  </ul>
-	</section>
-	
-</aside> </div></div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2014 -  -
-  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
-</footer>
+        </section>
+      </div>
+    </div>
 
 
 <script type="text/javascript">
@@ -1057,8 +1289,26 @@ s.src = '//' + disqus_shortname + '.disqus.com/count.js';
   
     
 
+    <script src="asset/js/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+      function fixSidebarHeight(){
+        var w1 = $('.markdown-body').height();
+          var w2 = $('#sidebar').height();
+          if (w1 > w2) { $('#sidebar').height(w1); };
+      }
+      $(function(){
+        fixSidebarHeight();
+      })
+      $(window).load(function(){
+          fixSidebarHeight();
+      });
+     
+    </script>
+
+    
 
 
 
-</body>
+  </body>
 </html>

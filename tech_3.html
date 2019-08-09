@@ -1,118 +1,157 @@
-
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
     
-  技术 - 野火🔥
+  技术 - Puck Chai
   
-
   </title>
-  <meta name="author" content="">
-  <meta name="description" content="生命如野火，骄傲而顽强">
-
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   
-  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
-  <script src="asset/js/modernizr-2.0.js"></script>
-  <script src="asset/js/jquery.min.js"></script>
+  
+  <link href="atom.xml" rel="alternate" title="Puck Chai" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/foundation.min.css" />
+    <link rel="stylesheet" href="asset/css/docs.css" />
+    <script src="asset/js/vendor/modernizr.js"></script>
+    <script src="asset/js/vendor/jquery.js"></script>
   <script src="asset/highlightjs/highlight.pack.js"></script>
-  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="asset/highlightjs/styles/github.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script>hljs.initHighlightingOnLoad();</script>
-
-  <style type="text/css">
-  .cat-children-p{ padding: 6px 0px;}
-  .hljs{background: none;}
-  </style>
-  <script type="text/javascript">
-  var isAddSildbar = true;
-  </script>
-  <script src="asset/js/octopress.js" type="text/javascript"></script>
-</head>
 <script type="text/javascript">
-//链接新开窗口
-function addBlankTargetForLinks () {
-  $('a[href^="http"]').each(function(){
-      $(this).attr('target', '_blank');
-  });
-}
-$(document).ready(function(event) {
-  addBlankTargetForLinks();
-});
+  function before_search(){
+    var searchVal = 'site:www.chaisong.xyz ' + document.getElementById('search_input').value;
+    document.getElementById('search_q').value = searchVal;
+    return true;
+  }
 </script>
-<body   >
-  <header role="banner"><hgroup>
-  <h1><a href="index.html">野火🔥</a></h1>
-  
-    <h2>生命如野火，骄傲而顽强</h2>
-  
-</hgroup>
+  </head>
+  <body class="antialiased hide-extras">
+    
+    <div class="marketing off-canvas-wrap" data-offcanvas>
+      <div class="inner-wrap">
 
-</header>
-  <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="http://google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
+
+<nav class="top-bar docs-bar hide-for-small" data-topbar>
+
+
+  <section class="top-bar-section">
+  <div class="row">
+      <div style="position: relative;width:100%;"><div style="position: absolute; width:100%;">
+        <ul id="main-menu" class="left">
+        
+        <li id=""><a target="_self" href="index.html">Home</a></li>
+        
+        <li id=""><a target="_self" href="archives.html">Archives</a></li>
+        
+        <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+        
+        </ul>
+
+        <ul class="right" id="search-wrap">
+          <li>
+<form target="_blank" onsubmit="return before_search();" action="https://google.com/search" method="get">
+    <input type="hidden" id="search_q" name="q" value="" />
+    <input tabindex="1" type="search" id="search_input"  placeholder="Search"/>
 </form>
-  
-<ul class="main-navigation">
-
-  <li id=""><a target="_self" href="index.html">Home</a></li>
-
-  <li id=""><a target="_self" href="archives.html">Archives</a></li>
-
-  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
-
-</ul>
+</li>
+          </ul>
+      </div></div>
+  </div>
+  </section>
 
 </nav>
-  <div id="main">
-    <div id="content"> 
-<div class="blog-index">
 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876730358.html">自定义Android开源库CSKit介绍</a></h1>
-			<p class="meta"><time datetime="2016-04-02T23:01:13+08:00" 
-			pubdate data-updated="true">2016/4/2</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<p>整个项目框架包含单例管理(MManagerCenter)，网络请求及文件下载(VolleyPlus)和事件总线管理(MMBus)的一个集合框架。还处于检验阶段，使用方法（Android studio）：</p>
+        <nav class="tab-bar show-for-small">
+  <a href="javascript:void(0)" class="left-off-canvas-toggle menu-icon">
+    <span> &nbsp; Puck Chai</span>
+  </a>
+</nav>
+
+<aside class="left-off-canvas-menu">
+      <ul class="off-canvas-list">
+        
+        <li><a target="_self" href="index.html">Home</a></li>
+        
+        <li><a target="_self" href="archives.html">Archives</a></li>
+        
+        <li><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+        
+
+    <li><label>Categories</label></li>
+
+        
+            <li><a href="tech.html">技术</a></li>
+        
+            <li><a href="Anything.html">胡写</a></li>
+        
+            <li><a href="QDaily.html">QDaily</a></li>
+         
+
+      </ul>
+    </aside>
+
+<a class="exit-off-canvas" href="#"></a>
 
 
+        <section id="main-content" role="main" class="scroll-container">
+        
+       
 
-		</div>
+ <script type="text/javascript">
+	$(function(){
+		$('#menu_item_index').addClass('is_active');
+	});
+</script>
+<div class="row">
+	<div class="large-8 medium-8 columns">
+		<div class="markdown-body home-categories">
+		
+			<div class="article">
+                <a class="clearlink" href="15378876730358.html">
+                
+                  <h1>自定义Android开源库CSKit介绍</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p>整个项目框架包含单例管理(MManagerCenter)，网络请求及文件下载(VolleyPlus)和事件总线管理(MMBus)的一个集合框架。还处于检验阶段，使用方法（Android studio）：</p>
 
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876730358.html#more">read more &rarr;</a>
-    	</footer>
-    	
 
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876732010.html">AFN源码分析-AFHTTPConnectionOperation</a></h1>
-			<p class="meta"><time datetime="2016-03-13T23:01:13+08:00" 
-			pubdate data-updated="true">2016/3/13</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<blockquote>
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15378876730358.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2016/4/2</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876730358.html#disqus_thread">comments</a>
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876732010.html">
+                
+                  <h1>AFN源码分析-AFHTTPConnectionOperation</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<blockquote>
 <p>AFHTTPConnectionOperation是AFNetWorking在使用NSURLConnection进行网络请求和下载的基本任务单元，其继承自AFURLConnectionOperation，仅对其进行了一些不太复杂的封装。在整个框架中，AFN并没有直接使用过AFURLConnectionOperation，均为面向AFHTTPConnectionOperation的一些开发工作，但作为抽象更好的Operation，需要进行优先的分析与学习。<br/>
 <!--more--></p>
 
@@ -204,22 +243,40 @@ for (AFURLConnectionOperation *operation in operations) {
 
 <p>作为子类，基本的功能就是对基类的一些封装和扩展</p>
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2016/3/13</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876732010.html#disqus_thread">comments</a>
+                      
 
-		</div>
-
-		
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876731943.html">AFN源码分析-AFURLRequestSerialization</a></h1>
-			<p class="meta"><time datetime="2016-03-12T23:01:13+08:00" 
-			pubdate data-updated="true">2016/3/12</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<h3 id="toc_0">AFURLRequestSerialization</h3>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876731943.html">
+                
+                  <h1>AFN源码分析-AFURLRequestSerialization</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h3 id="toc_0">AFURLRequestSerialization</h3>
 
 <p>该Class为用于对<code>请求</code>参数进行拼接、http body组合以及header配置。</p>
 
@@ -273,22 +330,40 @@ for (AFURLConnectionOperation *operation in operations) {
 
 <p>上传中可以设置上传的大小以及每个具体子资源写入的延迟，用于在3G和EDGE下选择使用。（文档这么讲，不懂，以后了解）</p>
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2016/3/12</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876731943.html#disqus_thread">comments</a>
+                      
 
-		</div>
-
-		
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876731909.html">AFN源码分析-开篇</a></h1>
-			<p class="meta"><time datetime="2016-03-10T23:01:13+08:00" 
-			pubdate data-updated="true">2016/3/10</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<h3 id="toc_0">开篇准备&amp;目录分析</h3>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876731909.html">
+                
+                  <h1>AFN源码分析-开篇</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h3 id="toc_0">开篇准备&amp;目录分析</h3>
 
 <p>学AFNetWorking2.0很有必要先看业界的这个<a href="http://nshipster.cn/afnetworking-2/">入门架构分析</a>，本部分基本就是对该文章的二次描述。</p>
 
@@ -340,73 +415,119 @@ for (AFURLConnectionOperation *operation in operations) {
 <li><a href="http://blog.cnbang.net/tech/2456/">AFNetworking2.0源码解析&lt;四&gt;</a></li>
 </ul>
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2016/3/10</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876731909.html#disqus_thread">comments</a>
+                      
 
-		</div>
-
-		
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876731044.html">《Effective Objective-C 2.0》读书笔记3---tips</a></h1>
-			<p class="meta"><time datetime="2016-03-03T23:01:13+08:00" 
-			pubdate data-updated="true">2016/3/3</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<blockquote>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876731044.html">
+                
+                  <h1>《Effective Objective-C 2.0》读书笔记3---tips</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<blockquote>
 <p>读书笔记第三篇，主要就是学习总结书中的一些小知识点，这些知识点对于学习理解iOS系统有一定的帮助，不过若以后转向swift可能没有太多用处。<br/>
 此处文章先hold住，慢慢补充</p>
 </blockquote>
 
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15378876731044.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2016/3/3</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876731044.html#disqus_thread">comments</a>
+                      
 
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876731044.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876731075.html">《Effective Objective-C 2.0》读书笔记1---消息发送</a></h1>
-			<p class="meta"><time datetime="2016-03-02T23:01:13+08:00" 
-			pubdate data-updated="true">2016/3/2</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<blockquote>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876731075.html">
+                
+                  <h1>《Effective Objective-C 2.0》读书笔记1---消息发送</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<blockquote>
 <p>objc在函数调用采用的是发送消息的方式，使得调用方法在编译器不能确定，需要在运行时动态绑定，也就是所谓的runtime特性，可以这么说，objc的对象结构和其消息发送机制，决定了它的runtime特性。</p>
 </blockquote>
 
 <h2 id="toc_0">一、Objective-C对象结构体</h2>
 
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15378876731075.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2016/3/2</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876731075.html#disqus_thread">comments</a>
+                      
 
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876731075.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876731602.html">SDWebImage源码研究与学习</a></h1>
-			<p class="meta"><time datetime="2016-01-05T23:01:13+08:00" 
-			pubdate data-updated="true">2016/1/5</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<blockquote>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876731602.html">
+                
+                  <h1>SDWebImage源码研究与学习</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<blockquote>
 <p>之前被问到有没有看过AFNetworking的源码，有没有看过SDWebImage的源码，我都非常尴尬的表示没有，非常受挫，所以决定着手看一下，证明自己其实看这个一点也不吃力，只是之前太忙没做而已。</p>
 </blockquote>
 
@@ -421,200 +542,299 @@ for (AFURLConnectionOperation *operation in operations) {
 <h3 id="toc_3">2、SDWebImageCompact</h3>
 
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15378876731602.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2016/1/5</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876731602.html#disqus_thread">comments</a>
+                      
 
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876731602.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876730676.html">好奇心日报iPad版的分屏适配实现</a></h1>
-			<p class="meta"><time datetime="2015-11-23T23:01:13+08:00" 
-			pubdate data-updated="true">2015/11/23</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<blockquote>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876730676.html">
+                
+                  <h1>好奇心日报iPad版的分屏适配实现</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<blockquote>
 <p>好奇心日报是一个媒体阅读类app，因此不可能放弃iPad这个平台，恰逢iPad pro上线，我们决定开发iPad版本并直接适配iOS9的新特性----分屏。</p>
 </blockquote>
 
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15378876730676.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2015/11/23</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				  
+          					    <span class="posted-in"><a href='QDaily.html'>QDaily</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876730676.html#disqus_thread">comments</a>
+                      
 
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876730676.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876731282.html">iOS hook实践（2）---入门插件实现</a></h1>
-			<p class="meta"><time datetime="2015-11-20T23:01:13+08:00" 
-			pubdate data-updated="true">2015/11/20</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<blockquote>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876731282.html">
+                
+                  <h1>iOS hook实践（2）---入门插件实现</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<blockquote>
 <p>本文主要介绍了一个针对第三方app的自动操作插件的开发，多是入门级的基础知识，有利于获取兴趣，并且这个插件也确实解决了我的实际问题。<br/>
 本文也是文章<a href="!http://huoya.blogspot.com/2015/11/iosapp1_3.html">在iOS下为他人App开发自动化操作插件，实现挂机操作（1）</a>后续的第二篇，着重介绍如可使用简单的逆向工程知识在实现一个越狱插件方便我们自己的日常。</p>
 </blockquote>
 
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15378876731282.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2015/11/20</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876731282.html#disqus_thread">comments</a>
+                      
 
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876731282.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876731248.html">iOS数据的磁盘缓存实现</a></h1>
-			<p class="meta"><time datetime="2015-11-19T23:01:13+08:00" 
-			pubdate data-updated="true">2015/11/19</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<blockquote>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876731248.html">
+                
+                  <h1>iOS数据的磁盘缓存实现</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<blockquote>
 <p>虽然第三方框架AFNetworking SDWebImage都有自己的内存缓存和数据缓存，但有时候app内部有一些数据（json、image等）可能有必要单独缓存进行管理，本文就根据最近的需求设计了一个比较简单磁盘缓存工具。</p>
 </blockquote>
 
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15378876731248.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2015/11/19</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876731248.html#disqus_thread">comments</a>
+                      
 
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+              
+
+
+			<div class="row">
+			  <div class="large-6 columns">
+			  <p class="text-left" style="padding-top:25px;">
+			   <a href="tech_2.html">&laquo; Prev Page</a>  
+			  </p>
+			  </div>
+			  <div class="large-6 columns">
+			<p class="text-right" style="padding-top:25px;">
+			 <a href="tech_4.html">&raquo; Next Page</a> 
+			</p>
+			  </div>
+			</div>
 		</div>
+	</div><!-- large 8 -->
 
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876731248.html#more">read more &rarr;</a>
-    	</footer>
-    	
+ <div class="large-4 medium-4 columns">
+  <div class="hide-for-small">
+    <div id="sidebar" class="sidebar">
+          <div id="site-info" class="site-info">
+            
+                <h1>Puck Chai</h1>
+                <div class="site-des">执行合一</div>
+                <div class="social">
 
-	</article>
-  
-	<div class="pagination">
-	 <a class="prev" href="tech_4.html">&larr; Older</a> 
-<a href="archives.html">Blog Archives</a>
-	 <a class="next" href="tech_2.html">Newer &rarr;</a>  
-	    
-	</div>
+
+
+
+
+
+
+
+
+
+
+  <a target="_blank" class="rss" href="atom.xml" title="RSS">RSS</a>
+                
+              	 </div>
+          	</div>
+
+             
+
+              <div id="site-categories" class="side-item ">
+                <div class="side-header">
+                  <h2>Categories</h2>
+                </div>
+                <div class="side-content">
+
+      	<p class="cat-list">
+        
+            <a href="tech.html"><strong>技术</strong></a>
+        
+            <a href="Anything.html"><strong>胡写</strong></a>
+        
+            <a href="QDaily.html"><strong>QDaily</strong></a>
+         
+        </p>
+
+
+                </div>
+              </div>
+
+              <div id="site-categories" class="side-item">
+                <div class="side-header">
+                  <h2>Recent Posts</h2>
+                </div>
+                <div class="side-content">
+                <ul class="posts-list">
+	      
+		      
+			      <li class="post">
+			        <a href="15653372657357.html">在互联网公司，App开发需要怎么的项目管理？</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15611669279804.html">年中思考</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15615190654300.html">从数据看北京教育资源</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15613470463264.html">LiveData组件分享</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15498584515544.html">写在19年新年上班第一天</a>
+			      </li>
+		     
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		   
+		  		</ul>
+                </div>
+              </div>
+        </div><!-- sidebar -->
+      </div><!-- hide for small -->
+</div><!-- large 4 -->
+
+</div><!-- row -->
+
+ <div class="page-bottom clearfix">
+  <div class="row">
+   <p class="copyright">Copyright &copy; 2015
+Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
+  </div>
 </div>
- <aside class="sidebar"> 
 
-	<section>
-	  <h1>Categories</h1>
-	  <ul id="recent_posts">
-	  
-	      <li class="post">
-	        <a href="tech.html"><strong>技术&nbsp;(59)</strong></a>
-	        
-	        
-	        
-	      </li>
-	  
-	      <li class="post">
-	        <a href="Anything.html"><strong>胡写&nbsp;(19)</strong></a>
-	        
-	        
-	        
-	      </li>
-	  
-	      <li class="post">
-	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
-	        
-	        
-	        
-	      </li>
-	   
-	  </ul>
-	</section>
-	<section>
-	  <h1>Recent Posts</h1>
-	  <ul id="recent_posts">
-	  
-	      
-		      <li class="post">
-		        <a href="15653372657357.html">在互联网公司，App开发需要怎么的项目管理？</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15611669279804.html">年中思考</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15615190654300.html">从数据看北京教育资源</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15613470463264.html">LiveData组件分享</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15498584515544.html">写在19年新年上班第一天</a>
-		      </li>
-	     
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	   
-	  </ul>
-	</section>
-	
-</aside> </div></div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2014 -  -
-  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
-</footer>
+        </section>
+      </div>
+    </div>
 
 
 <script type="text/javascript">
@@ -640,8 +860,26 @@ s.src = '//' + disqus_shortname + '.disqus.com/count.js';
   
     
 
+    <script src="asset/js/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+      function fixSidebarHeight(){
+        var w1 = $('.markdown-body').height();
+          var w2 = $('#sidebar').height();
+          if (w1 > w2) { $('#sidebar').height(w1); };
+      }
+      $(function(){
+        fixSidebarHeight();
+      })
+      $(window).load(function(){
+          fixSidebarHeight();
+      });
+     
+    </script>
+
+    
 
 
 
-</body>
+  </body>
 </html>

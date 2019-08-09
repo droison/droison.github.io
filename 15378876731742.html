@@ -1,93 +1,136 @@
-
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
     
-  RN学习1——前奏，app插件化和热更新的探索 - 野火🔥
+  RN学习1——前奏，app插件化和热更新的探索 - Puck Chai
   
-
   </title>
-  <meta name="author" content="">
-  <meta name="description" content="生命如野火，骄傲而顽强">
-
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   
-  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
-  <script src="asset/js/modernizr-2.0.js"></script>
-  <script src="asset/js/jquery.min.js"></script>
+  
+  <link href="atom.xml" rel="alternate" title="Puck Chai" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/foundation.min.css" />
+    <link rel="stylesheet" href="asset/css/docs.css" />
+    <script src="asset/js/vendor/modernizr.js"></script>
+    <script src="asset/js/vendor/jquery.js"></script>
   <script src="asset/highlightjs/highlight.pack.js"></script>
-  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="asset/highlightjs/styles/github.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script>hljs.initHighlightingOnLoad();</script>
-
-  <style type="text/css">
-  .cat-children-p{ padding: 6px 0px;}
-  .hljs{background: none;}
-  </style>
-  <script type="text/javascript">
-  var isAddSildbar = true;
-  </script>
-  <script src="asset/js/octopress.js" type="text/javascript"></script>
-</head>
 <script type="text/javascript">
-//链接新开窗口
-function addBlankTargetForLinks () {
-  $('a[href^="http"]').each(function(){
-      $(this).attr('target', '_blank');
-  });
-}
-$(document).ready(function(event) {
-  addBlankTargetForLinks();
-});
+  function before_search(){
+    var searchVal = 'site:www.chaisong.xyz ' + document.getElementById('search_input').value;
+    document.getElementById('search_q').value = searchVal;
+    return true;
+  }
 </script>
-<body   >
-  <header role="banner"><hgroup>
-  <h1><a href="index.html">野火🔥</a></h1>
-  
-    <h2>生命如野火，骄傲而顽强</h2>
-  
-</hgroup>
+  </head>
+  <body class="antialiased hide-extras">
+    
+    <div class="marketing off-canvas-wrap" data-offcanvas>
+      <div class="inner-wrap">
 
-</header>
-  <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="http://google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
+
+<nav class="top-bar docs-bar hide-for-small" data-topbar>
+
+
+  <section class="top-bar-section">
+  <div class="row">
+      <div style="position: relative;width:100%;"><div style="position: absolute; width:100%;">
+        <ul id="main-menu" class="left">
+        
+        <li id=""><a target="_self" href="index.html">Home</a></li>
+        
+        <li id=""><a target="_self" href="archives.html">Archives</a></li>
+        
+        <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+        
+        </ul>
+
+        <ul class="right" id="search-wrap">
+          <li>
+<form target="_blank" onsubmit="return before_search();" action="https://google.com/search" method="get">
+    <input type="hidden" id="search_q" name="q" value="" />
+    <input tabindex="1" type="search" id="search_input"  placeholder="Search"/>
 </form>
-  
-<ul class="main-navigation">
-
-  <li id=""><a target="_self" href="index.html">Home</a></li>
-
-  <li id=""><a target="_self" href="archives.html">Archives</a></li>
-
-  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
-
-</ul>
+</li>
+          </ul>
+      </div></div>
+  </div>
+  </section>
 
 </nav>
-  <div id="main">
-    <div id="content"> 
-<div>
-	<article class="hentry" role="article">
-	<header>
-			  	<h1 class="entry-title">RN学习1——前奏，app插件化和热更新的探索</h1>
-				<p class="meta"><time datetime="2016-06-20T23:01:13+08:00" pubdate data-updated="true">2016/6/20</time></p>
-			 </header>
-		  	<div class="entry-content">
-			  	<blockquote>
+
+        <nav class="tab-bar show-for-small">
+  <a href="javascript:void(0)" class="left-off-canvas-toggle menu-icon">
+    <span> &nbsp; Puck Chai</span>
+  </a>
+</nav>
+
+<aside class="left-off-canvas-menu">
+      <ul class="off-canvas-list">
+        
+        <li><a target="_self" href="index.html">Home</a></li>
+        
+        <li><a target="_self" href="archives.html">Archives</a></li>
+        
+        <li><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+        
+
+    <li><label>Categories</label></li>
+
+        
+            <li><a href="tech.html">技术</a></li>
+        
+            <li><a href="Anything.html">胡写</a></li>
+        
+            <li><a href="QDaily.html">QDaily</a></li>
+         
+
+      </ul>
+    </aside>
+
+<a class="exit-off-canvas" href="#"></a>
+
+
+        <section id="main-content" role="main" class="scroll-container">
+        
+       
+
+ <script type="text/javascript">
+  $(function(){
+    $('#menu_item_index').addClass('is_active');
+  });
+</script>
+<div class="row">
+  <div class="large-8 medium-8 columns">
+      <div class="markdown-body article-wrap">
+       <div class="article">
+          
+          <h1>RN学习1——前奏，app插件化和热更新的探索</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2016/6/20</span>
+
+          <span>posted in&nbsp;</span> 
+          
+              <span class="posted-in"><a href='tech.html'>技术</a></span>
+           
+         
+          <span class="comments">
+            
+              <a href="http://www.chaisong.xyz/15378876731742.html#disqus_thread">comments</a>
+            
+
+            
+          </span>
+
+        </div>
+      </div><!-- article -->
+
+      <div class="article-content">
+      <blockquote>
 <p>React Native（以下简称RN）有大量前端开发者的追捧。前端开发是一个活跃的社区，一直尝试着一统前后端，做一个全栈开发，RN就是他们在客户端领域的尝试。</p>
 
 <p>说是从零开始，但其实我还是懂一点点JS代码的，而且算是一个有经验的iOS、Android开发，对很多js和native交互的细节和特性还算了解，在QDaily里面也做过好多hybird的尝试，还经常用JSPatch做hotfix，总的来说，就是对hot update、插件化以及hybird编程非常非常感兴趣。RN也许是已知的开源方案中最好的一个吧。</p>
@@ -303,26 +346,32 @@ AppRegistry.registerComponent(&#39;AwesomeProject&#39;, setup);
 <li>微软的react-native-code-push，据说很好用，RN最终用于生产环境的时候可以参考下：<a href="https://github.com/Microsoft/react-native-code-push">Github</a>，<a href="http://blog.csdn.net/oiken/article/details/50279871">使用CodePush热更新ReactNative JS代码</a>，<a href="http://www.jianshu.com/p/07219e8dcdea">React Native项目更新</a>。</li>
 </ul>
 
-			</div>
 
-		
-	  
-		<footer>
-		 <p class="meta">
+    
 
-			<strong>Categories:</strong>&nbsp; 
-			<span class="categories">
-			
-			    <a class='category' href='tech.html'>技术</a>&nbsp;
-			 
-			</span>
-		    </p>
-		    <p class="meta">
-		      
-		 </p>
-	    
-		<div class="sharing">
-		  <div id="disqus_thread"></div>
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+          <a href="15378876731705.html" 
+          title="Previous Post: RN学习2——客户端开发者的一些准备工作">&laquo; RN学习2——客户端开发者的一些准备工作</a>
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="15378876730358.html" 
+          title="Next Post: 自定义Android开源库CSKit介绍">自定义Android开源库CSKit介绍 &raquo;</a>
+      
+      </p>
+        </div>
+      </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          <div id="disqus_thread"></div>
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = 'billchaiblog';
@@ -335,130 +384,153 @@ AppRegistry.registerComponent(&#39;AwesomeProject&#39;, setup);
     })();
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
           
             <div id="disqus_thread"></div>
           
 
           
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
 
-		</div>
 
-	    <p class="meta">
-	    
-	        <a class="basic-alignment left" href="15378876731705.html" 
-	        title="Previous Post: RN学习2——客户端开发者的一些准备工作">&laquo; RN学习2——客户端开发者的一些准备工作</a>
-	    
-	    
-	        <a class="basic-alignment right" href="15378876730358.html" 
-	        title="Next Post: 自定义Android开源库CSKit介绍">自定义Android开源库CSKit介绍 &raquo;</a>
-	    
-	    </p>
-	  </footer>
-	</article>
+
+
+ <div class="large-4 medium-4 columns">
+  <div class="hide-for-small">
+    <div id="sidebar" class="sidebar">
+          <div id="site-info" class="site-info">
+            
+                <h1>Puck Chai</h1>
+                <div class="site-des">执行合一</div>
+                <div class="social">
+
+
+
+
+
+
+
+
+
+
+
+  <a target="_blank" class="rss" href="atom.xml" title="RSS">RSS</a>
+                
+              	 </div>
+          	</div>
+
+             
+
+              <div id="site-categories" class="side-item ">
+                <div class="side-header">
+                  <h2>Categories</h2>
+                </div>
+                <div class="side-content">
+
+      	<p class="cat-list">
+        
+            <a href="tech.html"><strong>技术</strong></a>
+        
+            <a href="Anything.html"><strong>胡写</strong></a>
+        
+            <a href="QDaily.html"><strong>QDaily</strong></a>
+         
+        </p>
+
+
+                </div>
+              </div>
+
+              <div id="site-categories" class="side-item">
+                <div class="side-header">
+                  <h2>Recent Posts</h2>
+                </div>
+                <div class="side-content">
+                <ul class="posts-list">
+	      
+		      
+			      <li class="post">
+			        <a href="15653372657357.html">在互联网公司，App开发需要怎么的项目管理？</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15611669279804.html">年中思考</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15615190654300.html">从数据看北京教育资源</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15613470463264.html">LiveData组件分享</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15498584515544.html">写在19年新年上班第一天</a>
+			      </li>
+		     
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		   
+		  		</ul>
+                </div>
+              </div>
+        </div><!-- sidebar -->
+      </div><!-- hide for small -->
+</div><!-- large 4 -->
+
+</div><!-- row -->
+
+ <div class="page-bottom clearfix">
+  <div class="row">
+   <p class="copyright">Copyright &copy; 2015
+Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
+  </div>
 </div>
- <aside class="sidebar"> 
 
-	<section>
-	  <h1>Categories</h1>
-	  <ul id="recent_posts">
-	  
-	      <li class="post">
-	        <a href="tech.html"><strong>技术&nbsp;(59)</strong></a>
-	        
-	        
-	        
-	      </li>
-	  
-	      <li class="post">
-	        <a href="Anything.html"><strong>胡写&nbsp;(19)</strong></a>
-	        
-	        
-	        
-	      </li>
-	  
-	      <li class="post">
-	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
-	        
-	        
-	        
-	      </li>
-	   
-	  </ul>
-	</section>
-	<section>
-	  <h1>Recent Posts</h1>
-	  <ul id="recent_posts">
-	  
-	      
-		      <li class="post">
-		        <a href="15653372657357.html">在互联网公司，App开发需要怎么的项目管理？</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15611669279804.html">年中思考</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15615190654300.html">从数据看北京教育资源</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15613470463264.html">LiveData组件分享</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15498584515544.html">写在19年新年上班第一天</a>
-		      </li>
-	     
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	   
-	  </ul>
-	</section>
-	
-</aside> </div></div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2014 -  -
-  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
-</footer>
+        </section>
+      </div>
+    </div>
 
 
 <script type="text/javascript">
@@ -484,8 +556,26 @@ s.src = '//' + disqus_shortname + '.disqus.com/count.js';
   
     
 
+    <script src="asset/js/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+      function fixSidebarHeight(){
+        var w1 = $('.markdown-body').height();
+          var w2 = $('#sidebar').height();
+          if (w1 > w2) { $('#sidebar').height(w1); };
+      }
+      $(function(){
+        fixSidebarHeight();
+      })
+      $(window).load(function(){
+          fixSidebarHeight();
+      });
+     
+    </script>
+
+    
 
 
 
-</body>
+  </body>
 </html>

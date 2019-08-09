@@ -1,96 +1,121 @@
-
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
     
-  技术 - 野火🔥
+  技术 - Puck Chai
   
-
   </title>
-  <meta name="author" content="">
-  <meta name="description" content="生命如野火，骄傲而顽强">
-
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   
-  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="atom.xml" rel="alternate" title="野火🔥" type="application/atom+xml">
-  <script src="asset/js/modernizr-2.0.js"></script>
-  <script src="asset/js/jquery.min.js"></script>
+  
+  <link href="atom.xml" rel="alternate" title="Puck Chai" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/foundation.min.css" />
+    <link rel="stylesheet" href="asset/css/docs.css" />
+    <script src="asset/js/vendor/modernizr.js"></script>
+    <script src="asset/js/vendor/jquery.js"></script>
   <script src="asset/highlightjs/highlight.pack.js"></script>
-  <link href="asset/highlightjs/styles/solarized_light.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="asset/highlightjs/styles/github.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script>hljs.initHighlightingOnLoad();</script>
-
-  <style type="text/css">
-  .cat-children-p{ padding: 6px 0px;}
-  .hljs{background: none;}
-  </style>
-  <script type="text/javascript">
-  var isAddSildbar = true;
-  </script>
-  <script src="asset/js/octopress.js" type="text/javascript"></script>
-</head>
 <script type="text/javascript">
-//链接新开窗口
-function addBlankTargetForLinks () {
-  $('a[href^="http"]').each(function(){
-      $(this).attr('target', '_blank');
-  });
-}
-$(document).ready(function(event) {
-  addBlankTargetForLinks();
-});
+  function before_search(){
+    var searchVal = 'site:www.chaisong.xyz ' + document.getElementById('search_input').value;
+    document.getElementById('search_q').value = searchVal;
+    return true;
+  }
 </script>
-<body   >
-  <header role="banner"><hgroup>
-  <h1><a href="index.html">野火🔥</a></h1>
-  
-    <h2>生命如野火，骄傲而顽强</h2>
-  
-</hgroup>
+  </head>
+  <body class="antialiased hide-extras">
+    
+    <div class="marketing off-canvas-wrap" data-offcanvas>
+      <div class="inner-wrap">
 
-</header>
-  <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="http://google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:www.chaisong.xyz" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
+
+<nav class="top-bar docs-bar hide-for-small" data-topbar>
+
+
+  <section class="top-bar-section">
+  <div class="row">
+      <div style="position: relative;width:100%;"><div style="position: absolute; width:100%;">
+        <ul id="main-menu" class="left">
+        
+        <li id=""><a target="_self" href="index.html">Home</a></li>
+        
+        <li id=""><a target="_self" href="archives.html">Archives</a></li>
+        
+        <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+        
+        </ul>
+
+        <ul class="right" id="search-wrap">
+          <li>
+<form target="_blank" onsubmit="return before_search();" action="https://google.com/search" method="get">
+    <input type="hidden" id="search_q" name="q" value="" />
+    <input tabindex="1" type="search" id="search_input"  placeholder="Search"/>
 </form>
-  
-<ul class="main-navigation">
-
-  <li id=""><a target="_self" href="index.html">Home</a></li>
-
-  <li id=""><a target="_self" href="archives.html">Archives</a></li>
-
-  <li id=""><a target="_self" href="aboutme.html">ABOUT ME</a></li>
-
-</ul>
+</li>
+          </ul>
+      </div></div>
+  </div>
+  </section>
 
 </nav>
-  <div id="main">
-    <div id="content"> 
-<div class="blog-index">
 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876731318.html">iOS hook实践（1）</a></h1>
-			<p class="meta"><time datetime="2015-11-19T23:01:13+08:00" 
-			pubdate data-updated="true">2015/11/19</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<blockquote>
+        <nav class="tab-bar show-for-small">
+  <a href="javascript:void(0)" class="left-off-canvas-toggle menu-icon">
+    <span> &nbsp; Puck Chai</span>
+  </a>
+</nav>
+
+<aside class="left-off-canvas-menu">
+      <ul class="off-canvas-list">
+        
+        <li><a target="_self" href="index.html">Home</a></li>
+        
+        <li><a target="_self" href="archives.html">Archives</a></li>
+        
+        <li><a target="_self" href="aboutme.html">ABOUT ME</a></li>
+        
+
+    <li><label>Categories</label></li>
+
+        
+            <li><a href="tech.html">技术</a></li>
+        
+            <li><a href="Anything.html">胡写</a></li>
+        
+            <li><a href="QDaily.html">QDaily</a></li>
+         
+
+      </ul>
+    </aside>
+
+<a class="exit-off-canvas" href="#"></a>
+
+
+        <section id="main-content" role="main" class="scroll-container">
+        
+       
+
+ <script type="text/javascript">
+	$(function(){
+		$('#menu_item_index').addClass('is_active');
+	});
+</script>
+<div class="row">
+	<div class="large-8 medium-8 columns">
+		<div class="markdown-body home-categories">
+		
+			<div class="article">
+                <a class="clearlink" href="15378876731318.html">
+                
+                  <h1>iOS hook实践（1）</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<blockquote>
 <p>最近为了玖富理财的自动化投钱，狠狠的研究了下如何hack别人的app inject自己的代码，收货良多。同时发现自己对此非常感兴趣，成就感膨胀！</p>
 
 <p>so，今年多了一个目标：读完《iOS逆向工程（第二版）》，已经duokan下单，监督自己。</p>
@@ -164,339 +189,524 @@ $(document).ready(function(event) {
 
 <p><a href="http://www.olinone.com/">庞海礁</a>，在重签名部分从他这里收获了很多，推荐有空看看。</p>
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2015/11/19</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876731318.html#disqus_thread">comments</a>
+                      
 
-		</div>
-
-		
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876730285.html">【读书笔记】iOS编程实践</a></h1>
-			<p class="meta"><time datetime="2015-11-18T23:01:13+08:00" 
-			pubdate data-updated="true">2015/11/18</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<ul>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876730285.html">
+                
+                  <h1>【读书笔记】iOS编程实践</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<ul>
 <li>1、UIView的新属性 tintColor，一般如果子view不定义默认使用父view的tintColor</li>
 <li><p>2、关联引用 runtime机制</p>
 <p>objc_setAssociatedObject(self, &amp;key, value, OBJC_ASSOCITION_RETAIN)<br/>
  objc_getAssociatedObject(self, &amp;key)</p></li>
 <li><p>3、NSCache iOS的缓存，线程安全<br/>
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15378876730285.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2015/11/18</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876730285.html#disqus_thread">comments</a>
+                      
 
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876730285.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876730711.html">在iOS下为他人App开发自动化操作插件，实现挂机操作（1）</a></h1>
-			<p class="meta"><time datetime="2015-11-15T23:01:13+08:00" 
-			pubdate data-updated="true">2015/11/15</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<pre><code class="language-text">手机上经常会有一些需要我们重复操作的事情，做这些事情为的仅仅是一些利益结果，而并不关心过程，例如游戏打怪升级的固定关口，微信抢红包，或者一些别的什么商品的抢购流程。这时候如果能够有自动化插件就是最美妙的了。
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876730711.html">
+                
+                  <h1>在iOS下为他人App开发自动化操作插件，实现挂机操作（1）</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<pre><code class="language-text">手机上经常会有一些需要我们重复操作的事情，做这些事情为的仅仅是一些利益结果，而并不关心过程，例如游戏打怪升级的固定关口，微信抢红包，或者一些别的什么商品的抢购流程。这时候如果能够有自动化插件就是最美妙的了。
 </code></pre>
 
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15378876730711.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2015/11/15</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876730711.html#disqus_thread">comments</a>
+                      
 
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876730711.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876731110.html">otto源码解析及探索修改</a></h1>
-			<p class="meta"><time datetime="2015-06-13T23:01:13+08:00" 
-			pubdate data-updated="true">2015/6/13</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<p>本人之前在微信做iOS开发时，曾使用微信自己开发的 ExtensionCenter 框架来做事件的订阅和发布，使得代码各个层级完美解耦，当时就希望能将该思想应用于 Android开发领域。<br/><br/>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876731110.html">
+                
+                  <h1>otto源码解析及探索修改</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p>本人之前在微信做iOS开发时，曾使用微信自己开发的 ExtensionCenter 框架来做事件的订阅和发布，使得代码各个层级完美解耦，当时就希望能将该思想应用于 Android开发领域。<br/><br/>
 在进行现有项目调研的过程中，发现了Android上的开源工程EventBus 和 otto，这两个工程和我想实现的ExtensionCenter思想非常类似，在具体应用上使用了java特有的特性，但也有一些不足。本文将首先针对otto的架构设计和源码进行分析，之后介绍个人融合 微信iOS版中ExtensionCenter思想的修改版otto的框架。</p>
 
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15378876731110.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2015/6/13</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876731110.html#disqus_thread">comments</a>
+                      
 
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876731110.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876730322.html">自己动手在xcode6下编写dylib动态库文件</a></h1>
-			<p class="meta"><time datetime="2015-03-02T23:01:13+08:00" 
-			pubdate data-updated="true">2015/3/2</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<p>WWDC2014上发布的Xcode6在iOS上开放了动态库，可以直接通过xcode6*版本进行构建自己的framework动态库，具体可以参见<a href="https://developer.apple.com/library/prerelease/ios/documentation/DeveloperTools/Conceptual/WhatsNewXcode/Articles/xcode_6_0.html">New Features in Xcode 6</a>至于具体能不能通过Appstore的审核，尚不清楚。</p>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876730322.html">
+                
+                  <h1>自己动手在xcode6下编写dylib动态库文件</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p>WWDC2014上发布的Xcode6在iOS上开放了动态库，可以直接通过xcode6*版本进行构建自己的framework动态库，具体可以参见<a href="https://developer.apple.com/library/prerelease/ios/documentation/DeveloperTools/Conceptual/WhatsNewXcode/Articles/xcode_6_0.html">New Features in Xcode 6</a>至于具体能不能通过Appstore的审核，尚不清楚。</p>
 
 <p>本文着重描述如何生成打包dylib动态库文件，对于生成dynamic framework请参见blog <a href="http://foggry.com/blog/2014/06/12/wwdc2014zhi-iosshi-yong-dong-tai-ku/">WWDC2014之iOS使用动态库</a>。</p>
 
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15378876730322.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2015/3/2</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876730322.html#disqus_thread">comments</a>
+                      
 
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876730322.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876730851.html">使用iOS UI分析工具reveal和FLEX查看任意app</a></h1>
-			<p class="meta"><time datetime="2015-03-02T23:01:13+08:00" 
-			pubdate data-updated="true">2015/3/2</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<p>对于iOS开发，<a href="http://revealapp.com/">reveal</a>和<a href="https://github.com/Flipboard/FLEX">FLEX</a>应该都不陌生，相比于reveal，FLEX堪称单机版reveal，虽然没有reveal直观，但更加方便，最新版本的FLEX增加了很多网络调试的功能，使得不仅仅应用于UI部分。</p>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876730851.html">
+                
+                  <h1>使用iOS UI分析工具reveal和FLEX查看任意app</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p>对于iOS开发，<a href="http://revealapp.com/">reveal</a>和<a href="https://github.com/Flipboard/FLEX">FLEX</a>应该都不陌生，相比于reveal，FLEX堪称单机版reveal，虽然没有reveal直观，但更加方便，最新版本的FLEX增加了很多网络调试的功能，使得不仅仅应用于UI部分。</p>
 
 <p>在使用上，reveal只需把framework动态库放到工程中，然后在同一wifi下的Mac下查看即可。</p>
 
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15378876730851.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2015/3/2</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876730851.html#disqus_thread">comments</a>
+                      
 
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876730851.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876730817.html">使用sublime来写markdown</a></h1>
-			<p class="meta"><time datetime="2015-02-28T23:01:13+08:00" 
-			pubdate data-updated="true">2015/2/28</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<p>sublime是一款非常NB的编辑器，同时兼容Mac、linux和Windows，通过插件化可以将其变得非常强大，无所不能。这两天看到身后的domick非常熟练的使用sublime text，感觉非常羡慕，遂学了一点简单的使用，但愿能够长期使用下去。</p>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876730817.html">
+                
+                  <h1>使用sublime来写markdown</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p>sublime是一款非常NB的编辑器，同时兼容Mac、linux和Windows，通过插件化可以将其变得非常强大，无所不能。这两天看到身后的domick非常熟练的使用sublime text，感觉非常羡慕，遂学了一点简单的使用，但愿能够长期使用下去。</p>
 
 <h2 id="toc_0">1、增加包管理工具 package control</h2>
 
 <p>我在sublime text3下使用网上找的没有成功，遂只贴出来sublime text2的安装方式。</p>
 
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15378876730817.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2015/2/28</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876730817.html#disqus_thread">comments</a>
+                      
 
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876730817.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876730963.html">【转载】UML类图绘制指南</a></h1>
-			<p class="meta"><time datetime="2015-02-12T23:01:13+08:00" 
-			pubdate data-updated="true">2015/2/12</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<h2 id="toc_0">写在最前（独创）</h2>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876730963.html">
+                
+                  <h1>【转载】UML类图绘制指南</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h2 id="toc_0">写在最前（独创）</h2>
 
 <p>各个平台下画类图、流程图，强烈建议chrome app的gliffy，强大，跨平台、免费，简单。很难想象这么多优点能够集中于一款软件上。<br/>
 <img src="media/15378876730963/gliffy%E6%88%AA%E5%9B%BE.png" alt="gliffy截图"/></p>
 
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15378876730963.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2015/2/12</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876730963.html#disqus_thread">comments</a>
+                      
 
-		</div>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876731145.html">
+                
+                  <h1>MAC 设置环境变量path的几种方法</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15378876731145.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2015/2/5</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876731145.html#disqus_thread">comments</a>
+                      
 
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876730963.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876731145.html">MAC 设置环境变量path的几种方法</a></h1>
-			<p class="meta"><time datetime="2015-02-05T23:01:13+08:00" 
-			pubdate data-updated="true">2015/2/5</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	
-
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876731145.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15378876730746.html">在OSX10.10上的Xcode6免证书真机调试图文教程</a></h1>
-			<p class="meta"><time datetime="2014-10-19T23:01:13+08:00" 
-			pubdate data-updated="true">2014/10/19</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<p>所需设备：越狱后的iPhone一台，并且安装AppSync插件<br/><br/>
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876730746.html">
+                
+                  <h1>在OSX10.10上的Xcode6免证书真机调试图文教程</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p>所需设备：越狱后的iPhone一台，并且安装AppSync插件<br/><br/>
 10.10Yosemete，Xcode6.1，iOS6.1上测试通过，可完美调试无报错</p>
 
 <h2 id="toc_0">第一步：制作证书</h2>
 
 
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15378876730746.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2014/10/19</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876730746.html#disqus_thread">comments</a>
+                      
 
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+              
+
+
+			<div class="row">
+			  <div class="large-6 columns">
+			  <p class="text-left" style="padding-top:25px;">
+			   <a href="tech_3.html">&laquo; Prev Page</a>  
+			  </p>
+			  </div>
+			  <div class="large-6 columns">
+			<p class="text-right" style="padding-top:25px;">
+			 <a href="tech_5.html">&raquo; Next Page</a> 
+			</p>
+			  </div>
+			</div>
 		</div>
+	</div><!-- large 8 -->
 
-		 
-		 <footer>
-      	<a rel="full-article" href="15378876730746.html#more">read more &rarr;</a>
-    	</footer>
-    	
+ <div class="large-4 medium-4 columns">
+  <div class="hide-for-small">
+    <div id="sidebar" class="sidebar">
+          <div id="site-info" class="site-info">
+            
+                <h1>Puck Chai</h1>
+                <div class="site-des">执行合一</div>
+                <div class="social">
 
-	</article>
-  
-	<div class="pagination">
-	 <a class="prev" href="tech_5.html">&larr; Older</a> 
-<a href="archives.html">Blog Archives</a>
-	 <a class="next" href="tech_3.html">Newer &rarr;</a>  
-	    
-	</div>
+
+
+
+
+
+
+
+
+
+
+  <a target="_blank" class="rss" href="atom.xml" title="RSS">RSS</a>
+                
+              	 </div>
+          	</div>
+
+             
+
+              <div id="site-categories" class="side-item ">
+                <div class="side-header">
+                  <h2>Categories</h2>
+                </div>
+                <div class="side-content">
+
+      	<p class="cat-list">
+        
+            <a href="tech.html"><strong>技术</strong></a>
+        
+            <a href="Anything.html"><strong>胡写</strong></a>
+        
+            <a href="QDaily.html"><strong>QDaily</strong></a>
+         
+        </p>
+
+
+                </div>
+              </div>
+
+              <div id="site-categories" class="side-item">
+                <div class="side-header">
+                  <h2>Recent Posts</h2>
+                </div>
+                <div class="side-content">
+                <ul class="posts-list">
+	      
+		      
+			      <li class="post">
+			        <a href="15653372657357.html">在互联网公司，App开发需要怎么的项目管理？</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15611669279804.html">年中思考</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15615190654300.html">从数据看北京教育资源</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15613470463264.html">LiveData组件分享</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15498584515544.html">写在19年新年上班第一天</a>
+			      </li>
+		     
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		   
+		  		</ul>
+                </div>
+              </div>
+        </div><!-- sidebar -->
+      </div><!-- hide for small -->
+</div><!-- large 4 -->
+
+</div><!-- row -->
+
+ <div class="page-bottom clearfix">
+  <div class="row">
+   <p class="copyright">Copyright &copy; 2015
+Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
+  </div>
 </div>
- <aside class="sidebar"> 
 
-	<section>
-	  <h1>Categories</h1>
-	  <ul id="recent_posts">
-	  
-	      <li class="post">
-	        <a href="tech.html"><strong>技术&nbsp;(59)</strong></a>
-	        
-	        
-	        
-	      </li>
-	  
-	      <li class="post">
-	        <a href="Anything.html"><strong>胡写&nbsp;(19)</strong></a>
-	        
-	        
-	        
-	      </li>
-	  
-	      <li class="post">
-	        <a href="QDaily.html"><strong>QDaily&nbsp;(6)</strong></a>
-	        
-	        
-	        
-	      </li>
-	   
-	  </ul>
-	</section>
-	<section>
-	  <h1>Recent Posts</h1>
-	  <ul id="recent_posts">
-	  
-	      
-		      <li class="post">
-		        <a href="15653372657357.html">在互联网公司，App开发需要怎么的项目管理？</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15611669279804.html">年中思考</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15615190654300.html">从数据看北京教育资源</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15613470463264.html">LiveData组件分享</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15498584515544.html">写在19年新年上班第一天</a>
-		      </li>
-	     
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	  
-	      
-	   
-	  </ul>
-	</section>
-	
-</aside> </div></div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2014 -  -
-  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
-</footer>
+        </section>
+      </div>
+    </div>
 
 
 <script type="text/javascript">
@@ -522,8 +732,26 @@ s.src = '//' + disqus_shortname + '.disqus.com/count.js';
   
     
 
+    <script src="asset/js/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+      function fixSidebarHeight(){
+        var w1 = $('.markdown-body').height();
+          var w2 = $('#sidebar').height();
+          if (w1 > w2) { $('#sidebar').height(w1); };
+      }
+      $(function(){
+        fixSidebarHeight();
+      })
+      $(window).load(function(){
+          fixSidebarHeight();
+      });
+     
+    </script>
+
+    
 
 
 
-</body>
+  </body>
 </html>
