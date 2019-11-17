@@ -108,6 +108,167 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
+                <a class="clearlink" href="15378876730358.html">
+                
+                  <h1>自定义Android开源库CSKit介绍</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p>整个项目框架包含单例管理(MManagerCenter)，网络请求及文件下载(VolleyPlus)和事件总线管理(MMBus)的一个集合框架。还处于检验阶段，使用方法（Android studio）：</p>
+
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15378876730358.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2016/4/2</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876730358.html#disqus_thread">comments</a>
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876732010.html">
+                
+                  <h1>AFN源码分析-AFHTTPConnectionOperation</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<blockquote>
+<p>AFHTTPConnectionOperation是AFNetWorking在使用NSURLConnection进行网络请求和下载的基本任务单元，其继承自AFURLConnectionOperation，仅对其进行了一些不太复杂的封装。在整个框架中，AFN并没有直接使用过AFURLConnectionOperation，均为面向AFHTTPConnectionOperation的一些开发工作，但作为抽象更好的Operation，需要进行优先的分析与学习。<br/>
+<!--more--></p>
+
+<h3 id="toc_0">AFURLConnectionOperation</h3>
+
+<p>本类是NSOperation的子类，天然就是做具体任务操作的。由于进行网络请求，所以implement了NSURLConnectionDelegate和NSURLConnectionDataDelegate两个月网络相关的代理。</p>
+</blockquote>
+
+<p>由于过多线程本身会比较吃资源，同时还会有同步问题，AFN将所有网络请求的调用都统一放在了一个名为“AFNetWorking”的thread（以下简称AFThread）中。该thread的创建放在了具体的Operation中，使用懒加载，并用dispatch_once_t进行多线程单例创建。</p>
+
+<p>类中持有一个NSRecursiveLock的lock，进行多线程的同步操作，所有读写调用操作都会lock加锁。</p>
+
+<p>Operation启动后，会在AFThread调起operationDidStart方法，该方法会新建NSURLConnection并加入当前线程runloop中，然后启动网络请求。整个过程会判断isCancel，cancel就会停止该operation。</p>
+
+<p>Operation调用cancel方法后，会在AFThread线程调起cancelConnection方法，该方法会将当前已有的connection断掉并嗲用代理方法connection:didFailWithError:，将封装的cancel error发送出去。cancel的调用加锁，严格线程同步。</p>
+
+<p>pause方法同样是在加锁情况下使用，避免状态不同步问题。会在AFThead线程调用operationDidPause方法，方法会将已有connection cancel掉。</p>
+
+<p>resume是重新调起start方法，调用前需判断是不是在pause状态下，然后将相关的状态初始化。使用也用加锁方式严格线程同步。</p>
+
+<p>数据上传和下载过程中，更新进度的downloadProgress和uploadProgress都会严格在主线程调用，这个不知道为什么？一般应该在completeQueue使用吧。</p>
+
+<p>NSURLConnetion的代理回调线程一定在和调用线程一致，所以只要在主动调起代理方法时候注意当前线程问题即可，不需要在代理方法里进行加锁操作。</p>
+
+<p>一个小技巧要注意：本Operation中的很多状态都使用自定义的state进行识别和标志，用以替代覆写NSOperation中得一些默然方法，为支持KVO，需要将state改变的时候手动调起与状态改变有关的父类对应变量的willChangeValueForKey和didChangeValueForKey方法。</p>
+
+<p>completeQueue在传入为nil时默认使用主线程队列。</p>
+
+<p>在Operation complete时，有一处需要学些的GCD group的使用：</p>
+
+<pre><code class="language-objectivec">dispatch_group_t group = strongSelf.completionGroup ?: url_request_operation_completion_group();
+dispatch_queue_t queue = strongSelf.completionQueue ?: dispatch_get_main_queue();
+dispatch_group_async(group, queue, ^{
+    block();
+});
+dispatch_group_notify(group, url_request_operation_completion_queue(), ^{
+    [strongSelf setCompletionBlock:nil];
+});
+</code></pre>
+
+<p>本operation还提供了一个能够多url请求依赖完成统一回调的方法封装batchOfRequestOperations:progressBlock:completionBlock:，通过封装可以在调用方观察若干个网络请求operation进度和完成情况。方法分别传入需要观察的网络请求operation、进度观察的block和完成观察的block，返回值为一个operation的Array（本质就是为所有operation加了一个相同的groupQueue，并新建一个Operation，将所有的网络请求Operation都加入其依赖）。代码中有一些设计GCD group和operation的dependency相关的使用方法值得学习：</p>
+
+<pre><code class="language-objectivec">__block dispatch_group_t group = dispatch_group_create();
+NSBlockOperation *batchedOperation = [NSBlockOperation blockOperationWithBlock:^{
+    dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+        if (completionBlock) {
+            completionBlock(operations);
+        }
+    });
+}];
+
+for (AFURLConnectionOperation *operation in operations) {
+    operation.completionGroup = group;
+    void (^originalCompletionBlock)(void) = [operation.completionBlock copy];
+    __weak __typeof(operation)weakOperation = operation;
+    operation.completionBlock = ^{
+        __strong __typeof(weakOperation)strongOperation = weakOperation;
+        dispatch_queue_t queue = strongOperation.completionQueue ?: dispatch_get_main_queue();
+        dispatch_group_async(group, queue, ^{
+            if (originalCompletionBlock) {
+                originalCompletionBlock();
+            }
+            NSUInteger numberOfFinishedOperations = [[operations indexesOfObjectsPassingTest:^BOOL(id op, NSUInteger __unused idx,  BOOL __unused *stop) {
+                return [op isFinished];
+            }] count];
+            if (progressBlock) {
+                progressBlock(numberOfFinishedOperations, [operations count]);
+           }
+            dispatch_group_leave(group);
+        });
+    };
+    dispatch_group_enter(group);
+    [batchedOperation addDependency:operation];
+}
+</code></pre>
+
+<p>上面代码技巧包括</p>
+
+<ul>
+<li>异步block使用group需要在对应位置使用dispatch_group_enter和dispatch_group_leave方法，否则block不会执行，这里的group操作只会将block块放到队列里而已。</li>
+<li><strong>weak标记了对象避免block造成循环引用；</strong>strong标记已经被weak标记了得对象，使得对象在block使用过程中不会被释放。</li>
+<li>addDependency:方法可以使在一个queue上的若干个operation增加相互间的依赖关系，使其可以有一定顺序先后执行</li>
+<li>如果block中想修改外部变量指针的指向，需要对变量增加__block修饰关键字，否则block只是copy了一份指针过来，block能修改的，只是指针指向的堆内存中得数据</li>
+</ul>
+
+<p>本类可以比较多得收获到关于线程同步以及多线程一些操作的知识运用。</p>
+
+<h3 id="toc_1">AFHTTPRequestOperation</h3>
+
+<p>作为子类，基本的功能就是对基类的一些封装和扩展</p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2016/3/13</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876732010.html#disqus_thread">comments</a>
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
                 <a class="clearlink" href="15378876731943.html">
                 
                   <h1>AFN源码分析-AFURLRequestSerialization</h1>
@@ -523,153 +684,6 @@
                 </div>
               </div><!-- article -->
         
-			<div class="article">
-                <a class="clearlink" href="15378876731318.html">
-                
-                  <h1>iOS hook实践（1）</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<blockquote>
-<p>最近为了玖富理财的自动化投钱，狠狠的研究了下如何hack别人的app inject自己的代码，收货良多。同时发现自己对此非常感兴趣，成就感膨胀！</p>
-
-<p>so，今年多了一个目标：读完《iOS逆向工程（第二版）》，已经duokan下单，监督自己。</p>
-
-<p>感谢微信，给了我进入iOS大门的机会，感谢微信，叫我系统化的iOS研究方法，给了我编写动态库和入门hack的基础，我将在此继续学习，继续充实。</p>
-</blockquote>
-
-<h2 id="toc_0">一个不知道算不算开头的开头</h2>
-
-<p>这将是一个系列文章，包含各种学习研究过程，有生涩的基础，也有生动的实践，系列文章将伴随我的整个研究过程。</p>
-
-<p>系列文章需要懂得iOS的基础知识，并且对iOS开发以及攻防有较多的兴趣的同行阅读，如果您是老鸟，请多多指正其中的不足。</p>
-
-<p>本文将主要就是对近期的hack收货进行简单归集，避免忘记。</p>
-
-<h2 id="toc_1">基本知识</h2>
-
-<ul>
-<li>越狱</li>
-<li>动态库dylib</li>
-<li>dlopen指令</li>
-<li>ipa重签名</li>
-</ul>
-
-<h2 id="toc_2">几个工具</h2>
-
-<ul>
-<li><code>pp助手</code>，我也很无语，不过这个用的真心多，越狱，文件查看，ipa安装，ssh打开，真心简单易用。</li>
-<li><code>charles</code>，没的说，网络分析</li>
-<li><code>MachOView</code></li>
-<li><code>010 Editor</code></li>
-<li><code>FLEX</code></li>
-<li><code>THOS</code></li>
-<li><code>iOSOpenDev</code></li>
-</ul>
-
-<h2 id="toc_3">重签名</h2>
-
-<p>如果改了原来代码，势必需要重签名，重签名是个坑，下面写两个对我有帮助的博文，稍后单独一片文章介绍我是如何踩坑的。</p>
-
-<p>先来两张图，这两段代码是最后的完成稿：</p>
-
-<p><img src="media/15378876731318/iOSResign1.png" alt="iOSResign1"/><br/>
-<img src="media/15378876731318/iOSResign2.png" alt="iOSResign2"/></p>
-
-<p><a href="http://www.cnblogs.com/YungMing/p/4016511.html">iOS 证书管理、验证、打包流程</a>，一点基础知识，小白先看看。</p>
-
-<p><a href="http://www.olinone.com/?p=198">iOS证书及ipa包重签名探究</a>，按照网上的一般攻略，总是失败，原来是iOS8.1后增加了安全机制。这篇是针对的一些解法，不过应该企业签名才是最终的王道解决。</p>
-
-<p><a href="http://objccn.io/issue-17-2/">代码签名探析</a>，最详细的解析，代码重签名进阶使用。</p>
-
-<p><a href="http://blog.csdn.net/qinwei008/article/details/42379009">iOS APP反重签名技术详解</a>，知道了怎么重签，就要知道怎么攻防，避免别人用相同的方式搞你。</p>
-
-<h2 id="toc_4">几篇有用的博文</h2>
-
-<p><a href="http://www.blogfshare.com/inject-with-njb.html">http://www.blogfshare.com/inject-with-njb.html</a></p>
-
-<p><a href="http://wiki.jikexueyuan.com/project/ios-security-defense/injection.html">http://wiki.jikexueyuan.com/project/ios-security-defense/injection.html</a></p>
-
-<p><a href="http://www.opensource.apple.com/source/dyld/dyld-210.2.3/src/dyld.cpp">http://www.opensource.apple.com/source/dyld/dyld-210.2.3/src/dyld.cpp</a></p>
-
-<p><a href="http://www.cnblogs.com/xiongwj0910/archive/2012/08/16/2642992.html">http://www.cnblogs.com/xiongwj0910/archive/2012/08/16/2642992.html</a></p>
-
-<p><a href="https://nadavrub.wordpress.com/2015/07/23/injecting-code-to-an-ios-appstore-app/">https://nadavrub.wordpress.com/2015/07/23/injecting-code-to-an-ios-appstore-app/</a></p>
-
-<h2 id="toc_5">推荐的几个很不错的博主</h2>
-
-<p><a href="http://nianxi.net/">念茜</a>的博客，业界知名iOS美女程序员，支付宝的iOS安全工程师</p>
-
-<p><a href="http://www.blogfshare.com/block-code-inject.html">Alone_Monkey</a>的博客，在安全领域也很有研究，真心长江后浪推前浪！</p>
-
-<p><a href="http://www.olinone.com/">庞海礁</a>，在重签名部分从他这里收获了很多，推荐有空看看。</p>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2015/11/19</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-                        <a href="http://www.chaisong.xyz/15378876731318.html#disqus_thread">comments</a>
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15378876730285.html">
-                
-                  <h1>【读书笔记】iOS编程实践</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<ul>
-<li>1、UIView的新属性 tintColor，一般如果子view不定义默认使用父view的tintColor</li>
-<li><p>2、关联引用 runtime机制</p>
-<p>objc_setAssociatedObject(self, &amp;key, value, OBJC_ASSOCITION_RETAIN)<br/>
- objc_getAssociatedObject(self, &amp;key)</p></li>
-<li><p>3、NSCache iOS的缓存，线程安全<br/>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="15378876730285.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2015/11/18</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-                        <a href="http://www.chaisong.xyz/15378876730285.html#disqus_thread">comments</a>
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
               
 
 
@@ -743,6 +757,18 @@
 	      
 		      
 			      <li class="post">
+			        <a href="15739770698651.html">【项目管理】二、貌似是“银弹”的敏捷开发，为什么“只闻其名不见其人”？</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15653502237717.html">【项目管理】一、从概念说起，好的项目管理对团队有什么意义</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="15653372657357.html">在互联网公司，App开发需要怎么的项目管理？</a>
 			      </li>
 		     
@@ -756,18 +782,6 @@
 		      
 			      <li class="post">
 			        <a href="15615190654300.html">从数据看北京教育资源</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="15613470463264.html">LiveData组件分享</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="15498584515544.html">写在19年新年上班第一天</a>
 			      </li>
 		     
 		  

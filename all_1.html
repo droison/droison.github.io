@@ -108,6 +108,113 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
+                <a class="clearlink" href="15379393489219.html">
+                
+                  <h1>【从历年weak看iOS面试】</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<ul>
+<li><p>2013年<br/>
+面试官：代理用weak还是strong?<br/>
+我 ：weak 。<br/>
+面试官：明天来上班吧</p></li>
+<li><p>2014年<br/>
+面试官：代理为什么用weak不用strong?<br/>
+我 ： 用strong会造成循环引用。<br/>
+面试官：明天来上班吧</p></li>
+<li><p>2015年<br/>
+面试官：weak是怎么实现的？<br/>
+我 ：weak其实是 系统通过一个hash表来实现对象的弱引用<br/>
+面试官：明天来上班吧</p></li>
+<li><p>2016年<br/>
+面试官：weak是怎么实现的？<br/>
+我 ：runtime维护了一个weak表，用于存储指向某个对象的所有weak指针。weak表其实是一个hash（哈希）表，key是所指对象的地址，Value是weak指针的地址（这个地址的值是所指对象指针的地址）数组。<br/>
+面试官：明天来上班吧</p></li>
+<li><p>2017年<br/>
+面试官：weak是怎么实现的？<br/>
+我 ： 1 初始化时：runtime会调用objc_initWeak函数，初始化一个新的weak指针指向对象的地址。<br/>
+2    添加引用时：objc_initWeak函数会调用 storeWeak() 函数， storeWeak() 的作用是更新指针指向，创建对应的弱引用表。<br/>
+3    释放时,调用clearDeallocating函数。clearDeallocating函数首先根据对象地址获取所有weak指针地址的数组，然后遍历这个数组把其中的数据设为nil，最后把这个entry从weak表中删除，最后清理对象的记录。<br/>
+面试官：明天来上班吧</p></li>
+<li><p>2018年<br/>
+面试官：weak是怎么实现的？<br/>
+我 ：跟2017年说的一样，还详细补充了objc_initWeak, storeWeak, clearDeallocating的实现细节。<br/>
+面试官：小伙子基础不错。13k ,996干不干？干就明天来上班。。   下一个</p></li>
+<li><p>2019年<br/>
+面试官：weak是怎么实现的？<br/>
+我 ：     别说了，拿纸来，我动手实现一个。<br/>
+面试官：等写完后，面试官慢悠悠的说，小伙子不错，我考虑考虑，你先回去吧</p></li>
+</ul>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2018/9/26</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15379393489219.html#disqus_thread">comments</a>
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876730248.html">
+                
+                  <h1>面试常见：iOS Category</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<hr/>
+
+<blockquote>
+<p>面试非常多候选人，涉及到runtime相关知识Category是一个常见考察点，毕竟这是应用最多的runtime场景。<br/>
+本文会针对这部分知识问题做一下分解。</p>
+</blockquote>
+
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15378876730248.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2018/8/9</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876730248.html#disqus_thread">comments</a>
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
                 <a class="clearlink" href="15378876732043.html">
                 
                   <h1>-[UIImage imageNamed:]方法导致的卡顿优化</h1>
@@ -577,116 +684,6 @@ Introduction to Computation and Programming Using Python(2nd)</p>
                 </div>
               </div><!-- article -->
         
-			<div class="article">
-                <a class="clearlink" href="15378876732321.html">
-                
-                  <h1>UIResponder 响应链 拾遗</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">背景</h2>
-
-<p>基于ResponderChain可以做一些事件传递，将所有view的操作最终都送回到ViewController来处理，以实现view的功能单一性。如下：</p>
-
-<pre><code class="language-text">@interface UIResponder (Router)
-- (void)routerEventWithName:(NSString *)eventName userInfo:(NSDictionary *)userInfo;
-@end
-
-@implementation UIResponder (Router)
-- (void)routerEventWithName:(NSString *)eventName userInfo:(NSDictionary *)userInfo
-{
-    [[self nextResponder] routerEventWithName:eventName userInfo:userInfo];
-}
-@end
-</code></pre>
-
-<p>每个cell在做事件请求时，只需要调用<code>routerEventWithName:userInfo:</code>，即可将请求传递给对应的ViewController（也可以是响应链任意一环），然后用EventName来区分事件类型。</p>
-
-<h2 id="toc_1">ChildViewController</h2>
-
-<p>一般来讲 view.nextResponder = view.superView。ViewController的root view的nextResponder是当前ViewController，那childViewController的view的nextResponder是谁呢？如果用nextResponder拦截，childViewController能拦截到其中的view的响应吗？</p>
-
-<h3 id="toc_2">XCode实测：</h3>
-
-<ul>
-<li>如果addChildViewController：</li>
-</ul>
-
-<p>childVC.view.nextResponder == childVC，childVC.nextResponder == childVC.view.superView，相当于在subView&amp;superView的响应联调中，插入了一个VC，与window和VC.view的关系是一致的。</p>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2017/12/21</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-                        <a href="http://www.chaisong.xyz/15378876732321.html#disqus_thread">comments</a>
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15378876732356.html">
-                
-                  <h1>博客继续记录</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h3 id="toc_0">博客继续记录</h3>
-
-<p>3月底入职了头条，博客戛然而止。太忙了...</p>
-
-<p>以前写了太多的技术上的东西，其实生活不仅仅有代码，以后多一些<strong>扯淡</strong>。</p>
-
-<p>博客图片换了google的图床，嗯，想看肯定要有梯子。</p>
-
-<p>域名又买了5年，才80。</p>
-
-<p>评论在纠结于多说和网易云跟帖的关闭困境之后，终于找到了合适的替代品，机于github的issues的gitment应该是最优解。</p>
-
-<p><strong>嗯 最重要的，以后还要多写点博客。</strong></p>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2017/12/7</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='Anything.html'>胡写</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-                        <a href="http://www.chaisong.xyz/15378876732356.html#disqus_thread">comments</a>
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
               
 
 
@@ -760,6 +757,18 @@ Introduction to Computation and Programming Using Python(2nd)</p>
 	      
 		      
 			      <li class="post">
+			        <a href="15739770698651.html">【项目管理】二、貌似是“银弹”的敏捷开发，为什么“只闻其名不见其人”？</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15653502237717.html">【项目管理】一、从概念说起，好的项目管理对团队有什么意义</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="15653372657357.html">在互联网公司，App开发需要怎么的项目管理？</a>
 			      </li>
 		     
@@ -773,18 +782,6 @@ Introduction to Computation and Programming Using Python(2nd)</p>
 		      
 			      <li class="post">
 			        <a href="15615190654300.html">从数据看北京教育资源</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="15613470463264.html">LiveData组件分享</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="15498584515544.html">写在19年新年上班第一天</a>
 			      </li>
 		     
 		  

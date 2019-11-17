@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  使用sublime来写markdown - Puck Chai
+  胡写 - Puck Chai
   
   </title>
   
@@ -99,159 +99,79 @@
        
 
  <script type="text/javascript">
-  $(function(){
-    $('#menu_item_index').addClass('is_active');
-  });
+	$(function(){
+		$('#menu_item_index').addClass('is_active');
+	});
 </script>
 <div class="row">
-  <div class="large-8 medium-8 columns">
-      <div class="markdown-body article-wrap">
-       <div class="article">
-          
-          <h1>使用sublime来写markdown</h1>
-     
-        <div class="read-more clearfix">
-          <span class="date">2015/2/28</span>
+	<div class="large-8 medium-8 columns">
+		<div class="markdown-body home-categories">
+		
+			<div class="article">
+                <a class="clearlink" href="15378876730780.html">
+                
+                  <h1>吐槽《盛世的蝼蚁》</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<hr/>
 
-          <span>posted in&nbsp;</span> 
-          
-              <span class="posted-in"><a href='tech.html'>技术</a></span>
-           
-         
-          <span class="comments">
-            
-              <a href="http://www.chaisong.xyz/15378876730817.html#disqus_thread">comments</a>
-            
+<h2 id="toc_0">有人还没看过这篇文章，所以文章结尾附上原文</h2>
 
-            
-          </span>
+<blockquote>
+<p>说是吐槽《盛世的蝼蚁》，其实是想表达下朋友圈中的这个病毒分享现象。</p>
+</blockquote>
 
-        </div>
-      </div><!-- article -->
+<p>每次出现这种群体性分享情况，我的第一印象都是“暴民政治”，这堆暴民！民众懂个屁啊，国家肯定是精英治理。</p>
 
-      <div class="article-content">
-      <p>sublime是一款非常NB的编辑器，同时兼容Mac、linux和Windows，通过插件化可以将其变得非常强大，无所不能。这两天看到身后的domick非常熟练的使用sublime text，感觉非常羡慕，遂学了一点简单的使用，但愿能够长期使用下去。</p>
+<p>国家的存在的主要目的是维护秩序，换句话说，维护大多数人的利益。维稳是国家的天然职责，而对穷人的福利却不是。国家和底层群众的基本关系就是，国家一定要避免底层群众揭竿而起。</p>
 
-<h2 id="toc_0">1、增加包管理工具 package control</h2>
-
-<p>我在sublime text3下使用网上找的没有成功，遂只贴出来sublime text2的安装方式。</p>
-
-<span id="more"></span><!-- more -->
-
-<p>打开控制台『ctrl+`』，然后在console中输入</p>
-
-<pre><code class="language-text">import urllib2,os;pf=&#39;Package Control.sublime-package&#39;;ipp=sublime.installed_packages_path();os.makedirs(ipp) if not os.path.exists(ipp) else None;open(os.path.join(ipp,pf),&#39;wb&#39;).write(urllib2.urlopen(&#39;http://sublime.wbond.net/&#39;+pf.replace(&#39; &#39;,&#39;%20&#39;)).read())
-</code></pre>
-
-<p>安装完成后可以preferences中看到package control工具。</p>
-
-<p>使用『cmd+shift+p』可以调出改工具：</p>
-
-<ul>
-<li>输入『list』，选择『package control : list package』可以查看所有通过package control安装的扩展插件。</li>
-<li>输入『remove』，选择『package control : remove package』可以删除响应的插件</li>
-<li>输入『install』，可以选择安装</li>
-</ul>
-
-<h2 id="toc_1">2、安装markdown插件</h2>
-
-<p>文本编辑中，markdown是我比较常用的，sublime的插件中比较好的markdown为markdown preview（亲测感觉使用时有点卡）。</p>
-
-<p>在package control : install package中选择markdown preview，安装成功后，在preferences--package sets--markdown preview --default中进行设置语法高亮：</p>
-
-<pre><code class="language-text">以下两项置为true
-&quot;enable_mathjax&quot;: true,
-&quot;enable_highlight&quot;: true,
-</code></pre>
-
-<p>如此，在编辑md文件时，就会出现响应的语法高亮，具体其它使用方法，可以输入『cmd+shift+p』，在弹出框中选择markdown preview开头的那些功能，通过观察，有介绍markdown简易语法的，有导出为html的，有进行html预览的。</p>
-
-<h2 id="toc_2">3、增加头文件</h2>
-
-<p>好多文件编辑都需要有头文件，更好的标识文档的时间、作者等等。我在写markdown文件多数需要最后能够push到github进行blog的展示，因此希望能一键添加。</p>
-
-<h3 id="toc_3">安装插件</h3>
-
-<p>找到的合适的工具是<a href="http://shiyanhui.github.io/FileHeader/">file header</a>，安装过程如上。</p>
-
-<p>安装完成后，查看file header的设置，看到了增加header的快捷键&quot;cmd+option+a&quot;，即每次写完md文章可以采用这种方式假如header的模板。也可以使用&quot;cmd+option+n&quot;直接新建一个包含头的文件，这种适用于写一些代码，希望将头部最早加入。</p>
-
-<h3 id="toc_4">下一步，定制相应的header。</h3>
-
-<p>插件默认做了一个比较好的python的header，我这里需要的是markdown的header，这个默认没有，所以需要自行加入。</p>
-
-<p>在package control中输入&quot;list&quot;，找到file header插件并跳转到插件的安装目录，在template-head中选择markdown，然后自行添加。所有头都是采用<a href="http://jinja.pocoo.org/docs/">jinjia2 template</a>，具体使用方法可以自行查看。</p>
-
-<p>下面贴一份我的markdown头：</p>
-
-<pre><code class="language-text">Date: {{create_time}}  
-Title:   
-Published: true  
-Category:   
-Tags:  
-Author: {{author}}
-
-Last modified by:  {{last_modified_by}}
-Last Modified time: {{last_modified_time}}
-</code></pre>
-
-<p><code>last_modified_by</code>这个参数很强大，可以在每次cmd+s的时候自动更新时间。稍后研究下怎么自动添加Title。</p>
-
-<h2 id="toc_5">后记</h2>
-
-<p>暂时只写这么多吧，好多高级的方法都不太会，需要慢慢熟悉。以后慢慢更新。</p>
+<p>读过《中国是部金融史》，才知道什么才叫做天地不仁，以万物为刍狗。</p>
 
 
-    
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15378876730780.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2016/9/12</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='Anything.html'>胡写</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876730780.html#disqus_thread">comments</a>
+                      
 
-      </div>
-
-      <div class="row">
-        <div class="large-6 columns">
-        <p class="text-left" style="padding:15px 0px;">
-      
-          <a href="15378876730851.html" 
-          title="Previous Post: 使用iOS UI分析工具reveal和FLEX查看任意app">&laquo; 使用iOS UI分析工具reveal和FLEX查看任意app</a>
-      
-        </p>
-        </div>
-        <div class="large-6 columns">
-      <p class="text-right" style="padding:15px 0px;">
-      
-          <a  href="15378876730963.html" 
-          title="Next Post: 【转载】UML类图绘制指南">【转载】UML类图绘制指南 &raquo;</a>
-      
-      </p>
-        </div>
-      </div>
-      <div class="comments-wrap">
-        <div class="share-comments">
-          <div id="disqus_thread"></div>
-<script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES * * */
-    var disqus_shortname = 'billchaiblog';
-    
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
-
-          
-            <div id="disqus_thread"></div>
-          
-
-          
-        </div>
-      </div>
-    </div><!-- article-wrap -->
-  </div><!-- large 8 -->
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+              
 
 
-
+			<div class="row">
+			  <div class="large-6 columns">
+			  <p class="text-left" style="padding-top:25px;">
+			   <a href="Anything_1.html">&laquo; Prev Page</a>  
+			  </p>
+			  </div>
+			  <div class="large-6 columns">
+			<p class="text-right" style="padding-top:25px;">
+			
+			</p>
+			  </div>
+			</div>
+		</div>
+	</div><!-- large 8 -->
 
  <div class="large-4 medium-4 columns">
   <div class="hide-for-small">

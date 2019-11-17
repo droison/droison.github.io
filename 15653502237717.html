@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  使用sublime来写markdown - Puck Chai
+  【项目管理】一、从概念说起，好的项目管理对团队有什么意义 - Puck Chai
   
   </title>
   
@@ -108,19 +108,19 @@
       <div class="markdown-body article-wrap">
        <div class="article">
           
-          <h1>使用sublime来写markdown</h1>
+          <h1>【项目管理】一、从概念说起，好的项目管理对团队有什么意义</h1>
      
         <div class="read-more clearfix">
-          <span class="date">2015/2/28</span>
+          <span class="date">2019/8/9</span>
 
           <span>posted in&nbsp;</span> 
           
-              <span class="posted-in"><a href='tech.html'>技术</a></span>
+              <span class="posted-in"><a href='Anything.html'>胡写</a></span>
            
          
           <span class="comments">
             
-              <a href="http://www.chaisong.xyz/15378876730817.html#disqus_thread">comments</a>
+              <a href="http://www.chaisong.xyz/15653502237717.html#disqus_thread">comments</a>
             
 
             
@@ -130,76 +130,23 @@
       </div><!-- article -->
 
       <div class="article-content">
-      <p>sublime是一款非常NB的编辑器，同时兼容Mac、linux和Windows，通过插件化可以将其变得非常强大，无所不能。这两天看到身后的domick非常熟练的使用sublime text，感觉非常羡慕，遂学了一点简单的使用，但愿能够长期使用下去。</p>
+      <p>项目管理最初起源于西方发达国家的国防工程建设和工民建工程建设方面，应用于例如导弹研制、登月等工程，起到了很好的效果。</p>
 
-<h2 id="toc_0">1、增加包管理工具 package control</h2>
+<p>现代项目管理一般认为开始于上个实际80年代，主要应对全球化下的大量项目工程。以此也延伸了很多学科例如项目管理学、项目管理硕士，以及一些专业考试，典型的就是PMP。</p>
 
-<p>我在sublime text3下使用网上找的没有成功，遂只贴出来sublime text2的安装方式。</p>
-
-<span id="more"></span><!-- more -->
-
-<p>打开控制台『ctrl+`』，然后在console中输入</p>
-
-<pre><code class="language-text">import urllib2,os;pf=&#39;Package Control.sublime-package&#39;;ipp=sublime.installed_packages_path();os.makedirs(ipp) if not os.path.exists(ipp) else None;open(os.path.join(ipp,pf),&#39;wb&#39;).write(urllib2.urlopen(&#39;http://sublime.wbond.net/&#39;+pf.replace(&#39; &#39;,&#39;%20&#39;)).read())
-</code></pre>
-
-<p>安装完成后可以preferences中看到package control工具。</p>
-
-<p>使用『cmd+shift+p』可以调出改工具：</p>
+<p>项目管理就是经过周密的计划，管理项目中的人、事、物，高效达成目标的过程。也就是使得目标高效率、高质量的完成。<br/>
+在互联网公司，一个好的项目制度和管理方式，在维护团队的凝聚力和业务归属感上，都有非常大的好处。<strong>对于工程师团队来讲，项目管理制度是对公司文化的缩影和实践</strong>，是技术团队的思维方式。</p>
 
 <ul>
-<li>输入『list』，选择『package control : list package』可以查看所有通过package control安装的扩展插件。</li>
-<li>输入『remove』，选择『package control : remove package』可以删除响应的插件</li>
-<li>输入『install』，可以选择安装</li>
+<li>工程意义
+<ul>
+<li>如果项目没人管的话，只会越来越乱，绝对不会按期完成 --&gt; 熵的概念，外力如果不施加能量，就不会有序</li>
+</ul></li>
+<li>文化意义
+<ul>
+<li>项目基本贯穿整个工程师团队的日程工作，项目管理遵循怎样的原则意味这我们团队的价值观，我们的做事方式，我们的文化。</li>
+</ul></li>
 </ul>
-
-<h2 id="toc_1">2、安装markdown插件</h2>
-
-<p>文本编辑中，markdown是我比较常用的，sublime的插件中比较好的markdown为markdown preview（亲测感觉使用时有点卡）。</p>
-
-<p>在package control : install package中选择markdown preview，安装成功后，在preferences--package sets--markdown preview --default中进行设置语法高亮：</p>
-
-<pre><code class="language-text">以下两项置为true
-&quot;enable_mathjax&quot;: true,
-&quot;enable_highlight&quot;: true,
-</code></pre>
-
-<p>如此，在编辑md文件时，就会出现响应的语法高亮，具体其它使用方法，可以输入『cmd+shift+p』，在弹出框中选择markdown preview开头的那些功能，通过观察，有介绍markdown简易语法的，有导出为html的，有进行html预览的。</p>
-
-<h2 id="toc_2">3、增加头文件</h2>
-
-<p>好多文件编辑都需要有头文件，更好的标识文档的时间、作者等等。我在写markdown文件多数需要最后能够push到github进行blog的展示，因此希望能一键添加。</p>
-
-<h3 id="toc_3">安装插件</h3>
-
-<p>找到的合适的工具是<a href="http://shiyanhui.github.io/FileHeader/">file header</a>，安装过程如上。</p>
-
-<p>安装完成后，查看file header的设置，看到了增加header的快捷键&quot;cmd+option+a&quot;，即每次写完md文章可以采用这种方式假如header的模板。也可以使用&quot;cmd+option+n&quot;直接新建一个包含头的文件，这种适用于写一些代码，希望将头部最早加入。</p>
-
-<h3 id="toc_4">下一步，定制相应的header。</h3>
-
-<p>插件默认做了一个比较好的python的header，我这里需要的是markdown的header，这个默认没有，所以需要自行加入。</p>
-
-<p>在package control中输入&quot;list&quot;，找到file header插件并跳转到插件的安装目录，在template-head中选择markdown，然后自行添加。所有头都是采用<a href="http://jinja.pocoo.org/docs/">jinjia2 template</a>，具体使用方法可以自行查看。</p>
-
-<p>下面贴一份我的markdown头：</p>
-
-<pre><code class="language-text">Date: {{create_time}}  
-Title:   
-Published: true  
-Category:   
-Tags:  
-Author: {{author}}
-
-Last modified by:  {{last_modified_by}}
-Last Modified time: {{last_modified_time}}
-</code></pre>
-
-<p><code>last_modified_by</code>这个参数很强大，可以在每次cmd+s的时候自动更新时间。稍后研究下怎么自动添加Title。</p>
-
-<h2 id="toc_5">后记</h2>
-
-<p>暂时只写这么多吧，好多高级的方法都不太会，需要慢慢熟悉。以后慢慢更新。</p>
 
 
     
@@ -210,16 +157,16 @@ Last Modified time: {{last_modified_time}}
         <div class="large-6 columns">
         <p class="text-left" style="padding:15px 0px;">
       
-          <a href="15378876730851.html" 
-          title="Previous Post: 使用iOS UI分析工具reveal和FLEX查看任意app">&laquo; 使用iOS UI分析工具reveal和FLEX查看任意app</a>
+          <a href="15739770698651.html" 
+          title="Previous Post: 【项目管理】二、貌似是“银弹”的敏捷开发，为什么“只闻其名不见其人”？">&laquo; 【项目管理】二、貌似是“银弹”的敏捷开发，为什么“只闻其名不见其人”？</a>
       
         </p>
         </div>
         <div class="large-6 columns">
       <p class="text-right" style="padding:15px 0px;">
       
-          <a  href="15378876730963.html" 
-          title="Next Post: 【转载】UML类图绘制指南">【转载】UML类图绘制指南 &raquo;</a>
+          <a  href="15653372657357.html" 
+          title="Next Post: 在互联网公司，App开发需要怎么的项目管理？">在互联网公司，App开发需要怎么的项目管理？ &raquo;</a>
       
       </p>
         </div>

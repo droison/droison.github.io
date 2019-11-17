@@ -108,6 +108,116 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
+                <a class="clearlink" href="15378876732321.html">
+                
+                  <h1>UIResponder 响应链 拾遗</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h2 id="toc_0">背景</h2>
+
+<p>基于ResponderChain可以做一些事件传递，将所有view的操作最终都送回到ViewController来处理，以实现view的功能单一性。如下：</p>
+
+<pre><code class="language-text">@interface UIResponder (Router)
+- (void)routerEventWithName:(NSString *)eventName userInfo:(NSDictionary *)userInfo;
+@end
+
+@implementation UIResponder (Router)
+- (void)routerEventWithName:(NSString *)eventName userInfo:(NSDictionary *)userInfo
+{
+    [[self nextResponder] routerEventWithName:eventName userInfo:userInfo];
+}
+@end
+</code></pre>
+
+<p>每个cell在做事件请求时，只需要调用<code>routerEventWithName:userInfo:</code>，即可将请求传递给对应的ViewController（也可以是响应链任意一环），然后用EventName来区分事件类型。</p>
+
+<h2 id="toc_1">ChildViewController</h2>
+
+<p>一般来讲 view.nextResponder = view.superView。ViewController的root view的nextResponder是当前ViewController，那childViewController的view的nextResponder是谁呢？如果用nextResponder拦截，childViewController能拦截到其中的view的响应吗？</p>
+
+<h3 id="toc_2">XCode实测：</h3>
+
+<ul>
+<li>如果addChildViewController：</li>
+</ul>
+
+<p>childVC.view.nextResponder == childVC，childVC.nextResponder == childVC.view.superView，相当于在subView&amp;superView的响应联调中，插入了一个VC，与window和VC.view的关系是一致的。</p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2017/12/21</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876732321.html#disqus_thread">comments</a>
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15378876732356.html">
+                
+                  <h1>博客继续记录</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h3 id="toc_0">博客继续记录</h3>
+
+<p>3月底入职了头条，博客戛然而止。太忙了...</p>
+
+<p>以前写了太多的技术上的东西，其实生活不仅仅有代码，以后多一些<strong>扯淡</strong>。</p>
+
+<p>博客图片换了google的图床，嗯，想看肯定要有梯子。</p>
+
+<p>域名又买了5年，才80。</p>
+
+<p>评论在纠结于多说和网易云跟帖的关闭困境之后，终于找到了合适的替代品，机于github的issues的gitment应该是最优解。</p>
+
+<p><strong>嗯 最重要的，以后还要多写点博客。</strong></p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2017/12/7</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='Anything.html'>胡写</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+                        <a href="http://www.chaisong.xyz/15378876732356.html#disqus_thread">comments</a>
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
                 <a class="clearlink" href="15378876732390.html">
                 
                   <h1>简单处理不小心调用高版本API的问题</h1>
@@ -1196,113 +1306,6 @@ mReactRootView.startReactApplication(mReactInstanceManager, &quot;adImageLaunch&
                 </div>
               </div><!-- article -->
         
-			<div class="article">
-                <a class="clearlink" href="15378876732668.html">
-                
-                  <h1>Android M、N适配踩坑</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<blockquote>
-<p>我们上个月才决定开始进行Android M、N的集中适配，发现很多问题，在此一起进行总结。</p>
-
-<p>首先我们把buildToolsVersion和compileSdkVersion都改为24，相关support的lib也都改为24.*，以此放开了适配，遇上了很多坑。</p>
-
-<p>这里不是一个大而全的适配方案，仅仅是一个小app(好奇心日报)的适配总结。</p>
-
-<p>Android N的适配主要为组内<a href="https://github.com/yuelinghui">同事</a>操刀，所以文内部分内容源于该同事的总结。</p>
-
-<p>ps：此后统一博客文章的路由命名方式，改为文章创见时间命名，如“2016-11-20”，若当天有第二篇则顺序命名为“2016-11-20-1”，以此来统一化，避免未来路由失效问题。</p>
-</blockquote>
-
-<h2 id="toc_0">一、权限适配 -- Android M</h2>
-
-<p>作为一个新闻类app，适配的最主要的部分应该就是权限了。<br/>
-Android6.0引入了动态权限控制，7.0使用了<code>私有目录被限制访问</code>，<code>Strict Mode API 政策</code>。<br/>
-因此权限适配包含app权限获取部分和私有目录访问部分。<br/>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="15378876732668.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2016/11/20</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='QDaily.html'>QDaily</a></span>
-          				  
-          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-                        <a href="http://www.chaisong.xyz/15378876732668.html#disqus_thread">comments</a>
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15378876732704.html">
-                
-                  <h1>QDaily app连续crash处理方案</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<hr/>
-
-<blockquote>
-<p>上周出现了一次MIUI8.0的开机crash情况，在已经提交应用市场审核后通过的前一刻发现并下架，但也惊出了一身冷汗，深刻感觉开机crash的保护方案尤其重要。<br/>
-以前有crash的保护方案，但只是在连续crash后进行本地缓存清理，而且在Android端一直做的不够，不能够处理很多复杂情况。事实证明，这半年出现过两次打开crash的情况（一次iPad，一次MIUI8.0），之前的保护方案都未能生效。<br/>
-本文先进行头脑风暴，画出思维导图，然后进行细化和测试。</p>
-</blockquote>
-
-<h2 id="toc_0">思维导图</h2>
-
-<p>先出梗概，之后慢慢进行两个系统的细化实现。</p>
-
-<p><img src="http://obp30zydr.bkt.clouddn.com/QDaily%E5%90%AF%E5%8A%A8.png" alt=""/><br/>
-<!--more--></p>
-
-<h2 id="toc_1">iOS实现代码</h2>
-
-<h2 id="toc_2">Android的实现代码</h2>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2016/11/20</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='QDaily.html'>QDaily</a></span>
-          				  
-          					    <span class="posted-in"><a href='tech.html'>技术</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-                        <a href="http://www.chaisong.xyz/15378876732704.html#disqus_thread">comments</a>
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
               
 
 
@@ -1376,6 +1379,18 @@ Android6.0引入了动态权限控制，7.0使用了<code>私有目录被限制�
 	      
 		      
 			      <li class="post">
+			        <a href="15739770698651.html">【项目管理】二、貌似是“银弹”的敏捷开发，为什么“只闻其名不见其人”？</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15653502237717.html">【项目管理】一、从概念说起，好的项目管理对团队有什么意义</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="15653372657357.html">在互联网公司，App开发需要怎么的项目管理？</a>
 			      </li>
 		     
@@ -1389,18 +1404,6 @@ Android6.0引入了动态权限控制，7.0使用了<code>私有目录被限制�
 		      
 			      <li class="post">
 			        <a href="15615190654300.html">从数据看北京教育资源</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="15613470463264.html">LiveData组件分享</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="15498584515544.html">写在19年新年上班第一天</a>
 			      </li>
 		     
 		  
